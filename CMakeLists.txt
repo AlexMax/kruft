@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 3.22)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+
+set(CMAKE_CXX_STANDARD "20" CACHE STRING "C++ Standard to use")
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+option(KRUFT_ENABLE_TESTS "Enable tests for LPC")
+option(KRUFT_ENABLE_BENCHES "Enable benchmarks for LPC")
+
+project(kruft LANGUAGES C CXX)
+
+set(KRUFT_HEADERS
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/krctype.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/krdef.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/krlib.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/krstr.h")
+
+add_library(kruft INTERFACE ${KRUFT_HEADERS})
+target_include_directories(kruft INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include/")
+
+if(KRUFT_ENABLE_TESTS)
+    add_subdirectory(tests)
+endif()
+if(KRUFT_ENABLE_BENCHES)
+    add_subdirectory(benches)
+endif()
