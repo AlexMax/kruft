@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #endif
 
-KR_NODISCARD inline void *kr_reallocarray(void *ptr, size_t nmemb, size_t size)
+KR_NODISCARD KR_INLINE void *kr_reallocarray(void *ptr, size_t nmemb, size_t size)
 {
     const size_t x = nmemb * size;
     if (nmemb != 0 && x / nmemb != size)

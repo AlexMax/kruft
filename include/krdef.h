@@ -67,16 +67,26 @@
 #define KR_CASTS(t, u) (t)(u)
 #endif
 
-#if (KR_CPLUSPLUS)
+#if (KR_CPLUSPLUS >= 201103)
 #define KR_CONSTEXPR constexpr
+#elif (KR_MSC_VER < 1900) // Visual C++ 2015
+#define KR_CONSTEXPR __inline
 #else
 #define KR_CONSTEXPR inline
 #endif
 
-#if (KR_MSC_VER)
-#define KR_NODISCARD _Check_return_
+#if (KR_MSC_VER < 1900) // Visual C++ 2015
+#define KR_INLINE __inline
 #else
+#define KR_INLINE inline
+#endif
+
+#if (KR_MSC_VER) && defined(_Check_return_)
+#define KR_NODISCARD _Check_return_
+#elif (KR_GNUC || KR_CLANG)
 #define KR_NODISCARD __attribute__((__warn_unused_result__))
+#else
+#define KR_NODISCARD
 #endif
 
 #if (KR_MSC_VER)

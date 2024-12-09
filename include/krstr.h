@@ -18,7 +18,9 @@
 
 KR_CONSTEXPR size_t kr_strlen(const char *str)
 {
-    for (size_t i = 0;; i++)
+    size_t i;
+
+    for (i = 0;; i++)
     {
         if (str[i] == '\0')
         {
@@ -29,7 +31,9 @@ KR_CONSTEXPR size_t kr_strlen(const char *str)
 
 KR_CONSTEXPR size_t kr_strnlen(const char *str, size_t len)
 {
-    for (size_t i = 0; i < len; i++)
+    size_t i;
+
+    for (i = 0; i < len; i++)
     {
         if (str[i] == '\0')
         {
@@ -39,7 +43,7 @@ KR_CONSTEXPR size_t kr_strnlen(const char *str, size_t len)
     return len;
 }
 
-inline int kr_strcmp(const char *lhs, const char *rhs)
+KR_INLINE int kr_strcmp(const char *lhs, const char *rhs)
 {
     for (;; lhs++, rhs++)
     {
@@ -53,12 +57,14 @@ inline int kr_strcmp(const char *lhs, const char *rhs)
 
 KR_CONSTEXPR ptrdiff_t kr_strscpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
 {
+    size_t i;
+
     if (destLen == 0)
     {
         return 0;
     }
 
-    size_t i = 0;
+    i = 0;
     for (; i < destLen; i++)
     {
         dest[i] = src[i];
@@ -74,13 +80,15 @@ KR_CONSTEXPR ptrdiff_t kr_strscpy(char *KR_RESTRICT dest, const char *KR_RESTRIC
 
 KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
 {
+    ptrdiff_t len;
+
     size_t tail = kr_strnlen(dest, destLen);
     if (tail == destLen)
     {
         return -1;
     }
 
-    ptrdiff_t len = kr_strscpy(dest + tail, src, destLen - tail);
+    len = kr_strscpy(dest + tail, src, destLen - tail);
     if (len < 0)
     {
         return -1;
@@ -91,12 +99,14 @@ KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRIC
 
 KR_CONSTEXPR size_t kr_strlcpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
 {
+    size_t i;
+
     if (destLen == 0)
     {
         return 0;
     }
 
-    size_t i = 0;
+    i = 0;
     for (; i < destLen; i++)
     {
         dest[i] = src[i];
@@ -129,12 +139,14 @@ KR_CONSTEXPR size_t kr_strlcat(char *KR_RESTRICT dest, const char *KR_RESTRICT s
 
 KR_CONSTEXPR char *kr_stpecpy(char *dest, char *srcEnd, const char *KR_RESTRICT src)
 {
+    ptrdiff_t len;
+
     if (dest == NULL)
     {
         return NULL;
     }
 
-    ptrdiff_t len = kr_strscpy(dest, src, srcEnd - dest);
+    len = kr_strscpy(dest, src, srcEnd - dest);
     if (len == -1)
     {
         return NULL;
