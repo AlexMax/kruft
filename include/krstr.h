@@ -10,9 +10,11 @@
 
 #include "./krdef.h"
 
+#if (!KR_CONFIG_NOINCLUDE)
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#endif
 
 KR_CONSTEXPR size_t kr_strlen(const char *str)
 {

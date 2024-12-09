@@ -6,8 +6,6 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
-
 //
 // ctype.h functions
 //
@@ -16,7 +14,11 @@
 // - These functions only deal with ASCII and do not care about locales.
 //
 
+#pragma once
+
 #include "./krdef.h"
+
+#include "./krbool.h"
 
 KR_CONSTEXPR bool kr_isalnum(char ch)
 {

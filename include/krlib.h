@@ -9,8 +9,12 @@
 #pragma once
 
 #include "./krdef.h"
+#include "./krbool.h"
 
+#if (!KR_CONFIG_NOINCLUDE)
+#include <stddef.h>
 #include <stdlib.h>
+#endif
 
 KR_NODISCARD inline void *kr_reallocarray(void *ptr, size_t nmemb, size_t size)
 {
