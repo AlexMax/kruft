@@ -129,15 +129,15 @@ KR_CONSTEXPR size_t kr_strlcat(char *KR_RESTRICT dest, const char *KR_RESTRICT s
 
 KR_CONSTEXPR char *kr_stpecpy(char *dest, char *srcEnd, const char *KR_RESTRICT src)
 {
-    if (dest == KR_NULL)
+    if (dest == NULL)
     {
-        return KR_NULL;
+        return NULL;
     }
 
     ptrdiff_t len = kr_strscpy(dest, src, srcEnd - dest);
     if (len == -1)
     {
-        return KR_NULL;
+        return NULL;
     }
 
     return dest + len;
@@ -147,9 +147,9 @@ KR_NODISCARD char *kr_strdup(const char *str)
 {
     size_t strl = kr_strlen(str);
     char *dup = KR_CASTS(char *, malloc(strl + 1));
-    if (dup == KR_NULL)
+    if (dup == NULL)
     {
-        return KR_NULL;
+        return NULL;
     }
 
     memcpy(dup, str, strl + 1);
@@ -160,9 +160,9 @@ KR_NODISCARD char *kr_strndup(const char *str, size_t len)
 {
     size_t strl = kr_strnlen(str, len);
     char *dup = KR_CASTS(char *, malloc(strl + 1));
-    if (dup == KR_NULL)
+    if (dup == NULL)
     {
-        return KR_NULL;
+        return NULL;
     }
 
     memcpy(dup, str, strl);

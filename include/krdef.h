@@ -41,6 +41,12 @@
 #define KR_CLANG (0)
 #endif
 
+#if defined(__STDC_VERSION__)
+#define KR_STDC_VERSION (__STDC_VERSION__)
+#else
+#define KR_STDC_VERSION (0)
+#endif
+
 #if defined(__cplusplus) && defined(_MSVC_LANG)
 #define KR_CPLUSPLUS (_MSVC_LANG)
 #elif defined(__cplusplus)
@@ -71,12 +77,6 @@
 #define KR_NODISCARD _Check_return_
 #else
 #define KR_NODISCARD __attribute__((__warn_unused_result__))
-#endif
-
-#if (KR_CPLUSPLUS >= 201103)
-#define KR_NULL (nullptr)
-#else
-#define KR_NULL (NULL)
 #endif
 
 #if (KR_MSC_VER)

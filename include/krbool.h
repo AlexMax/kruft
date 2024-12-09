@@ -10,6 +10,16 @@
 
 #include "./krdef.h"
 
-#if (!KR_CONFIG_NOINCLUDE)
+#if (!KR_CPLUSPLUS)
+#if (KR_STDC_VERSION >= 199901)
+
 #include <stdbool.h>
-#endif
+
+#else
+
+#define bool int
+#define true (1)
+#define false (0)
+
+#endif // (KR_STDC_VERSION >= 199901)
+#endif // (!KR_CPLUSPLUS)

@@ -18,7 +18,9 @@
 
 #include "./krdef.h"
 
+#if (!KR_CONFIG_NOINCLUDE)
 #include "./krbool.h"
+#endif
 
 KR_CONSTEXPR bool kr_isalnum(char ch)
 {
