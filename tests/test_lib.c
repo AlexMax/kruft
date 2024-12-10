@@ -8,30 +8,30 @@
 
 #include "krlib.h"
 
-#include "gtest/gtest.h"
+#include "zztest.h"
 
 TEST(lib, kr_reallocarray)
 {
-    void *ptr1 = nullptr, *ptr2 = nullptr, *ptr3 = nullptr, *ptr4 = nullptr;
+    void *ptr1 = NULL, *ptr2 = NULL, *ptr3 = NULL, *ptr4 = NULL;
 
-    ptr1 = kr_reallocarray(nullptr, 8, 16);
-    if (ptr1 == nullptr)
+    ptr1 = kr_reallocarray(NULL, 8, 16);
+    if (ptr1 == NULL)
     {
         ADD_FAILURE();
         goto done;
     }
     SUCCEED();
 
-    ptr2 = kr_reallocarray(nullptr, SIZE_MAX, 8);
-    if (ptr2 != nullptr)
+    ptr2 = kr_reallocarray(NULL, SIZE_MAX, 8);
+    if (ptr2 != NULL)
     {
         ADD_FAILURE();
         goto done;
     }
     SUCCEED();
 
-    ptr3 = kr_reallocarray(nullptr, 8, SIZE_MAX);
-    if (ptr3 != nullptr)
+    ptr3 = kr_reallocarray(NULL, 8, SIZE_MAX);
+    if (ptr3 != NULL)
     {
         ADD_FAILURE();
         goto done;
@@ -39,14 +39,14 @@ TEST(lib, kr_reallocarray)
     SUCCEED();
 
     ptr4 = kr_reallocarray(ptr1, 8, 4);
-    if (ptr4 == nullptr)
+    if (ptr4 == NULL)
     {
         ADD_FAILURE();
         goto done;
     }
     else
     {
-        ptr1 = nullptr;
+        ptr1 = NULL;
     }
     SUCCEED();
 
@@ -56,3 +56,8 @@ done:
     free(ptr3);
     free(ptr4);
 }
+
+EXPORT_TEST_SUITE(lib) = {
+    EXPORT_TEST(lib, kr_reallocarray),
+};
+EXPORT_TEST_SUITE_COUNT(lib);
