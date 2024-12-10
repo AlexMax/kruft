@@ -6,6 +6,15 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "krctype.h"
-#include "krlib.h"
-#include "krstr.h"
+#include "zztest.h"
+
+#include <stdio.h>
+
+int main()
+{
+    //RUN_TESTS();
+    //RUN_TEST_SUITE(ctype);
+    //RUN_TEST_SUITE(lib);
+    //RUN_TEST_SUITE(str);
+    return 0;
+}

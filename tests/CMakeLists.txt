@@ -4,14 +4,14 @@ set(TEST_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/zztest.h")
 
 set(TEST_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_ctype.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_lib.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_str.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_ctype.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_lib.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_str.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/zztest.c")
 
 # Test suite.
-add_executable(kruft_test_c ${TEST_SOURCES} ${TEST_HEADERS} "${CMAKE_CURRENT_SOURCE_DIR}/test.c")
-add_executable(kruft_test_cxx ${TEST_SOURCES} ${TEST_HEADERS} "${CMAKE_CURRENT_SOURCE_DIR}/test.c")
+add_executable(kruft_test_c ${TEST_SOURCES} ${TEST_HEADERS} "${CMAKE_CURRENT_SOURCE_DIR}/test_c.c")
+add_executable(kruft_test_cxx ${TEST_SOURCES} ${TEST_HEADERS} "${CMAKE_CURRENT_SOURCE_DIR}/test_cpp.cpp")
 
 target_include_directories(kruft_test_c PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_include_directories(kruft_test_cxx PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
