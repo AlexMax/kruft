@@ -53,6 +53,22 @@ typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #endif
 
+#define INT8_MIN (-128)
+#define INT8_MAX (127)
+#define UINT8_MAX (0xff)
+
+#define INT16_MIN (-32768)
+#define INT16_MAX (32767)
+#define UINT16_MAX (0xffff)
+
+#define INT32_MIN (-2147483648)
+#define INT32_MAX (2147483647)
+#define UINT32_MAX (0xffffffff)
+
+#define INT64_MIN (-9223372036854775808)
+#define INT64_MAX (9223372036854775807)
+#define UINT64_MAX (0xffffffffffffffff)
+
 typedef signed __int64 intptr_t;
 typedef unsigned __int64 uintptr_t;
 
