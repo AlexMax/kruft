@@ -69,7 +69,7 @@
 
 #if (KR_CPLUSPLUS >= 201103)
 #define KR_CONSTEXPR constexpr
-#elif (KR_MSC_VER < 1900) // Visual C++ 2015
+#elif (KR_MSC_VER != 0 && KR_MSC_VER < 1900) // Visual C++ 2015
 #define KR_CONSTEXPR __inline
 #else
 #define KR_CONSTEXPR inline
