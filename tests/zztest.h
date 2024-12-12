@@ -174,6 +174,17 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
 #include <stdio.h>
 #include <stdlib.h>
 
+#if defined(WIN32)
+#pragma comment(lib, "WinMM.Lib") // Timer functions
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+#include "timeapi.h"
+#else
+#error "not implemented"
+#endif
+
 //------------------------------------------------------------------------------
 
 struct zztest_state_s
@@ -189,6 +200,7 @@ static unsigned long g_ulFailed;
 static unsigned long g_ulSkipped;
 static const char **g_nszFailed;
 static const char **g_nszSkipped;
+static unsigned long g_ulStartTime;
 
 //------------------------------------------------------------------------------
 
@@ -196,6 +208,17 @@ static void zztest_cleanup(void)
 {
     free(g_nszFailed);
     free(g_nszSkipped);
+}
+
+//------------------------------------------------------------------------------
+
+static unsigned long zztest_ms(void)
+{
+#if defined(WIN32)
+    return timeGetTime();
+#else
+#error "not implemented"
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -223,9 +246,11 @@ void zztest_result(struct zztest_state_s *state, const char *file, unsigned long
 
 void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long count)
 {
+    unsigned i;
+
     printf("[----------] %lu tests from %s\n", count, name);
 
-    unsigned i;
+    unsigned long startms = zztest_ms();
     for (i = 0; i < count; i++)
     {
         struct zztest_s *test = &tests[i];
@@ -277,7 +302,8 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
         }
     }
 
-    printf("[----------] %lu tests from %s (%lu ms total)\n\n", count, name, 0ul);
+    unsigned long endms = zztest_ms();
+    printf("[----------] %lu tests from %s (%lu ms total)\n\n", count, name, endms - startms);
 }
 
 //------------------------------------------------------------------------------
@@ -286,20 +312,29 @@ void RUN_TESTS(void)
 {
     printf("[----------] Global test environment set-up.\n");
 
+#if defined(WIN32)
+    // Set timer resolution to 1ms.
+    timeBeginPeriod(1);
+#endif
+
     g_ulPassed = 0;
     g_ulFailed = 0;
     g_ulSkipped = 0;
     g_ulSuites = 0;
     g_nszFailed = NULL;
     g_nszSkipped = NULL;
+    g_ulStartTime = zztest_ms();
 }
 
 //------------------------------------------------------------------------------
 
 int RUN_TESTS_RESULT(void)
 {
+    unsigned long endms = zztest_ms();
+
     printf("[----------] Global test environment tear-down.\n");
-    printf("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_ulPassed + g_ulFailed, g_ulSuites, 0ul);
+    printf("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_ulPassed + g_ulFailed, g_ulSuites,
+           endms - g_ulStartTime);
     printf("[  PASSED  ] %lu tests.\n", g_ulPassed);
 
     if (g_ulSkipped != 0)
