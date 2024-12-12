@@ -6,9 +6,14 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#define ZZTEST_IMPLEMENTATION
 #include "zztest.h"
 
 #include <stdio.h>
+
+#include "t_ctype.inl"
+#include "t_lib.inl"
+#include "t_str.inl"
 
 int main()
 {

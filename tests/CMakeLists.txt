@@ -1,20 +1,21 @@
 include(CheckCompilerFlag)
 
-set(TEST_HEADERS
+set(ZZTEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/zztest.h")
 
 set(TEST_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/t_ctype.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/t_lib.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/t_str.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/zztest.c")
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_ctype.inl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_lib.inl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_str.inl")
 
 # Test suite.
-add_executable(kruft_test_c ${TEST_SOURCES} ${TEST_HEADERS} "${CMAKE_CURRENT_SOURCE_DIR}/test_c.c")
-add_executable(kruft_test_cxx ${TEST_SOURCES} ${TEST_HEADERS} "${CMAKE_CURRENT_SOURCE_DIR}/test_cpp.cpp")
+add_executable(kruft_test_c ${ZZTEST_SOURCES} ${TEST_SOURCES}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_c.c")
+add_executable(kruft_test_cxx ${ZZTEST_SOURCES} ${TEST_SOURCES}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_cxx.cpp")
 
-target_include_directories(kruft_test_c PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
-target_include_directories(kruft_test_cxx PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+target_include_directories(kruft_test_c PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(kruft_test_cxx PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
 target_link_libraries(kruft_test_c PRIVATE kruft)
 target_link_libraries(kruft_test_cxx PRIVATE kruft)
