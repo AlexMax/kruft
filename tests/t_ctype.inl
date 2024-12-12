@@ -14,7 +14,9 @@
 
 TEST(ctype, kr_isalnum)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isalnum(i);
         bool kr = kr_isalnum((char)i);
@@ -24,7 +26,9 @@ TEST(ctype, kr_isalnum)
 
 TEST(ctype, kr_isalpha)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isalpha(i);
         bool kr = kr_isalpha((char)i);
@@ -34,7 +38,9 @@ TEST(ctype, kr_isalpha)
 
 TEST(ctype, kr_islower)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = islower(i);
         bool kr = kr_islower((char)i);
@@ -44,7 +50,9 @@ TEST(ctype, kr_islower)
 
 TEST(ctype, kr_isupper)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isupper(i);
         bool kr = kr_isupper((char)i);
@@ -54,7 +62,9 @@ TEST(ctype, kr_isupper)
 
 TEST(ctype, kr_isdigit)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isdigit(i);
         bool kr = kr_isdigit((char)i);
@@ -64,7 +74,9 @@ TEST(ctype, kr_isdigit)
 
 TEST(ctype, kr_isxdigit)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isxdigit(i);
         bool kr = kr_isxdigit((char)i);
@@ -74,7 +86,9 @@ TEST(ctype, kr_isxdigit)
 
 TEST(ctype, kr_iscntrl)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = iscntrl(i);
         bool kr = kr_iscntrl((char)i);
@@ -84,7 +98,9 @@ TEST(ctype, kr_iscntrl)
 
 TEST(ctype, kr_isgraph)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isgraph(i);
         bool kr = kr_isgraph((char)i);
@@ -94,7 +110,9 @@ TEST(ctype, kr_isgraph)
 
 TEST(ctype, kr_isspace)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isspace(i);
         bool kr = kr_isspace((char)i);
@@ -104,7 +122,9 @@ TEST(ctype, kr_isspace)
 
 TEST(ctype, kr_isblank)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isblank(i);
         bool kr = kr_isblank((char)i);
@@ -114,7 +134,9 @@ TEST(ctype, kr_isblank)
 
 TEST(ctype, kr_isprint)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = isprint(i);
         bool kr = kr_isprint((char)i);
@@ -124,7 +146,9 @@ TEST(ctype, kr_isprint)
 
 TEST(ctype, kr_ispunct)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         bool std = ispunct(i);
         bool kr = kr_ispunct((char)i);
@@ -134,7 +158,9 @@ TEST(ctype, kr_ispunct)
 
 TEST(ctype, kr_tolower)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         char std = (char)tolower(i);
         char kr = kr_tolower((char)i);
@@ -144,7 +170,9 @@ TEST(ctype, kr_tolower)
 
 TEST(ctype, kr_toupper)
 {
-    for (int i = 0; i < 0x100; i++)
+    int i;
+
+    for (i = 0; i < 0x100; i++)
     {
         char std = (char)toupper(i);
         char kr = kr_toupper((char)i);

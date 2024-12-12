@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.22)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
-set(CMAKE_CXX_STANDARD "20" CACHE STRING "C++ Standard to use")
-
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 option(KRUFT_ENABLE_TESTS "Enable tests for LPC")

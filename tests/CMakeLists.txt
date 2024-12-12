@@ -1,5 +1,8 @@
 include(CheckCompilerFlag)
 
+set(KRUFT_C_STANDARD "90" CACHE STRING "C Standard to use")
+set(KRUFT_CXX_STANDARD "14" CACHE STRING "C++ Standard to use")
+
 set(ZZTEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/zztest.h")
 
@@ -43,3 +46,6 @@ else()
     target_compile_options(kruft_test_c PUBLIC -Wall -Wextra -Wno-unknown-pragmas)
     target_compile_options(kruft_test_cxx PUBLIC -Wall -Wextra -Wno-unknown-pragmas)
 endif()
+
+set_target_properties(kruft_test_c PROPERTIES C_STANDARD "${KRUFT_C_STANDARD}")
+set_target_properties(kruft_test_cxx PROPERTIES CXX_STANDARD "${KRUFT_CXX_STANDARD}")
