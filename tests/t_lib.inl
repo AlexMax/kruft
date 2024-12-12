@@ -60,4 +60,3 @@ done:
 EXPORT_TEST_SUITE(lib) = {
     EXPORT_TEST(lib, kr_reallocarray),
 };
-EXPORT_TEST_SUITE_COUNT(lib);

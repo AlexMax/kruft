@@ -159,4 +159,3 @@ EXPORT_TEST_SUITE(ctype) = {
     EXPORT_TEST(ctype, kr_isblank), EXPORT_TEST(ctype, kr_isprint), EXPORT_TEST(ctype, kr_ispunct),
     EXPORT_TEST(ctype, kr_tolower), EXPORT_TEST(ctype, kr_toupper),
 };
-EXPORT_TEST_SUITE_COUNT(ctype);

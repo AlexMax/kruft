@@ -28,12 +28,27 @@ struct zztest_s
 };
 
 /**
+ * @brief Array length macro.
+ */
+#define ZZTEST_ARRLEN(a) (sizeof(a) / sizeof(*a))
+
+/**
+ * @brief Symbol name of a test.
+ */
+#define ZZTEST_SUITENAME(s) s##__SUITE
+
+/**
+ * @brief Symbol name of a test.
+ */
+#define ZZTEST_TESTNAME(s, t) s##__##t##__TEST
+
+/**
  * @brief Define a test
  *
  * @param s Test suite.  Must be valid identifier.
  * @param t Test name.  Must be valid identifier.
  */
-#define TEST(s, t) void zztest__##s##__##t(struct zztest_state_s *zztest_state)
+#define TEST(s, t) void ZZTEST_TESTNAME(s, t)(struct zztest_state_s * zztest_state)
 
 /**
  * @brief Expect boolean equality.
@@ -124,23 +139,17 @@ struct zztest_s
 /**
  * @brief Define an array of tests.
  */
-#define EXPORT_TEST_SUITE(s) struct zztest_s zztest_suite__##s[]
+#define EXPORT_TEST_SUITE(s) struct zztest_s ZZTEST_SUITENAME(s)[]
 
 /**
  * @brief A pointer to a test function.
  */
-#define EXPORT_TEST(s, t) {&zztest__##s##__##t, #s, #s "." #t}
-
-/**
- * @brief Define a count of how many tests we have.
- */
-#define EXPORT_TEST_SUITE_COUNT(s)                                                                                     \
-    unsigned long zztest_suite_count__##s = sizeof(zztest_suite__##s) / sizeof(struct zztest_s)
+#define EXPORT_TEST(s, t) {ZZTEST_TESTNAME(s, t), #s, #s "." #t}
 
 /**
  * @brief Run a test suite.  Call this from main().
  */
-#define RUN_TEST_SUITE(s) zztest_suite_run(#s, &zztest_suite__##s[0], zztest_suite_count__##s);
+#define RUN_TEST_SUITE(s) zztest_suite_run(#s, &ZZTEST_SUITENAME(s)[0], ZZTEST_ARRLEN(ZZTEST_SUITENAME(s)));
 
 /**
  * @brief Initialize test suite.
