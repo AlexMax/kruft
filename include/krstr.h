@@ -18,7 +18,7 @@
 
 KR_CONSTEXPR size_t kr_strlen(const char *str)
 {
-    size_t i;
+    size_t i = 0;
 
     for (i = 0;; i++)
     {
@@ -31,7 +31,7 @@ KR_CONSTEXPR size_t kr_strlen(const char *str)
 
 KR_CONSTEXPR size_t kr_strnlen(const char *str, size_t len)
 {
-    size_t i;
+    size_t i = 0;
 
     for (i = 0; i < len; i++)
     {
@@ -57,7 +57,7 @@ KR_INLINE int kr_strcmp(const char *lhs, const char *rhs)
 
 KR_CONSTEXPR ptrdiff_t kr_strscpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
 {
-    size_t i;
+    size_t i = 0;
 
     if (destLen == 0)
     {
@@ -80,7 +80,7 @@ KR_CONSTEXPR ptrdiff_t kr_strscpy(char *KR_RESTRICT dest, const char *KR_RESTRIC
 
 KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
 {
-    ptrdiff_t len;
+    ptrdiff_t len = 0;
 
     size_t tail = kr_strnlen(dest, destLen);
     if (tail == destLen)
@@ -99,7 +99,7 @@ KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRIC
 
 KR_CONSTEXPR size_t kr_strlcpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
 {
-    size_t i;
+    size_t i = 0;
 
     if (destLen == 0)
     {
@@ -139,7 +139,7 @@ KR_CONSTEXPR size_t kr_strlcat(char *KR_RESTRICT dest, const char *KR_RESTRICT s
 
 KR_CONSTEXPR char *kr_stpecpy(char *dest, char *srcEnd, const char *KR_RESTRICT src)
 {
-    ptrdiff_t len;
+    ptrdiff_t len = 0;
 
     if (dest == NULL)
     {
