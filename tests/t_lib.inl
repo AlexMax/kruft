@@ -6,9 +6,11 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include "zztest.h"
+
 #include "krlib.h"
 
-#include "zztest.h"
+#include <stdint.h> // FIXME: Use krint.h here.
 
 TEST(lib, kr_reallocarray)
 {

@@ -6,9 +6,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "krctype.h"
-
 #include "zztest.h"
+
+#include "krctype.h"
 
 #include <ctype.h>
 

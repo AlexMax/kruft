@@ -179,8 +179,12 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
-#include <Windows.h>
 #include "timeapi.h"
+#include <Windows.h>
+#elif defined(__unix__)
+#include <sys/time.h> // Timer functions.
+
+static struct timeval g_cTimeStart;
 #else
 #error "not implemented"
 #endif
@@ -210,12 +214,22 @@ static void zztest_cleanup(void)
     free(g_nszSkipped);
 }
 
-//------------------------------------------------------------------------------
-
+/**
+ * @brief Return time point with ms resolution.
+ *
+ * @details This is a compatible timer, not an accurate one.  We're making
+ *          a test suite, not a benchmark.
+ */
 static unsigned long zztest_ms(void)
 {
 #if defined(WIN32)
     return timeGetTime();
+#elif defined(__unix__)
+    unsigned long ms;
+    struct timeval now;
+    gettimeofday(&now, NULL);
+    ms = (now.tv_sec - g_cTimeStart.tv_sec) * 1000 + (now.tv_usec - g_cTimeStart.tv_usec) / 1000;
+    return ms;
 #else
 #error "not implemented"
 #endif

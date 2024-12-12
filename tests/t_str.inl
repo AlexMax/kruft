@@ -6,9 +6,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "krstr.h"
-
 #include "zztest.h"
+
+#include "krstr.h"
 
 TEST(str, kr_strscpy)
 {
