@@ -277,7 +277,7 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
         }
     }
 
-    printf("[----------] %lu tests from %s (%lu ms total)\n\n", count, name, 0);
+    printf("[----------] %lu tests from %s (%lu ms total)\n\n", count, name, 0ul);
 }
 
 //------------------------------------------------------------------------------
@@ -299,7 +299,7 @@ void RUN_TESTS(void)
 int RUN_TESTS_RESULT(void)
 {
     printf("[----------] Global test environment tear-down.\n");
-    printf("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_ulPassed + g_ulFailed, g_ulSuites, 0);
+    printf("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_ulPassed + g_ulFailed, g_ulSuites, 0ul);
     printf("[  PASSED  ] %lu tests.\n", g_ulPassed);
 
     if (g_ulSkipped != 0)
