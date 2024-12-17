@@ -15,62 +15,62 @@
 
 TEST(int, types)
 {
-    EXPECT_EQ(sizeof(kr_i8), 1);
-    EXPECT_EQ(sizeof(kr_u8), 1);
+    EXPECT_EQ(sizeof(int8_t), 1);
+    EXPECT_EQ(sizeof(uint8_t), 1);
 
-    EXPECT_EQ(sizeof(kr_i16), 2);
-    EXPECT_EQ(sizeof(kr_u16), 2);
+    EXPECT_EQ(sizeof(int16_t), 2);
+    EXPECT_EQ(sizeof(uint16_t), 2);
 
-    EXPECT_EQ(sizeof(kr_i32), 4);
-    EXPECT_EQ(sizeof(kr_u32), 4);
+    EXPECT_EQ(sizeof(int32_t), 4);
+    EXPECT_EQ(sizeof(uint32_t), 4);
 
-    EXPECT_EQ(sizeof(kr_i64), 8);
-    EXPECT_EQ(sizeof(kr_u64), 8);
+    EXPECT_EQ(sizeof(int64_t), 8);
+    EXPECT_EQ(sizeof(uint64_t), 8);
 }
 
 TEST(int, ranges)
 {
     {
-        kr_i8 smin = KR_I8_MIN;
+        int8_t smin = INT8_MIN;
         EXPECT_EQ(smin, -128);
 
-        kr_i8 smax = KR_I8_MAX;
+        int8_t smax = INT8_MAX;
         EXPECT_EQ(smax, 127);
 
-        kr_u8 umax = KR_U8_MAX;
+        uint8_t umax = UINT8_MAX;
         EXPECT_EQ(umax, 255);
     }
 
     {
-        kr_i16 smin = KR_I16_MIN;
-        EXPECT_EQ(smin, -32768);
+        int16_t smin = INT16_MIN;
+        EXPECT_EQ(smin, -32767 - 1);
 
-        kr_i16 smax = KR_I16_MAX;
+        int16_t smax = INT16_MAX;
         EXPECT_EQ(smax, 32767);
 
-        kr_u16 umax = KR_U16_MAX;
+        uint16_t umax = UINT16_MAX;
         EXPECT_EQ(umax, 65535);
     }
 
     {
-        kr_i32 smin = KR_I32_MIN;
+        int32_t smin = INT32_MIN;
         EXPECT_EQ(smin, -2147483647 - 1);
 
-        kr_i32 smax = KR_I32_MAX;
+        int32_t smax = INT32_MAX;
         EXPECT_EQ(smax, 2147483647);
 
-        kr_u32 umax = KR_U32_MAX;
+        uint32_t umax = UINT32_MAX;
         EXPECT_EQ(umax, 4294967295);
     }
 
     {
-        kr_i64 smin = KR_I64_MIN;
+        int64_t smin = INT64_MIN;
         EXPECT_EQ(smin, -9223372036854775807 - 1);
 
-        kr_i64 smax = KR_I64_MAX;
+        int64_t smax = INT64_MAX;
         EXPECT_EQ(smax, 9223372036854775807);
 
-        kr_u64 umax = KR_U64_MAX;
+        uint64_t umax = UINT64_MAX;
         EXPECT_EQ(umax, 18446744073709551615);
     }
 }
