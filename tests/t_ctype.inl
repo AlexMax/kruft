@@ -122,16 +122,14 @@ TEST(ctype, kr_isspace)
 
 TEST(ctype, kr_isblank)
 {
-#if 0
     int i;
 
     for (i = 0; i < 0x100; i++)
     {
-        bool std = isblank(i);
+        bool std = i == 0x09 || i == 0x20;
         bool kr = kr_isblank((char)i);
         EXPECT_TRUE(std, kr);
     }
-#endif
 }
 
 TEST(ctype, kr_isprint)
