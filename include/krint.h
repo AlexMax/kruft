@@ -14,65 +14,93 @@
 
 #include <stdint.h>
 
+typedef int8_t kr_i8;
+typedef uint8_t kr_u8;
+
+typedef int16_t kr_i16;
+typedef uint16_t kr_u16;
+
+typedef int32_t kr_i32;
+typedef uint32_t kr_u32;
+
+typedef int64_t kr_i64;
+typedef uint64_t kr_u64;
+
+#define KR_I8_MIN (INT8_MIN)
+#define KR_I8_MAX (INT8_MAX)
+#define KR_U8_MAX (UINT8_MAX)
+
+#define KR_I16_MIN (INT16_MIN)
+#define KR_I16_MAX (INT16_MAX)
+#define KR_U16_MAX (UINT16_MAX)
+
+#define KR_I32_MIN (INT32_MIN)
+#define KR_I32_MAX (INT32_MAX)
+#define KR_U32_MAX (UINT32_MAX)
+
+#define KR_I64_MIN (INT64_MIN)
+#define KR_I64_MAX (INT64_MAX)
+#define KR_U64_MAX (UINT64_MAX)
+
 #else
 
 #include <limits.h>
 
-#if defined(UCHAR_MAX) && (UCHAR_MAX == 0xff)
-typedef signed char int8_t;
-typedef unsigned char uint8_t;
+#if (UCHAR_MAX == 0xff)
+typedef signed char kr_i8;
+typedef unsigned char kr_u8;
 #endif
 
-#if defined(USHRT_MAX) && (USHRT_MAX == 0xffff)
-typedef signed short int16_t;
-typedef unsigned short uint16_t;
-#elif defined(UINT_MAX) && (UINT_MAX == 0xffff)
-typedef signed int int16_t;
-typedef unsigned int uint16_t;
+#if (UINT_MAX == 0xffff)
+typedef signed int kr_i16;
+typedef unsigned int kr_u16;
+#elif (USHRT_MAX == 0xffff)
+typedef signed short kr_i16;
+typedef unsigned short kr_u16;
 #endif
 
-#if defined(UINT_MAX) && (UINT_MAX == 0xffffffff)
-typedef signed int int32_t;
-typedef unsigned int uint32_t;
-#elif defined(ULONG_MAX) && (ULONG_MAX == 0xffffffff)
-typedef signed long int32_t;
-typedef unsigned long uint32_t;
+#if (UINT_MAX == 0xffffffff)
+typedef signed int kr_i32;
+typedef unsigned int kr_u32;
+#elif (ULONG_MAX == 0xffffffff)
+typedef signed long kr_i32;
+typedef unsigned long kr_u32;
 #endif
 
-#if defined(ULONG_MAX) && (ULONG_MAX == 0xffffffffffffffff)
-typedef signed int int64_t;
-typedef unsigned int uint64_t;
-#elif defined(ULLONG_MAX) && (ULLONG_MAX == 0xffffffffffffffff)
-typedef signed long long int64_t;
-typedef unsigned long long uint64_t;
+#if defined(_UI64_MAX) && (_UI64_MAX == 0xffffffffffffffff)             // MSVC
+typedef signed __int64 kr_i64;
+typedef unsigned __int64 kr_u64;
 #elif defined(ULONG_LONG_MAX) && (ULONG_LONG_MAX == 0xffffffffffffffff) // GCC
-typedef signed long long int64_t;
-typedef unsigned long long uint64_t;
-#elif defined(_UI64_MAX) && (_UI64_MAX == 0xffffffffffffffff)           // Visual C++ 6.0
-typedef signed __int64 int64_t;
-typedef unsigned __int64 uint64_t;
+typedef signed long long kr_i64;
+typedef unsigned long long kr_u64;
+#elif (ULONG_MAX == 0xffffffffffffffff)                                 // LP64
+typedef signed long kr_i64;
+typedef unsigned long kr_u64;
+#elif defined(ULLONG_MAX) && (ULLONG_MAX == 0xffffffffffffffff)         // LLP64
+typedef signed long long kr_i64;
+typedef unsigned long long kr_u64;
+#else
+#define KR_SKIP_64BIT_
 #endif
 
-#define INT8_MIN (-128)
-#define INT8_MAX (127)
-#define UINT8_MAX (0xff)
+#define KR_I8_MIN (-128)
+#define KR_I8_MAX (127)
+#define KR_U8_MAX (0xff)
 
-#define INT16_MIN (-32768)
-#define INT16_MAX (32767)
-#define UINT16_MAX (0xffff)
+#define KR_I16_MIN (-32768)
+#define KR_I16_MAX (32767)
+#define KR_U16_MAX (0xffff)
 
-#define INT32_MIN (-2147483648)
-#define INT32_MAX (2147483647)
-#define UINT32_MAX (0xffffffff)
+#define KR_I32_MIN (-2147483648)
+#define KR_I32_MAX (2147483647)
+#define KR_U32_MAX (0xffffffff)
 
-#define INT64_MIN (-9223372036854775808)
-#define INT64_MAX (9223372036854775807)
-#define UINT64_MAX (0xffffffffffffffff)
+#if !defined(KR_SKIP_64BIT_)
+#define KR_I64_MIN (-9223372036854775808)
+#define KR_I64_MAX (9223372036854775807)
+#define KR_U64_MAX (0xffffffffffffffff)
+#endif
 
-typedef signed __int64 intptr_t;
-typedef unsigned __int64 uintptr_t;
-
-typedef signed __int64 intmax_t;
-typedef unsigned __int64 uintmax_t;
+#undef KR_SKIP_64BIT_
 
 #endif

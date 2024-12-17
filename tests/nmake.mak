@@ -6,10 +6,10 @@ LDFLAGS = /nologo
 all: test_c.exe test_cxx.exe
 
 test_c.exe: test_c.c
-	$(CC) $(CFLAGS) $? /Fe:$@
+	$(CC) $(CFLAGS) $?
 
 test_cxx.exe: test_cxx.cpp
-	$(CC) $(CFLAGS) $? /Fe:$@
+	$(CC) $(CFLAGS) $?
 
 clean:
 	del *.obj

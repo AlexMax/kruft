@@ -5,9 +5,22 @@
 // accompanying file LICENSE.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
+//
+//
+// zztest - A greenfield subset of Google Test for crufty compilers.
+//
+// Configuration Defines:
+// - ZZTEST_CONFIG_PRINTF: Define this to your own print function.
+//
 
 #if !defined(INCLUDE_ZZTEST_H)
 #define INCLUDE_ZZTEST_H
+
+#if defined(ZZTEST_CONFIG_PRINTF)
+#define ZPRINTF_ ZZTEST_CONFIG_PRINTF
+#else
+#define ZPRINTF_ printf
+#endif
 
 struct zztest_state_s;
 
@@ -171,23 +184,21 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
 #if defined(ZZTEST_IMPLEMENTATION)
 //------------------------------------------------------------------------------
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#if defined(WIN32)
+#if defined(_WIN32)
 #pragma comment(lib, "WinMM.Lib") // Timer functions
-
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include "timeapi.h"
 #include <Windows.h>
 #elif defined(__unix__)
 #include <sys/time.h> // Timer functions.
-
 static struct timeval g_cTimeStart;
 #else
 #error "not implemented"
 #endif
+
+#if !defined(ZZTEST_CONFIG_PRINTF)
+#include <stdio.h>
+#endif
+
+#include <stdlib.h>
 
 //------------------------------------------------------------------------------
 
@@ -222,7 +233,7 @@ static void zztest_cleanup(void)
  */
 static unsigned long zztest_ms(void)
 {
-#if defined(WIN32)
+#if defined(_WIN32)
     return timeGetTime();
 #elif defined(__unix__)
     unsigned long ms;
@@ -247,7 +258,7 @@ void zztest_result(struct zztest_state_s *state, const char *file, unsigned long
         state->skipped = 0;
         break;
     case ZZTEST_RESULT_FAIL:
-        printf("%s(%lu): error: %s\n\n", file, line, msgstr);
+        ZPRINTF_("%s(%lu): error: %s\n\n", file, line, msgstr);
         state->failed += 1;
         break;
     case ZZTEST_RESULT_SKIP:
@@ -261,17 +272,16 @@ void zztest_result(struct zztest_state_s *state, const char *file, unsigned long
 void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long count)
 {
     unsigned i;
+    unsigned long startms, endms;
 
-    printf("[----------] %lu tests from %s\n", count, name);
-
-    unsigned long startms = zztest_ms();
+    ZPRINTF_("[----------] %lu tests from %s\n", count, name);
+    startms = zztest_ms();
     for (i = 0; i < count; i++)
     {
-        struct zztest_s *test = &tests[i];
-
-        printf("[ RUN      ] %s\n", test->test_name);
-
         struct zztest_state_s state;
+
+        struct zztest_s *test = &tests[i];
+        ZPRINTF_("[ RUN      ] %s\n", test->test_name);
         state.test = test;
         state.failed = 0;
         state.skipped = 0;
@@ -279,12 +289,13 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
 
         if (state.failed > 0)
         {
-            printf("[  FAILED  ] %s (0 ms)\n", test->test_name);
+            const char **failed;
 
-            const char **failed = (const char **)realloc(g_nszFailed, sizeof(char *) * (g_ulFailed + 1));
+            ZPRINTF_("[  FAILED  ] %s (0 ms)\n", test->test_name);
+            failed = (const char **)realloc(g_nszFailed, sizeof(char *) * (g_ulFailed + 1));
             if (failed == NULL)
             {
-                printf("realloc failure\n");
+                ZPRINTF_("realloc failure\n");
                 zztest_cleanup();
                 exit(1);
             }
@@ -295,12 +306,13 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
         }
         else if (state.skipped > 0)
         {
-            printf("[  SKIPPED ] %s (0 ms)\n", test->test_name);
+            const char **skipped;
 
-            const char **skipped = (const char **)realloc(g_nszSkipped, sizeof(char *) * (g_ulSkipped + 1));
+            ZPRINTF_("[  SKIPPED ] %s (0 ms)\n", test->test_name);
+            skipped = (const char **)realloc(g_nszSkipped, sizeof(char *) * (g_ulSkipped + 1));
             if (skipped == NULL)
             {
-                printf("realloc failure\n");
+                ZPRINTF_("realloc failure\n");
                 zztest_cleanup();
                 exit(1);
             }
@@ -311,22 +323,22 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
         }
         else
         {
-            printf("[       OK ] %s (0 ms)\n", test->test_name);
+            ZPRINTF_("[       OK ] %s (0 ms)\n", test->test_name);
             g_ulPassed += 1;
         }
     }
 
-    unsigned long endms = zztest_ms();
-    printf("[----------] %lu tests from %s (%lu ms total)\n\n", count, name, endms - startms);
+    endms = zztest_ms();
+    ZPRINTF_("[----------] %lu tests from %s (%lu ms total)\n\n", count, name, endms - startms);
 }
 
 //------------------------------------------------------------------------------
 
 void RUN_TESTS(void)
 {
-    printf("[----------] Global test environment set-up.\n");
+    ZPRINTF_("[----------] Global test environment set-up.\n");
 
-#if defined(WIN32)
+#if defined(_WIN32)
     // Set timer resolution to 1ms.
     timeBeginPeriod(1);
 #endif
@@ -346,19 +358,19 @@ int RUN_TESTS_RESULT(void)
 {
     unsigned long endms = zztest_ms();
 
-    printf("[----------] Global test environment tear-down.\n");
-    printf("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_ulPassed + g_ulFailed, g_ulSuites,
-           endms - g_ulStartTime);
-    printf("[  PASSED  ] %lu tests.\n", g_ulPassed);
+    ZPRINTF_("[----------] Global test environment tear-down.\n");
+    ZPRINTF_("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_ulPassed + g_ulFailed, g_ulSuites,
+             endms - g_ulStartTime);
+    ZPRINTF_("[  PASSED  ] %lu tests.\n", g_ulPassed);
 
     if (g_ulSkipped != 0)
     {
         unsigned long i;
 
-        printf("[  SKIPPED ] %lu tests, listed below:\n", g_ulSkipped);
+        ZPRINTF_("[  SKIPPED ] %lu tests, listed below:\n", g_ulSkipped);
         for (i = 0; i < g_ulSkipped; i++)
         {
-            printf("[  SKIPPED ] %s\n", g_nszSkipped[i]);
+            ZPRINTF_("[  SKIPPED ] %s\n", g_nszSkipped[i]);
         }
     }
 
@@ -366,10 +378,10 @@ int RUN_TESTS_RESULT(void)
     {
         unsigned long i;
 
-        printf("[  FAILED  ] %lu tests, listed below:\n", g_ulFailed);
+        ZPRINTF_("[  FAILED  ] %lu tests, listed below:\n", g_ulFailed);
         for (i = 0; i < g_ulFailed; i++)
         {
-            printf("[  FAILED  ] %s\n", g_nszFailed[i]);
+            ZPRINTF_("[  FAILED  ] %s\n", g_nszFailed[i]);
         }
     }
 

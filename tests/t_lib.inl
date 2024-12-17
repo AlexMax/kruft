@@ -10,7 +10,7 @@
 
 #include "krlib.h"
 
-#include <stdint.h> // FIXME: Use krint.h here.
+#include "krint.h"
 
 TEST(lib, kr_reallocarray)
 {
