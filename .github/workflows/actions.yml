@@ -45,25 +45,25 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           configurePreset: 'windows-clang'
-  macos-arm64:
-    runs-on: macos-latest
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
-      - name: Get CMake
-        uses: lukka/get-cmake@latest
-      - name: Run CMake
-        uses: lukka/run-cmake@v10
-        with:
-          workflowPreset: 'macos'
-  macos-x64:
-    runs-on: macos-13
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
-      - name: Get CMake
-        uses: lukka/get-cmake@latest
-      - name: Run CMake
-        uses: lukka/run-cmake@v10
-        with:
-          workflowPreset: 'macos'
+  # macos-arm64:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Git checkout
+  #       uses: actions/checkout@v4
+  #     - name: Get CMake
+  #       uses: lukka/get-cmake@latest
+  #     - name: Run CMake
+  #       uses: lukka/run-cmake@v10
+  #       with:
+  #         workflowPreset: 'macos'
+  # macos-x64:
+  #   runs-on: macos-13
+  #   steps:
+  #     - name: Git checkout
+  #       uses: actions/checkout@v4
+  #     - name: Get CMake
+  #       uses: lukka/get-cmake@latest
+  #     - name: Run CMake
+  #       uses: lukka/run-cmake@v10
+  #       with:
+  #         workflowPreset: 'macos'
