@@ -1,0 +1,39 @@
+name: GitHub Actions Demo
+on: [push]
+jobs:
+  ubuntu-gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get CMake
+        uses: lukka/get-cmake@latest
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'ubuntu-gcc'
+  windows-msvc:
+    runs-on: windows-latest
+    steps:
+      - name: Get CMake
+        uses: lukka/get-cmake@latest
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'windows-msvc'
+  macos-arm64:
+    runs-on: macos-latest
+    steps:
+      - name: Get CMake
+        uses: lukka/get-cmake@latest
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'macos'
+  macos-x64:
+    runs-on: macos-13
+    steps:
+      - name: Get CMake
+        uses: lukka/get-cmake@latest
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'macos'

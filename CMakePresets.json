@@ -1,0 +1,53 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "ubuntu-gcc",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "KRUFT_ENABLE_TESTS": "ON"
+            },
+            "binaryDir": "build_gcc"
+        },
+        {
+            "name": "ubuntu-clang",
+            "generator": "Ninja",
+            "environment": {
+                "CC": "/usr/bin/clang",
+                "CXX": "/usr/bin/clang++"
+            },
+            "cacheVariables": {
+                "KRUFT_ENABLE_TESTS": "ON"
+            },
+            "binaryDir": "build_clang"
+        },
+        {
+            "name": "windows-msvc",
+            "generator": "Visual Studio 17 2022",
+            "cacheVariables": {
+                "KRUFT_ENABLE_TESTS": "ON"
+            },
+            "binaryDir": "build_msvc"
+        },
+        {
+            "name": "windows-clang",
+            "generator": "Ninja",
+            "environment": {
+                "CC": "$env{ProgramFiles}\\LLVM\\bin\\clang.exe",
+                "CXX": "$env{ProgramFiles}\\LLVM\\bin\\clang++.exe"
+            },
+            "cacheVariables": {
+                "KRUFT_ENABLE_TESTS": "ON"
+            },
+            "binaryDir": "build_clang"
+        },
+        {
+            "name": "macos",
+            "generator": "Xcode",
+            "cacheVariables": {
+                "KRUFT_ENABLE_TESTS": "ON"
+            },
+            "binaryDir": "build"
+        }
+    ]
+}
