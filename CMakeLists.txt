@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.25)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
@@ -21,6 +21,7 @@ add_library(kruft INTERFACE ${KRUFT_HEADERS})
 target_include_directories(kruft INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 
 if(KRUFT_ENABLE_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 if(KRUFT_ENABLE_BENCHES)

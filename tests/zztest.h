@@ -386,7 +386,7 @@ int RUN_TESTS_RESULT(void)
     }
 
     zztest_cleanup();
-    return g_ulFailed == 0;
+    return g_ulFailed == 0 ? 0 : 1;
 }
 
 #endif // defined(ZZTEST_IMPLEMENTATION)

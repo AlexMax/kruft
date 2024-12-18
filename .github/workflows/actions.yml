@@ -33,7 +33,7 @@ jobs:
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: 'windows-msvc'
+          workflowPreset: 'windows-msvc'
   windows-clang:
     runs-on: windows-latest
     steps:

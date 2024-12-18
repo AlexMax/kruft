@@ -1,5 +1,5 @@
 {
-    "version": 3,
+    "version": 6,
     "configurePresets": [
         {
             "name": "ubuntu-gcc",
@@ -48,6 +48,39 @@
                 "KRUFT_ENABLE_TESTS": "ON"
             },
             "binaryDir": "build"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-msvc",
+            "configurePreset": "windows-msvc",
+            "configuration": "Debug"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "windows-msvc",
+            "configurePreset": "windows-msvc",
+            "configuration": "Debug"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "windows-msvc",
+            "steps": [
+                {
+                    "name": "windows-msvc",
+                    "type": "configure"
+                },
+                {
+                    "name": "windows-msvc",
+                    "type": "build"
+                },
+                {
+                    "name": "windows-msvc",
+                    "type": "test"
+                }
+            ]
         }
     ]
 }

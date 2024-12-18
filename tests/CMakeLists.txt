@@ -50,3 +50,7 @@ endif()
 
 set_target_properties(kruft_test_c PROPERTIES C_STANDARD "${KRUFT_C_STANDARD}")
 set_target_properties(kruft_test_cxx PROPERTIES CXX_STANDARD "${KRUFT_CXX_STANDARD}")
+
+enable_testing()
+add_test(NAME kruft_test_c COMMAND $<TARGET_FILE:kruft_test_c>)
+add_test(NAME kruft_test_cxx COMMAND $<TARGET_FILE:kruft_test_cxx>)
