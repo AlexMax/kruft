@@ -5,6 +5,7 @@
             "name": "ubuntu-gcc",
             "generator": "Ninja",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
                 "KRUFT_ENABLE_TESTS": "ON"
             },
             "binaryDir": "build_gcc"
@@ -17,6 +18,7 @@
                 "CXX": "/usr/bin/clang++"
             },
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
                 "KRUFT_ENABLE_TESTS": "ON"
             },
             "binaryDir": "build_clang"
@@ -37,6 +39,7 @@
                 "CXX": "$env{ProgramFiles}\\LLVM\\bin\\clang++.exe"
             },
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
                 "KRUFT_ENABLE_TESTS": "ON"
             },
             "binaryDir": "build_clang"
@@ -53,13 +56,20 @@
     "buildPresets": [
         {
             "name": "ubuntu-gcc",
-            "configurePreset": "ubuntu-gcc",
-            "configuration": "Debug"
+            "configurePreset": "ubuntu-gcc"
+        },
+        {
+            "name": "ubuntu-clang",
+            "configurePreset": "ubuntu-clang"
         },
         {
             "name": "windows-msvc",
             "configurePreset": "windows-msvc",
             "configuration": "Debug"
+        },
+        {
+            "name": "windows-clang",
+            "configurePreset": "windows-clang"
         },
         {
             "name": "macos",
@@ -74,9 +84,17 @@
             "configuration": "Debug"
         },
         {
+            "name": "ubuntu-clang",
+            "configurePreset": "ubuntu-clang"
+        },
+        {
             "name": "windows-msvc",
             "configurePreset": "windows-msvc",
             "configuration": "Debug"
+        },
+        {
+            "name": "windows-clang",
+            "configurePreset": "windows-clang"
         },
         {
             "name": "macos",
@@ -103,6 +121,23 @@
             ]
         },
         {
+            "name": "ubuntu-clang",
+            "steps": [
+                {
+                    "name": "ubuntu-clang",
+                    "type": "configure"
+                },
+                {
+                    "name": "ubuntu-clang",
+                    "type": "build"
+                },
+                {
+                    "name": "ubuntu-clang",
+                    "type": "test"
+                }
+            ]
+        },
+        {
             "name": "windows-msvc",
             "steps": [
                 {
@@ -115,6 +150,23 @@
                 },
                 {
                     "name": "windows-msvc",
+                    "type": "test"
+                }
+            ]
+        },
+        {
+            "name": "windows-clang",
+            "steps": [
+                {
+                    "name": "windows-clang",
+                    "type": "configure"
+                },
+                {
+                    "name": "windows-clang",
+                    "type": "build"
+                },
+                {
+                    "name": "windows-clang",
                     "type": "test"
                 }
             ]
