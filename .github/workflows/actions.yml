@@ -4,60 +4,66 @@ jobs:
   ubuntu-gcc:
     runs-on: ubuntu-latest
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
       - name: Get CMake
         uses: lukka/get-cmake@latest
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ubuntu-gcc'
   ubuntu-clang:
     runs-on: ubuntu-latest
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
       - name: Get CMake
         uses: lukka/get-cmake@latest
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ubuntu-clang'
   windows-msvc:
     runs-on: windows-latest
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
       - name: Get CMake
         uses: lukka/get-cmake@latest
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'windows-msvc'
   windows-clang:
     runs-on: windows-latest
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
       - name: Get CMake
         uses: lukka/get-cmake@latest
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'windows-clang'
   macos-arm64:
     runs-on: macos-latest
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
       - name: Get CMake
         uses: lukka/get-cmake@latest
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'macos'
   macos-x64:
     runs-on: macos-13
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
       - name: Get CMake
         uses: lukka/get-cmake@latest
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'macos'
