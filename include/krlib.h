@@ -11,7 +11,6 @@
 #include "./krdef.h"
 
 #if (!KR_CONFIG_NOINCLUDE)
-#include "./krbool.h"
 #include <stddef.h>
 #include <stdlib.h>
 #endif

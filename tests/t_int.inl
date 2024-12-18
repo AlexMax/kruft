@@ -71,7 +71,7 @@ TEST(int, ranges)
         EXPECT_EQ(smax, 9223372036854775807);
 
         uint64_t umax = UINT64_MAX;
-        EXPECT_EQ(umax, 18446744073709551615);
+        EXPECT_EQ(umax, UINT64_C(18446744073709551615));
     }
 }
 

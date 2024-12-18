@@ -10,9 +10,18 @@
 
 #include "./krdef.h"
 
-#if (KR_MSC_VER >= 1600 || KR_STDC_VERSION >= 199901)
+#if defined(__has_include)
+#if __has_include(<stdint.h>)
+#define KR_USE_STDINT_
+#endif // __has_include(<stdint.h>)
+#elif (KR_MSC_VER >= 1600 || KR_STDC_VERSION >= 199901)
+#define KR_USE_STDINT_
+#endif
+
+#if defined(KR_USE_STDINT_)
 #include <stdint.h>
-#else
+#undef KR_USE_STDINT_
+#else // defined(KR_USE_STDINT_)
 #include <limits.h>
 
 #if (UCHAR_MAX == 0xff)
@@ -72,4 +81,4 @@ typedef unsigned long long uint64_t;
 
 #undef KR_SKIP_64BIT_
 
-#endif
+#endif // defined(KR_USE_STDINT_)
