@@ -75,6 +75,12 @@
 #define KR_CONSTEXPR inline
 #endif
 
+#if (KR_MSC_VER)
+#define KR_FORCEINLINE __forceinline
+#else
+#define KR_FORCEINLINE inline __attribute__((always_inline))
+#endif
+
 #if (KR_MSC_VER < 1900) // Visual C++ 2015
 #define KR_INLINE __inline
 #else
@@ -87,6 +93,12 @@
 #define KR_NODISCARD __attribute__((__warn_unused_result__))
 #else
 #define KR_NODISCARD
+#endif
+
+#if (KR_CPLUSPLUS)
+#define KR_NOEXCEPT noexcept
+#else
+#define KR_NOEXCEPT
 #endif
 
 #if (KR_MSC_VER)

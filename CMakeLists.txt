@@ -10,6 +10,7 @@ option(KRUFT_ENABLE_BENCHES "Enable benchmarks for LPC")
 project(kruft LANGUAGES C CXX)
 
 set(KRUFT_HEADERS
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/krbit.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krbool.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krctype.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krdef.h"

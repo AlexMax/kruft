@@ -7,6 +7,7 @@ set(ZZTEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/zztest.h")
 
 set(TEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_bit.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_ctype.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_int.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_lib.inl"

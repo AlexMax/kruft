@@ -32,6 +32,15 @@
             "binaryDir": "build_msvc"
         },
         {
+            "name": "windows-msvc-clang",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "ClangCL",
+            "cacheVariables": {
+                "KRUFT_ENABLE_TESTS": "ON"
+            },
+            "binaryDir": "build_msvc_clang"
+        },
+        {
             "name": "windows-clang",
             "generator": "Ninja",
             "environment": {
@@ -68,6 +77,11 @@
             "configuration": "Debug"
         },
         {
+            "name": "windows-msvc-clang",
+            "configurePreset": "windows-msvc-clang",
+            "configuration": "Debug"
+        },
+        {
             "name": "windows-clang",
             "configurePreset": "windows-clang"
         },
@@ -90,6 +104,11 @@
         {
             "name": "windows-msvc",
             "configurePreset": "windows-msvc",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-msvc-clang",
+            "configurePreset": "windows-msvc-clang",
             "configuration": "Debug"
         },
         {
@@ -150,6 +169,23 @@
                 },
                 {
                     "name": "windows-msvc",
+                    "type": "test"
+                }
+            ]
+        },
+        {
+            "name": "windows-msvc-clang",
+            "steps": [
+                {
+                    "name": "windows-msvc-clang",
+                    "type": "configure"
+                },
+                {
+                    "name": "windows-msvc-clang",
+                    "type": "build"
+                },
+                {
+                    "name": "windows-msvc-clang",
                     "type": "test"
                 }
             ]

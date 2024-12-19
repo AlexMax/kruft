@@ -1,4 +1,4 @@
-name: GitHub Actions Demo
+name: Test Suite
 on: [push]
 jobs:
   ubuntu-gcc:
@@ -34,6 +34,17 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           workflowPreset: 'windows-msvc'
+  windows-msvc-clang:
+    runs-on: windows-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+      - name: Get CMake
+        uses: lukka/get-cmake@latest
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
+        with:
+          workflowPreset: 'windows-msvc-clang'
   windows-clang:
     runs-on: windows-latest
     steps:

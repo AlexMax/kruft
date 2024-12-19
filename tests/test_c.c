@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 
+#include "t_bit.inl"
 #include "t_ctype.inl"
 #include "t_int.inl"
 #include "t_lib.inl"
@@ -19,6 +20,7 @@
 int main()
 {
     RUN_TESTS();
+    RUN_TEST_SUITE(bit);
     RUN_TEST_SUITE(ctype);
     RUN_TEST_SUITE(int);
     RUN_TEST_SUITE(lib);
