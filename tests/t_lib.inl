@@ -22,7 +22,6 @@ TEST(lib, kr_reallocarray)
         ADD_FAILURE();
         goto done;
     }
-    SUCCEED();
 
     ptr2 = kr_reallocarray(NULL, SIZE_MAX, 8);
     if (ptr2 != NULL)
@@ -30,7 +29,6 @@ TEST(lib, kr_reallocarray)
         ADD_FAILURE();
         goto done;
     }
-    SUCCEED();
 
     ptr3 = kr_reallocarray(NULL, 8, SIZE_MAX);
     if (ptr3 != NULL)
@@ -38,7 +36,6 @@ TEST(lib, kr_reallocarray)
         ADD_FAILURE();
         goto done;
     }
-    SUCCEED();
 
     ptr4 = kr_reallocarray(ptr1, 8, 4);
     if (ptr4 == NULL)
@@ -50,13 +47,12 @@ TEST(lib, kr_reallocarray)
     {
         ptr1 = NULL;
     }
-    SUCCEED();
 
 done:
-    free(ptr1);
-    free(ptr2);
-    free(ptr3);
-    free(ptr4);
+    KR_FREE(ptr1);
+    KR_FREE(ptr2);
+    KR_FREE(ptr3);
+    KR_FREE(ptr4);
 }
 
 EXPORT_TEST_SUITE(lib) = {

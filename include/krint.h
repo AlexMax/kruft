@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "./krdef.h"
+#include "./krconfig.h"
 
 #if defined(__has_include)
 #if __has_include(<stdint.h>)
@@ -19,10 +19,14 @@
 #endif
 
 #if defined(KR_USE_STDINT_)
+#if (!KR_CONFIG_NOINCLUDE)
 #include <stdint.h>
+#endif
 #undef KR_USE_STDINT_
 #else // defined(KR_USE_STDINT_)
+#if (!KR_CONFIG_NOINCLUDE)
 #include <limits.h>
+#endif
 
 #if (UCHAR_MAX == 0xff)
 typedef signed char int8_t;

@@ -20,7 +20,7 @@ TEST(ctype, kr_isalnum)
     {
         bool std = isalnum(i);
         bool kr = kr_isalnum((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -32,7 +32,7 @@ TEST(ctype, kr_isalpha)
     {
         bool std = isalpha(i);
         bool kr = kr_isalpha((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -44,7 +44,7 @@ TEST(ctype, kr_islower)
     {
         bool std = islower(i);
         bool kr = kr_islower((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -56,7 +56,7 @@ TEST(ctype, kr_isupper)
     {
         bool std = isupper(i);
         bool kr = kr_isupper((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -68,7 +68,7 @@ TEST(ctype, kr_isdigit)
     {
         bool std = isdigit(i);
         bool kr = kr_isdigit((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -80,7 +80,7 @@ TEST(ctype, kr_isxdigit)
     {
         bool std = isxdigit(i);
         bool kr = kr_isxdigit((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -92,7 +92,7 @@ TEST(ctype, kr_iscntrl)
     {
         bool std = iscntrl(i);
         bool kr = kr_iscntrl((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -104,7 +104,7 @@ TEST(ctype, kr_isgraph)
     {
         bool std = isgraph(i);
         bool kr = kr_isgraph((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -116,7 +116,7 @@ TEST(ctype, kr_isspace)
     {
         bool std = isspace(i);
         bool kr = kr_isspace((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -128,7 +128,7 @@ TEST(ctype, kr_isblank)
     {
         bool std = i == 0x09 || i == 0x20;
         bool kr = kr_isblank((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -140,7 +140,7 @@ TEST(ctype, kr_isprint)
     {
         bool std = isprint(i);
         bool kr = kr_isprint((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -152,7 +152,7 @@ TEST(ctype, kr_ispunct)
     {
         bool std = ispunct(i);
         bool kr = kr_ispunct((char)i);
-        EXPECT_TRUE(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -164,7 +164,7 @@ TEST(ctype, kr_tolower)
     {
         char std = (char)tolower(i);
         char kr = kr_tolower((char)i);
-        EXPECT_EQ(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 
@@ -176,7 +176,7 @@ TEST(ctype, kr_toupper)
     {
         char std = (char)toupper(i);
         char kr = kr_toupper((char)i);
-        EXPECT_EQ(std, kr);
+        EXPECT_BOOLEQ(std, kr);
     }
 }
 

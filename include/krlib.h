@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "./krdef.h"
+#include "./krconfig.h"
 
 #if (!KR_CONFIG_NOINCLUDE)
 #include <stddef.h>
@@ -22,5 +22,5 @@ KR_NODISCARD KR_INLINE void *kr_reallocarray(void *ptr, size_t nmemb, size_t siz
     {
         return NULL;
     }
-    return realloc(ptr, nmemb * size);
+    return KR_REALLOC(ptr, nmemb * size);
 }

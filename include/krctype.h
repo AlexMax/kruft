@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "./krdef.h"
+#include "./krconfig.h"
 
 #if (!KR_CONFIG_NOINCLUDE)
 #include "./krbool.h"

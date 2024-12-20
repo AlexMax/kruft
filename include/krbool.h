@@ -8,12 +8,14 @@
 
 #pragma once
 
-#include "./krdef.h"
+#include "./krconfig.h"
 
 #if (!KR_CPLUSPLUS)
 #if (KR_STDC_VERSION >= 199901)
 
+#if (!KR_CONFIG_NOINCLUDE)
 #include <stdbool.h>
+#endif
 
 #else
 

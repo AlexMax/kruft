@@ -15,10 +15,22 @@
 
 #pragma once
 
-// Configuration.
+// Configuration options.
 
 #if !defined(KR_CONFIG_NOINCLUDE)
 #define KR_CONFIG_NOINCLUDE (0)
+#endif
+
+#if !defined(KR_MALLOC)
+#define KR_MALLOC(sz) (malloc((sz)))
+#endif
+
+#if !defined(KR_REALLOC)
+#define KR_REALLOC(p, sz) (realloc((p), (sz)))
+#endif
+
+#if !defined(KR_FREE)
+#define KR_FREE(p) (free((p)))
 #endif
 
 // Compiler detection.
@@ -41,11 +53,15 @@
 #define KR_CLANG (0)
 #endif
 
+// C standard version.
+
 #if defined(__STDC_VERSION__)
 #define KR_STDC_VERSION (__STDC_VERSION__)
 #else
 #define KR_STDC_VERSION (0)
 #endif
+
+// C++ standard version.
 
 #if defined(__cplusplus) && defined(_MSVC_LANG)
 #define KR_CPLUSPLUS (_MSVC_LANG)
@@ -54,6 +70,8 @@
 #else
 #define KR_CPLUSPLUS (0)
 #endif
+
+// Language and compiler feature shims.
 
 #if (KR_CPLUSPLUS)
 #define KR_CASTR(t, u) (reinterpret_cast<t>(u))
@@ -117,4 +135,16 @@
 #define KR_UNREACHABLE() (__assume(0))
 #else
 #define KR_UNREACHABLE() (__builtin_unreachable())
+#endif
+
+// Endian detection.
+
+#if (KR_MSC_VER && !KR_CLANG)
+#define KR_ORDER_LITTLE_ENDIAN (1234)
+#define KR_ORDER_BIG_ENDIAN (4321)
+#define KR_BYTE_ORDER (KR_ORDER_LITTLE_ENDIAN)
+#else
+#define KR_ORDER_LITTLE_ENDIAN (__ORDER_LITTLE_ENDIAN__)
+#define KR_ORDER_BIG_ENDIAN (__ORDER_BIG_ENDIAN__)
+#define KR_BYTE_ORDER (__BYTE_ORDER__)
 #endif

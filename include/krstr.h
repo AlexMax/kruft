@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "./krdef.h"
+#include "./krconfig.h"
 
 #if (!KR_CONFIG_NOINCLUDE)
 #include <stddef.h>
@@ -158,7 +158,7 @@ KR_CONSTEXPR char *kr_stpecpy(char *dest, char *srcEnd, const char *KR_RESTRICT 
 KR_NODISCARD char *kr_strdup(const char *str)
 {
     size_t strl = kr_strlen(str);
-    char *dup = KR_CASTS(char *, malloc(strl + 1));
+    char *dup = KR_CASTS(char *, KR_MALLOC(strl + 1));
     if (dup == NULL)
     {
         return NULL;
@@ -171,7 +171,7 @@ KR_NODISCARD char *kr_strdup(const char *str)
 KR_NODISCARD char *kr_strndup(const char *str, size_t len)
 {
     size_t strl = kr_strnlen(str, len);
-    char *dup = KR_CASTS(char *, malloc(strl + 1));
+    char *dup = KR_CASTS(char *, KR_MALLOC(strl + 1));
     if (dup == NULL)
     {
         return NULL;

@@ -11,6 +11,7 @@ set(TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/t_ctype.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_int.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_lib.inl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_serial.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_str.inl")
 
 # Test suite.

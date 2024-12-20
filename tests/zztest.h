@@ -64,28 +64,35 @@ struct zztest_s
 #define TEST(s, t) void ZZTEST_TESTNAME(s, t)(struct zztest_state_s * zztest_state)
 
 /**
- * @brief Expect boolean equality.
+ * @brief Expect equality.
  */
-#define EXPECT_TRUE(l, r)                                                                                              \
+#define EXPECT_TRUE(t)                                                                                                 \
     {                                                                                                                  \
-        (void)zztest_state;                                                                                            \
-        if (!!l != !!r)                                                                                                \
+        if ((t))                                                                                                       \
         {                                                                                                              \
-            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "!!" #l " != !!" #r);                  \
-            return;                                                                                                    \
+            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, #t);                                   \
         }                                                                                                              \
     }
 
 /**
- * @brief Expect boolean inequality.
+ * @brief Expect inequality.
  */
-#define EXPECT_FALSE(l, r)                                                                                             \
+#define EXPECT_FALSE(t)                                                                                                \
     {                                                                                                                  \
-        (void)zztest_state;                                                                                            \
-        if (!!l == !!r)                                                                                                \
+        if (!(t))                                                                                                      \
         {                                                                                                              \
-            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "!!" #l " == !!" #r);                  \
-            return;                                                                                                    \
+            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "!" #t);                               \
+        }                                                                                                              \
+    }
+
+/**
+ * @brief Expect boolean equality.
+ */
+#define EXPECT_BOOLEQ(l, r)                                                                                            \
+    {                                                                                                                  \
+        if (!!(l) != !!(r))                                                                                            \
+        {                                                                                                              \
+            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "!!" #l " != !!" #r);                  \
         }                                                                                                              \
     }
 
@@ -94,11 +101,9 @@ struct zztest_s
  */
 #define EXPECT_EQ(l, r)                                                                                                \
     {                                                                                                                  \
-        (void)zztest_state;                                                                                            \
-        if (l != r)                                                                                                    \
+        if ((l) != (r))                                                                                                \
         {                                                                                                              \
             zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, #l " != " #r);                         \
-            return;                                                                                                    \
         }                                                                                                              \
     }
 
@@ -107,20 +112,18 @@ struct zztest_s
  */
 #define EXPECT_STREQ(l, r)                                                                                             \
     {                                                                                                                  \
-        (void)zztest_state;                                                                                            \
-        if (strcmp(l, r) != 0)                                                                                         \
+        if (strcmp((l), (r)) != 0)                                                                                     \
         {                                                                                                              \
             zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "0 != strcmp(" #l ", " #r ")");        \
-            return;                                                                                                    \
         }                                                                                                              \
     }
 
 /**
- * @brief Signal success.
+ * @brief Add a failure, without a return.
  */
-#define SUCCEED()                                                                                                      \
+#define ADD_FAILURE()                                                                                                  \
     {                                                                                                                  \
-        zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_SUCCESS, NULL);                                  \
+        zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "Failure");                                \
     }
 
 /**
@@ -139,14 +142,6 @@ struct zztest_s
     {                                                                                                                  \
         zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_SKIP, NULL);                                     \
         return;                                                                                                        \
-    }
-
-/**
- * @brief Add a failure, without a return.
- */
-#define ADD_FAILURE()                                                                                                  \
-    {                                                                                                                  \
-        zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "Failure");                                \
     }
 
 /**
