@@ -150,11 +150,18 @@ TEST(serial, kr_store_u64be)
 #endif // !defined(UINT64_MAX)
 }
 
-//------------------------------------------------------------------------------
-
-EXPORT_TEST_SUITE(serial) = {
-    EXPORT_TEST(serial, kr_load_u16le),  EXPORT_TEST(serial, kr_load_u16be),  EXPORT_TEST(serial, kr_load_u32le),
-    EXPORT_TEST(serial, kr_load_u32be),  EXPORT_TEST(serial, kr_load_u64le),  EXPORT_TEST(serial, kr_load_u64be),
-    EXPORT_TEST(serial, kr_store_u16le), EXPORT_TEST(serial, kr_store_u16be), EXPORT_TEST(serial, kr_store_u32le),
-    EXPORT_TEST(serial, kr_store_u32be), EXPORT_TEST(serial, kr_store_u64le), EXPORT_TEST(serial, kr_store_u64be),
-};
+SUITE(serial)
+{
+    SUITE_TEST(serial, kr_load_u16le);
+    SUITE_TEST(serial, kr_load_u16be);
+    SUITE_TEST(serial, kr_load_u32le);
+    SUITE_TEST(serial, kr_load_u32be);
+    SUITE_TEST(serial, kr_load_u64le);
+    SUITE_TEST(serial, kr_load_u64be);
+    SUITE_TEST(serial, kr_store_u16le);
+    SUITE_TEST(serial, kr_store_u16be);
+    SUITE_TEST(serial, kr_store_u32le);
+    SUITE_TEST(serial, kr_store_u32be);
+    SUITE_TEST(serial, kr_store_u64le);
+    SUITE_TEST(serial, kr_store_u64be);
+}

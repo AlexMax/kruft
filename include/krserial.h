@@ -16,6 +16,10 @@
 
 #include "./krbit.h" // Needed for bswap.
 
+#if (!KR_CONFIG_NOINCLUDE)
+#include <string.h>
+#endif // (!KR_CONFIG_NOINCLUDE)
+
 //------------------------------------------------------------------------------
 
 KR_INLINE uint16_t kr_load_u16le(void *in)

@@ -257,18 +257,40 @@ TEST(bit, kr_popcnt64_MACRO)
 
 //------------------------------------------------------------------------------
 
-EXPORT_TEST_SUITE(bit) = {
-    EXPORT_TEST(bit, kr_byteswap16),       EXPORT_TEST(bit, kr_bswap16_MACRO),    EXPORT_TEST(bit, kr_byteswap32),
-    EXPORT_TEST(bit, kr_bswap32_MACRO),    EXPORT_TEST(bit, kr_byteswap64),       EXPORT_TEST(bit, kr_bswap64_MACRO),
-    EXPORT_TEST(bit, kr_has_single_bit8),  EXPORT_TEST(bit, kr_has_single_bit16), EXPORT_TEST(bit, kr_has_single_bit32),
-    EXPORT_TEST(bit, kr_has_single_bit64), EXPORT_TEST(bit, kr_rotl32),           EXPORT_TEST(bit, kr_rol32_MACRO),
-    EXPORT_TEST(bit, kr_rotl64),           EXPORT_TEST(bit, kr_rol64_MACRO),      EXPORT_TEST(bit, kr_rotr32),
-    EXPORT_TEST(bit, kr_ror32_MACRO),      EXPORT_TEST(bit, kr_rotr64),           EXPORT_TEST(bit, kr_ror64_MACRO),
-    EXPORT_TEST(bit, kr_countl_zero32),    EXPORT_TEST(bit, kr_clz32_MACRO),      EXPORT_TEST(bit, kr_countl_one32),
-    EXPORT_TEST(bit, kr_clo32_MACRO),      EXPORT_TEST(bit, kr_countr_zero32),    EXPORT_TEST(bit, kr_ctz32_MACRO),
-    EXPORT_TEST(bit, kr_countr_one32),     EXPORT_TEST(bit, kr_cto32_MACRO),      EXPORT_TEST(bit, kr_popcount16),
-    EXPORT_TEST(bit, kr_popcnt16_MACRO),   EXPORT_TEST(bit, kr_popcount32),       EXPORT_TEST(bit, kr_popcnt32_MACRO),
-    EXPORT_TEST(bit, kr_popcount64),       EXPORT_TEST(bit, kr_popcnt64_MACRO),
-};
+SUITE(bit)
+{
+    SUITE_TEST(bit, kr_byteswap16);
+    SUITE_TEST(bit, kr_bswap16_MACRO);
+    SUITE_TEST(bit, kr_byteswap32);
+    SUITE_TEST(bit, kr_bswap32_MACRO);
+    SUITE_TEST(bit, kr_byteswap64);
+    SUITE_TEST(bit, kr_bswap64_MACRO);
+    SUITE_TEST(bit, kr_has_single_bit8);
+    SUITE_TEST(bit, kr_has_single_bit16);
+    SUITE_TEST(bit, kr_has_single_bit32);
+    SUITE_TEST(bit, kr_has_single_bit64);
+    SUITE_TEST(bit, kr_rotl32);
+    SUITE_TEST(bit, kr_rol32_MACRO);
+    SUITE_TEST(bit, kr_rotl64);
+    SUITE_TEST(bit, kr_rol64_MACRO);
+    SUITE_TEST(bit, kr_rotr32);
+    SUITE_TEST(bit, kr_ror32_MACRO);
+    SUITE_TEST(bit, kr_rotr64);
+    SUITE_TEST(bit, kr_ror64_MACRO);
+    SUITE_TEST(bit, kr_countl_zero32);
+    SUITE_TEST(bit, kr_clz32_MACRO);
+    SUITE_TEST(bit, kr_countl_one32);
+    SUITE_TEST(bit, kr_clo32_MACRO);
+    SUITE_TEST(bit, kr_countr_zero32);
+    SUITE_TEST(bit, kr_ctz32_MACRO);
+    SUITE_TEST(bit, kr_countr_one32);
+    SUITE_TEST(bit, kr_cto32_MACRO);
+    SUITE_TEST(bit, kr_popcount16);
+    SUITE_TEST(bit, kr_popcnt16_MACRO);
+    SUITE_TEST(bit, kr_popcount32);
+    SUITE_TEST(bit, kr_popcnt32_MACRO);
+    SUITE_TEST(bit, kr_popcount64);
+    SUITE_TEST(bit, kr_popcnt64_MACRO);
+}
 
 #pragma warning(pop)

@@ -75,9 +75,10 @@ TEST(int, ranges)
     }
 }
 
-EXPORT_TEST_SUITE(int) = {
-    EXPORT_TEST(int, types),
-    EXPORT_TEST(int, ranges),
-};
+SUITE(int)
+{
+    SUITE_TEST(int, types);
+    SUITE_TEST(int, ranges);
+}
 
 #pragma warning(pop)

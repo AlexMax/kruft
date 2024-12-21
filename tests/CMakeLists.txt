@@ -16,9 +16,11 @@ set(TEST_SOURCES
 
 # Test suite.
 add_executable(kruft_test_c ${ZZTEST_SOURCES} ${TEST_SOURCES}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_c.c")
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_c.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/zztest.c")
 add_executable(kruft_test_cxx ${ZZTEST_SOURCES} ${TEST_SOURCES}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_cxx.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_cxx.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/zztest.cpp")
 
 target_include_directories(kruft_test_c PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_include_directories(kruft_test_cxx PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")

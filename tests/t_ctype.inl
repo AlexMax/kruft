@@ -180,10 +180,20 @@ TEST(ctype, kr_toupper)
     }
 }
 
-EXPORT_TEST_SUITE(ctype) = {
-    EXPORT_TEST(ctype, kr_isalnum), EXPORT_TEST(ctype, kr_isalpha), EXPORT_TEST(ctype, kr_islower),
-    EXPORT_TEST(ctype, kr_isupper), EXPORT_TEST(ctype, kr_isdigit), EXPORT_TEST(ctype, kr_isxdigit),
-    EXPORT_TEST(ctype, kr_iscntrl), EXPORT_TEST(ctype, kr_isgraph), EXPORT_TEST(ctype, kr_isspace),
-    EXPORT_TEST(ctype, kr_isblank), EXPORT_TEST(ctype, kr_isprint), EXPORT_TEST(ctype, kr_ispunct),
-    EXPORT_TEST(ctype, kr_tolower), EXPORT_TEST(ctype, kr_toupper),
-};
+SUITE(ctype)
+{
+    SUITE_TEST(ctype, kr_isalnum);
+    SUITE_TEST(ctype, kr_isalpha);
+    SUITE_TEST(ctype, kr_islower);
+    SUITE_TEST(ctype, kr_isupper);
+    SUITE_TEST(ctype, kr_isdigit);
+    SUITE_TEST(ctype, kr_isxdigit);
+    SUITE_TEST(ctype, kr_iscntrl);
+    SUITE_TEST(ctype, kr_isgraph);
+    SUITE_TEST(ctype, kr_isspace);
+    SUITE_TEST(ctype, kr_isblank);
+    SUITE_TEST(ctype, kr_isprint);
+    SUITE_TEST(ctype, kr_ispunct);
+    SUITE_TEST(ctype, kr_tolower);
+    SUITE_TEST(ctype, kr_toupper);
+}

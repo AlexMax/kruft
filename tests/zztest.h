@@ -38,6 +38,18 @@ struct zztest_s
     zztest_func func;
     const char *suite_name;
     const char *test_name;
+    struct zztest_s *next;
+    struct zztest_s *next_skip;
+    struct zztest_s *next_fail;
+};
+
+struct zztest_suite_s
+{
+    struct zztest_s *head;
+    struct zztest_s *tail;
+    const char *suite_name;
+    unsigned long tests_count;
+    struct zztest_suite_s *next;
 };
 
 /**
@@ -46,29 +58,70 @@ struct zztest_s
 #define ZZTEST_ARRLEN(a) (sizeof(a) / sizeof(*a))
 
 /**
- * @brief Symbol name of a test.
+ * @brief Function name of a test suite.
  */
 #define ZZTEST_SUITENAME(s) s##__SUITE
 
 /**
- * @brief Symbol name of a test.
+ * @brief Symbol name of test suite info.
+ */
+#define ZZTEST_SUITEINFO(s) s##__SINFO
+
+/**
+ * @brief Function name of a test.
  */
 #define ZZTEST_TESTNAME(s, t) s##__##t##__TEST
 
 /**
- * @brief Define a test
+ * @brief Symbol name of test info.
+ */
+#define ZZTEST_TESTINFO(s, t) s##__##t##__INFO
+
+/**
+ * @brief Define a test suite.
+ *
+ * @param s Test suite.  Must be valid identifier.
+ */
+#define SUITE(s)                                                                                                       \
+    static struct zztest_suite_s ZZTEST_SUITEINFO(s);                                                                  \
+    void ZZTEST_SUITENAME(s)(void)
+
+/**
+ * @brief Define a test.
  *
  * @param s Test suite.  Must be valid identifier.
  * @param t Test name.  Must be valid identifier.
  */
-#define TEST(s, t) void ZZTEST_TESTNAME(s, t)(struct zztest_state_s * zztest_state)
+#define TEST(s, t)                                                                                                     \
+    void ZZTEST_TESTNAME(s, t)(struct zztest_state_s * zztest_state);                                                  \
+    static struct zztest_s ZZTEST_TESTINFO(s, t) = {ZZTEST_TESTNAME(s, t), #s, #s "." #t, NULL, NULL, NULL};           \
+    void ZZTEST_TESTNAME(s, t)(struct zztest_state_s * zztest_state)
+
+#define SUITE_TEST(s, t)                                                                                               \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        struct zztest_suite_s *suite = &ZZTEST_SUITEINFO(s);                                                           \
+        if (suite->head == NULL)                                                                                       \
+        {                                                                                                              \
+            suite->suite_name = #s;                                                                                    \
+            suite->head = &ZZTEST_TESTINFO(s, t);                                                                      \
+            suite->tail = suite->head;                                                                                 \
+            suite->tests_count = 1;                                                                                    \
+        }                                                                                                              \
+        else                                                                                                           \
+        {                                                                                                              \
+            suite->tail->next = &ZZTEST_TESTINFO(s, t);                                                                \
+            suite->tail = suite->tail->next;                                                                           \
+            suite->tests_count += 1;                                                                                   \
+        }                                                                                                              \
+    } while (0)
 
 /**
  * @brief Expect equality.
  */
 #define EXPECT_TRUE(t)                                                                                                 \
     {                                                                                                                  \
-        if ((t))                                                                                                       \
+        if (!(t))                                                                                                      \
         {                                                                                                              \
             zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, #t);                                   \
         }                                                                                                              \
@@ -79,7 +132,7 @@ struct zztest_s
  */
 #define EXPECT_FALSE(t)                                                                                                \
     {                                                                                                                  \
-        if (!(t))                                                                                                      \
+        if (!!(t))                                                                                                     \
         {                                                                                                              \
             zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "!" #t);                               \
         }                                                                                                              \
@@ -112,7 +165,7 @@ struct zztest_s
  */
 #define EXPECT_STREQ(l, r)                                                                                             \
     {                                                                                                                  \
-        if (strcmp((l), (r)) != 0)                                                                                     \
+        if (zztest_strcmp((l), (r)) != 0)                                                                              \
         {                                                                                                              \
             zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "0 != strcmp(" #l ", " #r ")");        \
         }                                                                                                              \
@@ -145,35 +198,24 @@ struct zztest_s
     }
 
 /**
- * @brief Define an array of tests.
+ * @brief Add suite of tests to be run when RUN_TESTS is called.
  */
-#define EXPORT_TEST_SUITE(s) struct zztest_s ZZTEST_SUITENAME(s)[]
+#define ADD_TEST_SUITE(s)                                                                                              \
+    {                                                                                                                  \
+        ZZTEST_SUITENAME(s)();                                                                                         \
+        zztest_add_test_suite(&ZZTEST_SUITEINFO(s));                                                                   \
+    }
 
 /**
- * @brief A pointer to a test function.
+ * @brief Run all tests and return code which can be returned from main().
  */
-#define EXPORT_TEST(s, t) {ZZTEST_TESTNAME(s, t), #s, #s "." #t}
+#define RUN_TESTS() (zztest_run_all())
 
-/**
- * @brief Run a test suite.  Call this from main().
- */
-#define RUN_TEST_SUITE(s) zztest_suite_run(#s, &ZZTEST_SUITENAME(s)[0], ZZTEST_ARRLEN(ZZTEST_SUITENAME(s)));
-
-/**
- * @brief Initialize test suite.
- */
-void RUN_TESTS(void);
-
-/**
- * @brief Get result of test suite.
- *
- * @return Return code to return from main().
- */
-int RUN_TESTS_RESULT(void);
-
+int zztest_strcmp(const char *lhs, const char *rhs);
 void zztest_result(struct zztest_state_s *state, const char *file, unsigned long line, enum zztest_result_e msg,
                    const char *msgstr);
-void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long count);
+void zztest_add_test_suite(struct zztest_suite_s *suite);
+int zztest_run_all(void);
 
 //------------------------------------------------------------------------------
 #if defined(ZZTEST_IMPLEMENTATION)
@@ -185,15 +227,11 @@ void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long co
 #elif defined(__unix__)
 #include <sys/time.h> // Timer functions.
 static struct timeval g_cTimeStart;
-#else
-#error "not implemented"
 #endif
 
 #if !defined(ZZTEST_CONFIG_PRINTF)
 #include <stdio.h>
 #endif
-
-#include <stdlib.h>
 
 //------------------------------------------------------------------------------
 
@@ -204,21 +242,14 @@ struct zztest_state_s
     int skipped;
 };
 
-static unsigned long g_ulSuites;
-static unsigned long g_ulPassed;
-static unsigned long g_ulFailed;
-static unsigned long g_ulSkipped;
-static const char **g_nszFailed;
-static const char **g_nszSkipped;
-static unsigned long g_ulStartTime;
-
-//------------------------------------------------------------------------------
-
-static void zztest_cleanup(void)
-{
-    free(g_nszFailed);
-    free(g_nszSkipped);
-}
+static unsigned long g_testsCount;
+static struct zztest_suite_s *g_suitesHead;
+static struct zztest_suite_s *g_suitesTail;
+static unsigned long g_suitesCount;
+static struct zztest_s *g_testFailHead;
+static struct zztest_s *g_testFailTail;
+static struct zztest_s *g_testSkipHead;
+static struct zztest_s *g_testSkipTail;
 
 /**
  * @brief Return time point with ms resolution.
@@ -237,8 +268,56 @@ static unsigned long zztest_ms(void)
     ms = (now.tv_sec - g_cTimeStart.tv_sec) * 1000 + (now.tv_usec - g_cTimeStart.tv_usec) / 1000;
     return ms;
 #else
-#error "not implemented"
+    return 0; // oh well...
 #endif
+}
+
+/**
+ * @brief Add a test to our list of failed tests.
+ */
+static void zztest_add_fail(struct zztest_s *test)
+{
+    if (g_testFailHead == NULL)
+    {
+        g_testFailHead = test;
+        g_testFailTail = test;
+    }
+    else
+    {
+        g_testFailTail->next_fail = test;
+        g_testFailTail = test;
+    }
+}
+
+/**
+ * @brief Add a test to our list of skipped tests.
+ */
+static void zztest_add_skip(struct zztest_s *test)
+{
+    if (g_testSkipHead == NULL)
+    {
+        g_testSkipHead = test;
+        g_testSkipTail = test;
+    }
+    else
+    {
+        g_testSkipTail->next_skip = test;
+        g_testSkipTail = test;
+    }
+}
+
+//------------------------------------------------------------------------------
+
+int zztest_strcmp(const char *lhs, const char *rhs)
+{
+    for (;; lhs++, rhs++)
+    {
+        if (*lhs != *rhs || *lhs == '\0')
+        {
+            break;
+        }
+    }
+    return *((const unsigned char *)lhs) - *((const unsigned char *)rhs);
 }
 
 //------------------------------------------------------------------------------
@@ -264,125 +343,172 @@ void zztest_result(struct zztest_state_s *state, const char *file, unsigned long
 
 //------------------------------------------------------------------------------
 
-void zztest_suite_run(const char *name, struct zztest_s *tests, unsigned long count)
+void zztest_add_test_suite(struct zztest_suite_s *suite)
 {
-    unsigned i;
-    unsigned long startms, endms;
-
-    ZPRINTF_("[----------] %lu tests from %s\n", count, name);
-    startms = zztest_ms();
-    for (i = 0; i < count; i++)
+    if (g_suitesHead == NULL)
     {
-        struct zztest_state_s state;
-
-        struct zztest_s *test = &tests[i];
-        ZPRINTF_("[ RUN      ] %s\n", test->test_name);
-        state.test = test;
-        state.failed = 0;
-        state.skipped = 0;
-        test->func(&state);
-
-        if (state.failed > 0)
-        {
-            const char **failed;
-
-            ZPRINTF_("[  FAILED  ] %s (0 ms)\n", test->test_name);
-            failed = (const char **)realloc(g_nszFailed, sizeof(char *) * (g_ulFailed + 1));
-            if (failed == NULL)
-            {
-                ZPRINTF_("realloc failure\n");
-                zztest_cleanup();
-                exit(1);
-            }
-
-            g_nszFailed = failed;
-            g_nszFailed[g_ulFailed] = test->test_name;
-            g_ulFailed += 1;
-        }
-        else if (state.skipped > 0)
-        {
-            const char **skipped;
-
-            ZPRINTF_("[  SKIPPED ] %s (0 ms)\n", test->test_name);
-            skipped = (const char **)realloc(g_nszSkipped, sizeof(char *) * (g_ulSkipped + 1));
-            if (skipped == NULL)
-            {
-                ZPRINTF_("realloc failure\n");
-                zztest_cleanup();
-                exit(1);
-            }
-
-            g_nszSkipped = skipped;
-            g_nszSkipped[g_ulSkipped] = test->test_name;
-            g_ulSkipped += 1;
-        }
-        else
-        {
-            ZPRINTF_("[       OK ] %s (0 ms)\n", test->test_name);
-            g_ulPassed += 1;
-        }
+        g_testsCount = suite->tests_count;
+        g_suitesHead = suite;
+        g_suitesTail = g_suitesHead;
+        g_suitesCount = 1;
     }
-
-    endms = zztest_ms();
-    ZPRINTF_("[----------] %lu tests from %s (%lu ms total)\n\n", count, name, endms - startms);
+    else
+    {
+        g_testsCount += suite->tests_count;
+        g_suitesTail->next = suite;
+        g_suitesTail = g_suitesTail->next;
+        g_suitesCount += 1;
+    }
 }
 
 //------------------------------------------------------------------------------
 
-void RUN_TESTS(void)
+int zztest_run_all(void)
 {
-    ZPRINTF_("[----------] Global test environment set-up.\n");
+    unsigned long passed = 0, failed = 0, skipped = 0;
+    unsigned long startAllMs = 0, endAllMs = 0;
+    struct zztest_suite_s *suite = g_suitesHead;
+    struct zztest_s *test = NULL;
 
 #if defined(_WIN32)
     // Set timer resolution to 1ms.
     timeBeginPeriod(1);
 #endif
 
-    g_ulPassed = 0;
-    g_ulFailed = 0;
-    g_ulSkipped = 0;
-    g_ulSuites = 0;
-    g_nszFailed = NULL;
-    g_nszSkipped = NULL;
-    g_ulStartTime = zztest_ms();
+    ZPRINTF_("[==========] Running %lu tests from %lu test suites.\n", g_testsCount, g_suitesCount);
+    startAllMs = zztest_ms();
+
+    for (; suite; suite = suite->next)
+    {
+        unsigned long startSuiteMs = 0, endSuiteMs = 0;
+
+        ZPRINTF_("[----------] %lu tests from %s\n", suite->tests_count, suite->suite_name);
+        startSuiteMs = zztest_ms();
+
+        test = suite->head;
+        for (; test; test = test->next)
+        {
+            unsigned long startTestMs = 0, endTestMs = 0;
+            struct zztest_state_s state;
+
+            ZPRINTF_("[ RUN      ] %s\n", test->test_name);
+            state.test = test;
+            state.failed = 0;
+            state.skipped = 0;
+
+            startTestMs = zztest_ms();
+            test->func(&state);
+            endTestMs = zztest_ms();
+
+            if (state.failed != 0)
+            {
+                ZPRINTF_("[  FAILED  ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
+                zztest_add_fail(test);
+                failed += 1;
+            }
+            else if (state.skipped != 0)
+            {
+                ZPRINTF_("[  SKIPPED ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
+                zztest_add_skip(test);
+                skipped += 1;
+            }
+            else
+            {
+                ZPRINTF_("[       OK ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
+                passed += 1;
+            }
+        }
+
+        endSuiteMs = zztest_ms();
+        ZPRINTF_("[----------] %lu tests from %s (%lu ms total)\n\n", suite->tests_count, suite->suite_name,
+                 endSuiteMs - startSuiteMs);
+    }
+
+    endAllMs = zztest_ms();
+    ZPRINTF_("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_testsCount, g_suitesCount,
+             endAllMs - startAllMs);
+    ZPRINTF_("[  PASSED  ] %lu tests.\n", passed);
+
+    if (skipped != 0)
+    {
+        ZPRINTF_("[  SKIPPED ] %lu tests, listed below:\n", skipped);
+
+        test = g_testSkipHead;
+        for (; test; test = test->next_skip)
+        {
+            ZPRINTF_("[  SKIPPED ] %s\n", test->test_name);
+        }
+    }
+
+    if (failed != 0)
+    {
+        ZPRINTF_("[  FAILED  ] %lu tests, listed below:\n", failed);
+
+        test = g_testFailHead;
+        for (; test; test = test->next_fail)
+        {
+            ZPRINTF_("[  FAILED  ] %s\n", test->test_name);
+        }
+    }
+
+    return 0;
 }
 
-//------------------------------------------------------------------------------
+#if defined(ZZTEST_SELFCHECK)
 
-int RUN_TESTS_RESULT(void)
+TEST(zztest, passing1)
 {
-    unsigned long endms = zztest_ms();
-
-    ZPRINTF_("[----------] Global test environment tear-down.\n");
-    ZPRINTF_("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_ulPassed + g_ulFailed, g_ulSuites,
-             endms - g_ulStartTime);
-    ZPRINTF_("[  PASSED  ] %lu tests.\n", g_ulPassed);
-
-    if (g_ulSkipped != 0)
-    {
-        unsigned long i;
-
-        ZPRINTF_("[  SKIPPED ] %lu tests, listed below:\n", g_ulSkipped);
-        for (i = 0; i < g_ulSkipped; i++)
-        {
-            ZPRINTF_("[  SKIPPED ] %s\n", g_nszSkipped[i]);
-        }
-    }
-
-    if (g_ulFailed != 0)
-    {
-        unsigned long i;
-
-        ZPRINTF_("[  FAILED  ] %lu tests, listed below:\n", g_ulFailed);
-        for (i = 0; i < g_ulFailed; i++)
-        {
-            ZPRINTF_("[  FAILED  ] %s\n", g_nszFailed[i]);
-        }
-    }
-
-    zztest_cleanup();
-    return g_ulFailed == 0 ? 0 : 1;
+    EXPECT_TRUE(1 == 1);
+    EXPECT_FALSE(1 != 1);
+    EXPECT_BOOLEQ(1, 2);
 }
 
+TEST(zztest, passing2)
+{
+    EXPECT_EQ(1, 1);
+    EXPECT_STREQ("foo", "foo");
+}
+
+TEST(zztest, failing1)
+{
+    EXPECT_TRUE(1 == 2);
+    EXPECT_FALSE(1 != 2);
+    EXPECT_BOOLEQ(1, 0);
+}
+
+TEST(zztest, failing2)
+{
+    EXPECT_EQ(1, 2);
+    EXPECT_STREQ("foo", "bar");
+    ADD_FAILURE();
+}
+
+TEST(zztest, skipping1)
+{
+    SKIP();
+}
+
+TEST(zztest, skipping2)
+{
+    SKIP();
+}
+
+SUITE(zztest)
+{
+    SUITE_TEST(zztest, passing1);
+    SUITE_TEST(zztest, passing2);
+    SUITE_TEST(zztest, failing1);
+    SUITE_TEST(zztest, failing2);
+    SUITE_TEST(zztest, skipping1);
+    SUITE_TEST(zztest, skipping2);
+}
+
+int main()
+{
+    ADD_TEST_SUITE(zztest);
+    return RUN_TESTS();
+}
+
+#endif // defined(ZZTEST_SELFCHECK)
 #endif // defined(ZZTEST_IMPLEMENTATION)
 #endif // !defined(INCLUDE_ZZTEST_H)

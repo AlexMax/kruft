@@ -6,10 +6,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#define ZZTEST_IMPLEMENTATION
 #include "zztest.h"
-
-#include <stdio.h>
 
 #include "t_bit.inl"
 #include "t_ctype.inl"
@@ -20,12 +17,11 @@
 
 int main()
 {
-    RUN_TESTS();
-    RUN_TEST_SUITE(bit);
-    RUN_TEST_SUITE(ctype);
-    RUN_TEST_SUITE(int);
-    RUN_TEST_SUITE(lib);
-    RUN_TEST_SUITE(serial);
-    RUN_TEST_SUITE(str);
-    return RUN_TESTS_RESULT();
+    ADD_TEST_SUITE(bit);
+    ADD_TEST_SUITE(ctype);
+    ADD_TEST_SUITE(int);
+    ADD_TEST_SUITE(lib);
+    ADD_TEST_SUITE(serial);
+    ADD_TEST_SUITE(str);
+    return RUN_TESTS();
 }

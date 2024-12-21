@@ -55,6 +55,7 @@ done:
     KR_FREE(ptr4);
 }
 
-EXPORT_TEST_SUITE(lib) = {
-    EXPORT_TEST(lib, kr_reallocarray),
-};
+SUITE(lib)
+{
+    SUITE_TEST(lib, kr_reallocarray);
+}

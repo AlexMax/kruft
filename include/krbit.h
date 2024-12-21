@@ -230,7 +230,7 @@ KR_CONSTEXPR int kr_countr_zero32(uint32_t x) KR_NOEXCEPT
 {
     if (x == 0)
     {
-        return sizeof(x) * CHAR_BIT;
+        return sizeof(x) * 8;
     }
 
     int rvo = 0;

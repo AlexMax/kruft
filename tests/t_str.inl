@@ -151,7 +151,11 @@ TEST(str, kr_stpecpy)
     EXPECT_EQ(res, NULL);
 }
 
-EXPORT_TEST_SUITE(str) = {
-    EXPORT_TEST(str, kr_strscpy), EXPORT_TEST(str, kr_strscat), EXPORT_TEST(str, kr_strlcpy),
-    EXPORT_TEST(str, kr_strlcat), EXPORT_TEST(str, kr_stpecpy),
-};
+SUITE(str)
+{
+    SUITE_TEST(str, kr_strscpy);
+    SUITE_TEST(str, kr_strscat);
+    SUITE_TEST(str, kr_strlcpy);
+    SUITE_TEST(str, kr_strlcat);
+    SUITE_TEST(str, kr_stpecpy);
+}
