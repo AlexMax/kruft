@@ -49,7 +49,7 @@ typedef signed long int32_t;
 typedef unsigned long uint32_t;
 #endif
 
-#if defined(_UI64_MAX) && (_UI64_MAX == 0xffffffffffffffff)             // MSVC
+#if defined(_UI64_MAX)                                                  // MSVC
 typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #elif defined(ULONG_LONG_MAX) && (ULONG_LONG_MAX == 0xffffffffffffffff) // GCC

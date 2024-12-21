@@ -9,7 +9,13 @@
 //
 // zztest - A greenfield subset of Google Test for crufty compilers.
 //
-// Configuration Defines:
+// Important defines:
+// - ZZTEST_IMPLEMENTATION: You must define this before including zztest.h
+//                          in a single file, otherwise internal functions
+//                          will be missing their implementation.
+// - ZZTEST_SELFCHECK: Define this before including zztest.h to create a
+//                     self-contained program that shows output of sample
+//                     tests.  Useful to sanity check your environment.
 // - ZZTEST_CONFIG_PRINTF: Define this to your own print function.
 //
 
@@ -17,65 +23,106 @@
 #define INCLUDE_ZZTEST_H
 
 #if defined(ZZTEST_CONFIG_PRINTF)
-#define ZPRINTF_ ZZTEST_CONFIG_PRINTF
+#define ZZT_PRINTF ZZTEST_CONFIG_PRINTF
 #else
-#define ZPRINTF_ printf
+#define ZZT_PRINTF printf
 #endif
 
-struct zztest_state_s;
+#include <limits.h>
 
-enum zztest_result_e
+// Boolean datatype.
+typedef int ZZT_BOOL;
+#define ZZT_FALSE (0)
+#define ZZT_TRUE (1)
+
+// Determine our 64-bit data type.
+#if defined(ULLONG_MAX) // C99
+#if (ULLONG_MAX == 0xFFFFFFFFFFFFFFFFull)
+#define ZZT_64BIT_LL_
+#endif
+#elif defined(ULONG_LONG_MAX) // GNU
+#if (ULONG_LONG_MAX == 0xFFFFFFFFFFFFFFFFull)
+#define ZZT_64BIT_LL_
+#endif
+#endif
+#if defined(ZZT_64BIT_LL_)
+#define ZZTEST_HAS_64BIT (1)
+typedef long long ZZT_INT64;
+typedef unsigned long long ZZT_UINT64;
+#define ZZT_PRIi64 "lld"
+#define ZZT_PRIu64 "llu"
+#define ZZT_PRIx64 "llx"
+#undef ZZT_64BIT_LL_
+#elif defined(_UI64_MAX) // MSVC
+#define ZZTEST_HAS_64BIT (1)
+typedef __int64 ZZT_INT64;
+typedef unsigned __int64 ZZT_UINT64;
+#define ZZT_PRIi64 "I64d"
+#define ZZT_PRIu64 "I64u"
+#define ZZT_PRIx64 "I64x"
+#else
+#define ZZTEST_HAS_64BIT (0)
+#endif
+
+enum zzt_fmt_e
 {
-    ZZTEST_RESULT_SUCCESS,
-    ZZTEST_RESULT_FAIL,
-    ZZTEST_RESULT_SKIP,
+    ZZT_FMT_LONG,
+    ZZT_FMT_ULONG,
+    ZZT_FMT_XLONG,
+    ZZT_FMT_I64,
+    ZZT_FMT_UI64,
+    ZZT_FMT_XI64,
 };
 
-typedef void (*zztest_func)(struct zztest_state_s *);
+struct zzt_test_state_s;
 
-struct zztest_s
+enum zzt_result_e
 {
-    zztest_func func;
+    ZZT_RESULT_SUCCESS,
+    ZZT_RESULT_FAIL,
+    ZZT_RESULT_SKIP,
+};
+
+typedef void (*zzt_testfunc)(struct zzt_test_state_s *);
+
+struct zzt_test_s
+{
+    zzt_testfunc func;
     const char *suite_name;
     const char *test_name;
-    struct zztest_s *next;
-    struct zztest_s *next_skip;
-    struct zztest_s *next_fail;
+    struct zzt_test_s *next;
+    struct zzt_test_s *next_skip;
+    struct zzt_test_s *next_fail;
 };
 
-struct zztest_suite_s
+struct zzt_test_suite_s
 {
-    struct zztest_s *head;
-    struct zztest_s *tail;
+    struct zzt_test_s *head;
+    struct zzt_test_s *tail;
     const char *suite_name;
     unsigned long tests_count;
-    struct zztest_suite_s *next;
+    struct zzt_test_suite_s *next;
 };
-
-/**
- * @brief Array length macro.
- */
-#define ZZTEST_ARRLEN(a) (sizeof(a) / sizeof(*a))
 
 /**
  * @brief Function name of a test suite.
  */
-#define ZZTEST_SUITENAME(s) s##__SUITE
+#define ZZT_SUITENAME(s) s##__SUITE
 
 /**
  * @brief Symbol name of test suite info.
  */
-#define ZZTEST_SUITEINFO(s) s##__SINFO
+#define ZZT_SUITEINFO(s) s##__SINFO
 
 /**
  * @brief Function name of a test.
  */
-#define ZZTEST_TESTNAME(s, t) s##__##t##__TEST
+#define ZZT_TESTNAME(s, t) s##__##t##__TEST
 
 /**
  * @brief Symbol name of test info.
  */
-#define ZZTEST_TESTINFO(s, t) s##__##t##__INFO
+#define ZZT_TESTINFO(s, t) s##__##t##__INFO
 
 /**
  * @brief Define a test suite.
@@ -83,8 +130,8 @@ struct zztest_suite_s
  * @param s Test suite.  Must be valid identifier.
  */
 #define SUITE(s)                                                                                                       \
-    static struct zztest_suite_s ZZTEST_SUITEINFO(s);                                                                  \
-    void ZZTEST_SUITENAME(s)(void)
+    static struct zzt_test_suite_s ZZT_SUITEINFO(s);                                                                   \
+    void ZZT_SUITENAME(s)(void)
 
 /**
  * @brief Define a test.
@@ -93,24 +140,24 @@ struct zztest_suite_s
  * @param t Test name.  Must be valid identifier.
  */
 #define TEST(s, t)                                                                                                     \
-    void ZZTEST_TESTNAME(s, t)(struct zztest_state_s * zztest_state);                                                  \
-    static struct zztest_s ZZTEST_TESTINFO(s, t) = {ZZTEST_TESTNAME(s, t), #s, #s "." #t, NULL, NULL, NULL};           \
-    void ZZTEST_TESTNAME(s, t)(struct zztest_state_s * zztest_state)
+    void ZZT_TESTNAME(s, t)(struct zzt_test_state_s * zzt_test_state);                                                 \
+    static struct zzt_test_s ZZT_TESTINFO(s, t) = {ZZT_TESTNAME(s, t), #s, #s "." #t, NULL, NULL, NULL};               \
+    void ZZT_TESTNAME(s, t)(struct zzt_test_state_s * zzt_test_state)
 
 #define SUITE_TEST(s, t)                                                                                               \
     do                                                                                                                 \
     {                                                                                                                  \
-        struct zztest_suite_s *suite = &ZZTEST_SUITEINFO(s);                                                           \
+        struct zzt_test_suite_s *suite = &ZZT_SUITEINFO(s);                                                            \
         if (suite->head == NULL)                                                                                       \
         {                                                                                                              \
             suite->suite_name = #s;                                                                                    \
-            suite->head = &ZZTEST_TESTINFO(s, t);                                                                      \
+            suite->head = &ZZT_TESTINFO(s, t);                                                                         \
             suite->tail = suite->head;                                                                                 \
             suite->tests_count = 1;                                                                                    \
         }                                                                                                              \
         else                                                                                                           \
         {                                                                                                              \
-            suite->tail->next = &ZZTEST_TESTINFO(s, t);                                                                \
+            suite->tail->next = &ZZT_TESTINFO(s, t);                                                                   \
             suite->tail = suite->tail->next;                                                                           \
             suite->tests_count += 1;                                                                                   \
         }                                                                                                              \
@@ -123,7 +170,7 @@ struct zztest_suite_s
     {                                                                                                                  \
         if (!(t))                                                                                                      \
         {                                                                                                              \
-            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, #t);                                   \
+            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, #t);                                       \
         }                                                                                                              \
     }
 
@@ -134,7 +181,7 @@ struct zztest_suite_s
     {                                                                                                                  \
         if (!!(t))                                                                                                     \
         {                                                                                                              \
-            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "!" #t);                               \
+            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "!" #t);                                   \
         }                                                                                                              \
     }
 
@@ -145,18 +192,84 @@ struct zztest_suite_s
     {                                                                                                                  \
         if (!!(l) != !!(r))                                                                                            \
         {                                                                                                              \
-            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "!!" #l " != !!" #r);                  \
+            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "!!" #l " != !!" #r);                      \
         }                                                                                                              \
     }
 
 /**
- * @brief Expect exact equality.
+ * @brief Expect exact integer equality.
  */
-#define EXPECT_EQ(l, r)                                                                                                \
+#define EXPECT_INTEQ(l, r)                                                                                             \
     {                                                                                                                  \
-        if ((l) != (r))                                                                                                \
+        long ll = l, rr = r;                                                                                           \
+        zzt_eq(zzt_test_state, ZZT_FMT_LONG, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+    }
+
+/**
+ * @brief Expect exact integer equality.
+ */
+#define EXPECT_UINTEQ(l, r)                                                                                            \
+    {                                                                                                                  \
+        long ll = l, rr = r;                                                                                           \
+        zzt_eq(zzt_test_state, ZZT_FMT_ULONG, &ll, &rr, #l, #r, __FILE__, __LINE__);                                   \
+    }
+
+/**
+ * @brief Expect exact integer equality, failures are shown in hex.
+ */
+#define EXPECT_XINTEQ(l, r)                                                                                            \
+    {                                                                                                                  \
+        long ll = l, rr = r;                                                                                           \
+        zzt_eq(zzt_test_state, ZZT_FMT_XLONG, &ll, &rr, #l, #r, __FILE__, __LINE__);                                   \
+    }
+
+/**
+ * @brief Expect exact 64-bit integer equality.
+ */
+#define EXPECT_INT64EQ(l, r)                                                                                           \
+    {                                                                                                                  \
+        ZZT_INT64 ll = l, rr = r;                                                                                      \
+        zzt_eq(zzt_test_state, ZZT_FMT_I64, &ll, &rr, #l, #r, __FILE__, __LINE__);                                     \
+    }
+
+/**
+ * @brief Expect exact 64-bit integer equality.
+ */
+#define EXPECT_UINT64EQ(l, r)                                                                                          \
+    {                                                                                                                  \
+        ZZT_UINT64 ll = l, rr = r;                                                                                     \
+        zzt_eq(zzt_test_state, ZZT_FMT_UI64, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+    }
+
+/**
+ * @brief Expect exact 64-bit integer equality, failures are shown in hex.
+ */
+#define EXPECT_XINT64EQ(l, r)                                                                                          \
+    {                                                                                                                  \
+        ZZT_UINT64 ll = l, rr = r;                                                                                     \
+        zzt_eq(zzt_test_state, ZZT_FMT_XI64, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+    }
+
+#if (ZZTEST_HAS_64BIT)
+#define EXPECT_IMAXEQ EXPECT_INT64EQ
+#define EXPECT_UIMAXEQ EXPECT_UINT64EQ
+#define EXPECT_SIZEEQ EXPECT_UINT64EQ
+#define EXPECT_ISIZEEQ EXPECT_INT64EQ
+#else
+#define EXPECT_IMAXEQ EXPECT_INTEQ
+#define EXPECT_UIMAXEQ EXPECT_UINTEQ
+#define EXPECT_SIZEEQ EXPECT_UINTEQ
+#define EXPECT_ISIZEEQ EXPECT_INTEQ
+#endif
+
+/**
+ * @brief Expect char equality.
+ */
+#define EXPECT_CHAREQ(l, r)                                                                                            \
+    {                                                                                                                  \
+        if (!((l) == (r)))                                                                                             \
         {                                                                                                              \
-            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, #l " != " #r);                         \
+            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "!(" #l " == " #r ")");                    \
         }                                                                                                              \
     }
 
@@ -165,9 +278,9 @@ struct zztest_suite_s
  */
 #define EXPECT_STREQ(l, r)                                                                                             \
     {                                                                                                                  \
-        if (zztest_strcmp((l), (r)) != 0)                                                                              \
+        if (zzt_test_strcmp((l), (r)) != 0)                                                                            \
         {                                                                                                              \
-            zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "0 != strcmp(" #l ", " #r ")");        \
+            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "0 != strcmp(" #l ", " #r ")");            \
         }                                                                                                              \
     }
 
@@ -176,7 +289,7 @@ struct zztest_suite_s
  */
 #define ADD_FAILURE()                                                                                                  \
     {                                                                                                                  \
-        zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "Failure");                                \
+        zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "Failure");                                    \
     }
 
 /**
@@ -184,7 +297,7 @@ struct zztest_suite_s
  */
 #define FAIL()                                                                                                         \
     {                                                                                                                  \
-        zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_FAIL, "Failure");                                \
+        zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "Failure");                                    \
         return;                                                                                                        \
     }
 
@@ -193,7 +306,7 @@ struct zztest_suite_s
  */
 #define SKIP()                                                                                                         \
     {                                                                                                                  \
-        zztest_result(zztest_state, __FILE__, __LINE__, ZZTEST_RESULT_SKIP, NULL);                                     \
+        zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_SKIP, NULL);                                         \
         return;                                                                                                        \
     }
 
@@ -202,20 +315,22 @@ struct zztest_suite_s
  */
 #define ADD_TEST_SUITE(s)                                                                                              \
     {                                                                                                                  \
-        ZZTEST_SUITENAME(s)();                                                                                         \
-        zztest_add_test_suite(&ZZTEST_SUITEINFO(s));                                                                   \
+        ZZT_SUITENAME(s)();                                                                                            \
+        zzt_add_test_suite(&ZZT_SUITEINFO(s));                                                                         \
     }
 
 /**
  * @brief Run all tests and return code which can be returned from main().
  */
-#define RUN_TESTS() (zztest_run_all())
+#define RUN_TESTS() (zzt_run_all())
 
-int zztest_strcmp(const char *lhs, const char *rhs);
-void zztest_result(struct zztest_state_s *state, const char *file, unsigned long line, enum zztest_result_e msg,
-                   const char *msgstr);
-void zztest_add_test_suite(struct zztest_suite_s *suite);
-int zztest_run_all(void);
+int zzt_test_strcmp(const char *lhs, const char *rhs);
+ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, void *l, void *r, const char *ls, const char *rs,
+                const char *file, unsigned long line);
+void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long line, enum zzt_result_e msg,
+                const char *msgstr);
+void zzt_add_test_suite(struct zzt_test_suite_s *suite);
+int zzt_run_all(void);
 
 //------------------------------------------------------------------------------
 #if defined(ZZTEST_IMPLEMENTATION)
@@ -229,27 +344,27 @@ int zztest_run_all(void);
 static struct timeval g_cTimeStart;
 #endif
 
-#if !defined(ZZTEST_CONFIG_PRINTF)
+#include <stdarg.h>
 #include <stdio.h>
-#endif
+#include <string.h>
 
 //------------------------------------------------------------------------------
 
-struct zztest_state_s
+struct zzt_test_state_s
 {
-    struct zztest_s *test;
+    struct zzt_test_s *test;
     int failed;
     int skipped;
 };
 
 static unsigned long g_testsCount;
-static struct zztest_suite_s *g_suitesHead;
-static struct zztest_suite_s *g_suitesTail;
+static struct zzt_test_suite_s *g_suitesHead;
+static struct zzt_test_suite_s *g_suitesTail;
 static unsigned long g_suitesCount;
-static struct zztest_s *g_testFailHead;
-static struct zztest_s *g_testFailTail;
-static struct zztest_s *g_testSkipHead;
-static struct zztest_s *g_testSkipTail;
+static struct zzt_test_s *g_testFailHead;
+static struct zzt_test_s *g_testFailTail;
+static struct zzt_test_s *g_testSkipHead;
+static struct zzt_test_s *g_testSkipTail;
 
 /**
  * @brief Return time point with ms resolution.
@@ -257,7 +372,7 @@ static struct zztest_s *g_testSkipTail;
  * @details This is a compatible timer, not an accurate one.  We're making
  *          a test suite, not a benchmark.
  */
-static unsigned long zztest_ms(void)
+static unsigned long zzt_ms(void)
 {
 #if defined(_WIN32)
     return timeGetTime();
@@ -273,9 +388,80 @@ static unsigned long zztest_ms(void)
 }
 
 /**
+ * @brief Use the safest vsprintf we have available.
+ *
+ * @param buf Buffer to write to.
+ * @param buflen Length of buffer.
+ * @param fmt Format string.
+ * @param ... Format parameters.
+ */
+static void zzt_test_sprintf(char *buf, unsigned buflen, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+
+#if defined(__GNUC__)
+    vsnprintf(buf, buflen, fmt, args);
+#elif defined(_MSC_VER) // FIXME: When was this added?
+#define _CRT_SECURE_NO_WARNINGS // Say the line, Bart!
+    _vsnprintf(buf, buflen, fmt, args);
+    buf[buflen - 1] = '\0';
+#else
+    (void)buflen;
+    vsprintf(buf, fmt, args);
+#endif
+
+    va_end(args);
+}
+
+/**
+ * @brief Print a value based on its desired format.
+ *
+ * @param fmt Format type.
+ * @param v Pointer to underlying value.
+ * @param vs String representation of value.
+ */
+static void zzt_printv(enum zzt_fmt_e fmt, void *v, const char *vs)
+{
+    char buffer[32];
+
+    switch (fmt)
+    {
+    case ZZT_FMT_LONG:
+        zzt_test_sprintf(buffer, sizeof(buffer), "%ld", *((long *)v));
+        break;
+    case ZZT_FMT_ULONG:
+        zzt_test_sprintf(buffer, sizeof(buffer), "%lu", *((unsigned long *)v));
+        break;
+    case ZZT_FMT_XLONG:
+        zzt_test_sprintf(buffer, sizeof(buffer), "0x%lx", *((unsigned long *)v));
+        break;
+#if (ZZTEST_HAS_64BIT)
+    case ZZT_FMT_I64:
+        zzt_test_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIi64, *((ZZT_INT64 *)v));
+        break;
+    case ZZT_FMT_UI64:
+        zzt_test_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIu64, *((ZZT_UINT64 *)v));
+        break;
+    case ZZT_FMT_XI64:
+        zzt_test_sprintf(buffer, sizeof(buffer), "0x%" ZZT_PRIx64, *((ZZT_UINT64 *)v));
+        break;
+#endif // (ZZT_HAS_64BIT)
+    default:
+        return;
+    }
+
+    ZZT_PRINTF("  %s\n", vs);
+    if (strcmp(buffer, vs))
+    {
+        ZZT_PRINTF("    Which is: %s\n", buffer);
+    }
+}
+
+/**
  * @brief Add a test to our list of failed tests.
  */
-static void zztest_add_fail(struct zztest_s *test)
+static void zzt_add_fail(struct zzt_test_s *test)
 {
     if (g_testFailHead == NULL)
     {
@@ -292,7 +478,7 @@ static void zztest_add_fail(struct zztest_s *test)
 /**
  * @brief Add a test to our list of skipped tests.
  */
-static void zztest_add_skip(struct zztest_s *test)
+static void zzt_add_skip(struct zzt_test_s *test)
 {
     if (g_testSkipHead == NULL)
     {
@@ -308,34 +494,74 @@ static void zztest_add_skip(struct zztest_s *test)
 
 //------------------------------------------------------------------------------
 
-int zztest_strcmp(const char *lhs, const char *rhs)
+int zzt_test_strcmp(const char *lhs, const char *rhs)
 {
-    for (;; lhs++, rhs++)
-    {
-        if (*lhs != *rhs || *lhs == '\0')
-        {
-            break;
-        }
-    }
-    return *((const unsigned char *)lhs) - *((const unsigned char *)rhs);
+    return strcmp(lhs, rhs);
 }
 
 //------------------------------------------------------------------------------
 
-void zztest_result(struct zztest_state_s *state, const char *file, unsigned long line, enum zztest_result_e msg,
-                   const char *msgstr)
+ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, void *l, void *r, const char *ls, const char *rs,
+                const char *file, unsigned long line)
+{
+    ZZT_BOOL isEqual = ZZT_FALSE;
+
+    if (fmt == ZZT_FMT_LONG)
+    {
+        isEqual = *((long *)l) == *((long *)r);
+    }
+    else if (fmt == ZZT_FMT_ULONG || fmt == ZZT_FMT_XLONG)
+    {
+        isEqual = *((unsigned long *)l) == *((unsigned long *)r);
+    }
+#if (ZZTEST_HAS_64BIT)
+    else if (fmt == ZZT_FMT_I64)
+    {
+        isEqual = *((ZZT_INT64 *)l) == *((ZZT_INT64 *)r);
+    }
+    else if (fmt == ZZT_FMT_UI64 || fmt == ZZT_FMT_XI64)
+    {
+        isEqual = *((ZZT_UINT64 *)l) == *((ZZT_UINT64 *)r);
+    }
+#endif // (ZZT_HAS_64BIT)
+    else
+    {
+        return ZZT_FALSE;
+    }
+
+    if (isEqual)
+    {
+        state->failed = 0;
+        state->skipped = 0;
+        return ZZT_TRUE;
+    }
+
+    state->failed += 1;
+
+    ZZT_PRINTF("%s(%lu): error: Expected equality of these values:\n", file, line);
+    zzt_printv(fmt, l, ls);
+    zzt_printv(fmt, r, rs);
+    puts("");
+
+    return ZZT_FALSE;
+}
+
+//------------------------------------------------------------------------------
+
+void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long line, enum zzt_result_e msg,
+                const char *msgstr)
 {
     switch (msg)
     {
-    case ZZTEST_RESULT_SUCCESS:
+    case ZZT_RESULT_SUCCESS:
         state->failed = 0;
         state->skipped = 0;
         break;
-    case ZZTEST_RESULT_FAIL:
-        ZPRINTF_("%s(%lu): error: %s\n\n", file, line, msgstr);
+    case ZZT_RESULT_FAIL:
+        ZZT_PRINTF("%s(%lu): error: %s\n\n", file, line, msgstr);
         state->failed += 1;
         break;
-    case ZZTEST_RESULT_SKIP:
+    case ZZT_RESULT_SKIP:
         state->skipped += 1;
         break;
     }
@@ -343,7 +569,7 @@ void zztest_result(struct zztest_state_s *state, const char *file, unsigned long
 
 //------------------------------------------------------------------------------
 
-void zztest_add_test_suite(struct zztest_suite_s *suite)
+void zzt_add_test_suite(struct zzt_test_suite_s *suite)
 {
     if (g_suitesHead == NULL)
     {
@@ -363,91 +589,91 @@ void zztest_add_test_suite(struct zztest_suite_s *suite)
 
 //------------------------------------------------------------------------------
 
-int zztest_run_all(void)
+int zzt_run_all(void)
 {
     unsigned long passed = 0, failed = 0, skipped = 0;
     unsigned long startAllMs = 0, endAllMs = 0;
-    struct zztest_suite_s *suite = g_suitesHead;
-    struct zztest_s *test = NULL;
+    struct zzt_test_suite_s *suite = g_suitesHead;
+    struct zzt_test_s *test = NULL;
 
 #if defined(_WIN32)
     // Set timer resolution to 1ms.
     timeBeginPeriod(1);
 #endif
 
-    ZPRINTF_("[==========] Running %lu tests from %lu test suites.\n", g_testsCount, g_suitesCount);
-    startAllMs = zztest_ms();
+    ZZT_PRINTF("[==========] Running %lu tests from %lu test suites.\n", g_testsCount, g_suitesCount);
+    startAllMs = zzt_ms();
 
     for (; suite; suite = suite->next)
     {
         unsigned long startSuiteMs = 0, endSuiteMs = 0;
 
-        ZPRINTF_("[----------] %lu tests from %s\n", suite->tests_count, suite->suite_name);
-        startSuiteMs = zztest_ms();
+        ZZT_PRINTF("[----------] %lu tests from %s\n", suite->tests_count, suite->suite_name);
+        startSuiteMs = zzt_ms();
 
         test = suite->head;
         for (; test; test = test->next)
         {
             unsigned long startTestMs = 0, endTestMs = 0;
-            struct zztest_state_s state;
+            struct zzt_test_state_s state;
 
-            ZPRINTF_("[ RUN      ] %s\n", test->test_name);
+            ZZT_PRINTF("[ RUN      ] %s\n", test->test_name);
             state.test = test;
             state.failed = 0;
             state.skipped = 0;
 
-            startTestMs = zztest_ms();
+            startTestMs = zzt_ms();
             test->func(&state);
-            endTestMs = zztest_ms();
+            endTestMs = zzt_ms();
 
             if (state.failed != 0)
             {
-                ZPRINTF_("[  FAILED  ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
-                zztest_add_fail(test);
+                ZZT_PRINTF("[  FAILED  ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
+                zzt_add_fail(test);
                 failed += 1;
             }
             else if (state.skipped != 0)
             {
-                ZPRINTF_("[  SKIPPED ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
-                zztest_add_skip(test);
+                ZZT_PRINTF("[  SKIPPED ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
+                zzt_add_skip(test);
                 skipped += 1;
             }
             else
             {
-                ZPRINTF_("[       OK ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
+                ZZT_PRINTF("[       OK ] %s (%lu ms)\n", test->test_name, endTestMs - startTestMs);
                 passed += 1;
             }
         }
 
-        endSuiteMs = zztest_ms();
-        ZPRINTF_("[----------] %lu tests from %s (%lu ms total)\n\n", suite->tests_count, suite->suite_name,
-                 endSuiteMs - startSuiteMs);
+        endSuiteMs = zzt_ms();
+        ZZT_PRINTF("[----------] %lu tests from %s (%lu ms total)\n\n", suite->tests_count, suite->suite_name,
+                   endSuiteMs - startSuiteMs);
     }
 
-    endAllMs = zztest_ms();
-    ZPRINTF_("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_testsCount, g_suitesCount,
-             endAllMs - startAllMs);
-    ZPRINTF_("[  PASSED  ] %lu tests.\n", passed);
+    endAllMs = zzt_ms();
+    ZZT_PRINTF("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_testsCount, g_suitesCount,
+               endAllMs - startAllMs);
+    ZZT_PRINTF("[  PASSED  ] %lu tests.\n", passed);
 
     if (skipped != 0)
     {
-        ZPRINTF_("[  SKIPPED ] %lu tests, listed below:\n", skipped);
+        ZZT_PRINTF("[  SKIPPED ] %lu tests, listed below:\n", skipped);
 
         test = g_testSkipHead;
         for (; test; test = test->next_skip)
         {
-            ZPRINTF_("[  SKIPPED ] %s\n", test->test_name);
+            ZZT_PRINTF("[  SKIPPED ] %s\n", test->test_name);
         }
     }
 
     if (failed != 0)
     {
-        ZPRINTF_("[  FAILED  ] %lu tests, listed below:\n", failed);
+        ZZT_PRINTF("[  FAILED  ] %lu tests, listed below:\n", failed);
 
         test = g_testFailHead;
         for (; test; test = test->next_fail)
         {
-            ZPRINTF_("[  FAILED  ] %s\n", test->test_name);
+            ZZT_PRINTF("[  FAILED  ] %s\n", test->test_name);
         }
     }
 
@@ -456,34 +682,58 @@ int zztest_run_all(void)
 
 #if defined(ZZTEST_SELFCHECK)
 
-TEST(zztest, passing1)
+TEST(zztest, passing)
 {
     EXPECT_TRUE(1 == 1);
     EXPECT_FALSE(1 != 1);
     EXPECT_BOOLEQ(1, 2);
-}
-
-TEST(zztest, passing2)
-{
-    EXPECT_EQ(1, 1);
+    EXPECT_CHAREQ('a', 'a');
     EXPECT_STREQ("foo", "foo");
 }
 
-TEST(zztest, failing1)
+TEST(zztest, passing_int)
+{
+    EXPECT_INTEQ(1, 1);
+    EXPECT_UINTEQ(1, 1);
+    EXPECT_XINTEQ(1, 1);
+#if (ZZTEST_HAS_64BIT)
+    EXPECT_INT64EQ(1, 1);
+    EXPECT_UINT64EQ(1, 1);
+    EXPECT_XINT64EQ(1, 1);
+#endif
+    EXPECT_IMAXEQ(1, 1);
+    EXPECT_UIMAXEQ(1, 1);
+    EXPECT_SIZEEQ(1, 1);
+    EXPECT_ISIZEEQ(1, 1);
+}
+
+TEST(zztest, failing)
 {
     EXPECT_TRUE(1 == 2);
     EXPECT_FALSE(1 != 2);
     EXPECT_BOOLEQ(1, 0);
-}
-
-TEST(zztest, failing2)
-{
-    EXPECT_EQ(1, 2);
+    EXPECT_CHAREQ('a', 'b');
     EXPECT_STREQ("foo", "bar");
     ADD_FAILURE();
 }
 
-TEST(zztest, skipping1)
+TEST(zztest, failing_int)
+{
+    EXPECT_INTEQ(1, (int)2);
+    EXPECT_UINTEQ(1, 2u);
+    EXPECT_XINTEQ(0xabc, 0x0DEF);
+#if (ZZTEST_HAS_64BIT)
+    EXPECT_INT64EQ(1, (int)2);
+    EXPECT_UINT64EQ(1, 2u);
+    EXPECT_XINT64EQ(0xabc, 0x0DEF);
+#endif
+    EXPECT_IMAXEQ(1, (int)2);
+    EXPECT_UIMAXEQ(1, 2u);
+    EXPECT_SIZEEQ(1, 2u);
+    EXPECT_ISIZEEQ(1, (int)2);
+}
+
+TEST(zztest, skipping)
 {
     SKIP();
 }
@@ -495,11 +745,11 @@ TEST(zztest, skipping2)
 
 SUITE(zztest)
 {
-    SUITE_TEST(zztest, passing1);
-    SUITE_TEST(zztest, passing2);
-    SUITE_TEST(zztest, failing1);
-    SUITE_TEST(zztest, failing2);
-    SUITE_TEST(zztest, skipping1);
+    SUITE_TEST(zztest, passing);
+    SUITE_TEST(zztest, passing_int);
+    SUITE_TEST(zztest, failing);
+    SUITE_TEST(zztest, failing_int);
+    SUITE_TEST(zztest, skipping);
     SUITE_TEST(zztest, skipping2);
 }
 
