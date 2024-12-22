@@ -8,9 +8,7 @@ jobs:
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~3.25.0"
-      - uses: lukka/run-cmake@v10
-        with:
-          workflowPreset: 'ubuntu-gcc'
+      - run: cmake --workflow --preset ubuntu-gcc
   ubuntu-clang:
     runs-on: ubuntu-latest
     steps:
@@ -19,9 +17,7 @@ jobs:
         with:
           cmakeVersion: "~3.25.0"
       - run: sudo apt-get install clang
-      - uses: lukka/run-cmake@v10
-        with:
-          workflowPreset: 'ubuntu-clang'
+      - run: cmake --workflow --preset ubuntu-clang
   windows-msvc:
     runs-on: windows-latest
     steps:
@@ -29,9 +25,7 @@ jobs:
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~3.25.0"
-      - uses: lukka/run-cmake@v10
-        with:
-          workflowPreset: 'windows-msvc'
+      - run: cmake --workflow --preset windows-msvc
   windows-msvc-clang:
     runs-on: windows-latest
     steps:
@@ -39,9 +33,7 @@ jobs:
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~3.25.0"
-      - uses: lukka/run-cmake@v10
-        with:
-          workflowPreset: 'windows-msvc-clang'
+      - run: cmake --workflow --preset windows-msvc-clang
   windows-clang:
     runs-on: windows-latest
     steps:
@@ -49,28 +41,4 @@ jobs:
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~3.25.0"
-      - uses: lukka/run-cmake@v10
-        with:
-          configurePreset: 'windows-clang'
-  # macos-arm64:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: Git checkout
-  #       uses: actions/checkout@v4
-  #     - name: Get CMake
-  #       uses: lukka/get-cmake@latest
-  #     - name: Run CMake
-  #       uses: lukka/run-cmake@v10
-  #       with:
-  #         workflowPreset: 'macos'
-  # macos-x64:
-  #   runs-on: macos-13
-  #   steps:
-  #     - name: Git checkout
-  #       uses: actions/checkout@v4
-  #     - name: Get CMake
-  #       uses: lukka/get-cmake@latest
-  #     - name: Run CMake
-  #       uses: lukka/run-cmake@v10
-  #       with:
-  #         workflowPreset: 'macos'
+      - run: cmake --workflow --preset windows-clang
