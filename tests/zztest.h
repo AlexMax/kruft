@@ -351,6 +351,14 @@ static struct timeval g_cTimeStart;
 #include <stdio.h>
 #include <string.h>
 
+#define ZZTLOG_H1 "[==========]"
+#define ZZTLOG_H2 "[----------]"
+#define ZZTLOG_RUN "[ RUN      ]"
+#define ZZTLOG_OK "[       OK ]"
+#define ZZTLOG_SKIPPED "[  SKIPPED ]"
+#define ZZTLOG_FAILED "[  FAILED  ]"
+#define ZZTLOG_PASSED "[  PASSED  ]"
+
 //------------------------------------------------------------------------------
 
 struct zzt_test_state_s
@@ -756,14 +764,14 @@ int zzt_run_all(void)
     timeBeginPeriod(1);
 #endif
 
-    ZZT_PRINTF("[==========] Running %lu tests from %lu test suites.\n", g_testsCount, g_suitesCount);
+    ZZT_PRINTF(ZZTLOG_H1 " Running %lu tests from %lu test suites.\n", g_testsCount, g_suitesCount);
     startAllMs = zzt_ms();
 
     for (; suite; suite = suite->next)
     {
         unsigned long startSuiteMs = 0, suiteMs = 0;
 
-        ZZT_PRINTF("[----------] %lu tests from %s\n", suite->tests_count, suite->suite_name);
+        ZZT_PRINTF(ZZTLOG_H2 " %lu tests from %s\n", suite->tests_count, suite->suite_name);
         startSuiteMs = zzt_ms();
 
         test = suite->head;
@@ -773,7 +781,7 @@ int zzt_run_all(void)
             unsigned long startTestMs = 0, testMs = 0;
             struct zzt_test_state_s state;
 
-            ZZT_PRINTF("[ RUN      ] %s\n", test->test_name);
+            ZZT_PRINTF(ZZTLOG_RUN " %s\n", test->test_name);
             state.test = test;
             state.failed = 0;
             state.skipped = 0;
@@ -784,76 +792,76 @@ int zzt_run_all(void)
 
             if (state.failed != 0)
             {
-                result = "  FAILED  ";
+                result = ZZTLOG_FAILED;
                 zzt_add_fail(test);
                 failed += 1;
             }
             else if (state.skipped != 0)
             {
-                result = "  SKIPPED ";
+                result = ZZTLOG_SKIPPED;
                 zzt_add_skip(test);
                 skipped += 1;
             }
             else
             {
-                result = "       OK ";
+                result = ZZTLOG_OK;
                 passed += 1;
             }
 
             if (testMs)
             {
-                ZZT_PRINTF("[%s] %s (%lu ms)\n", result, test->test_name, testMs);
+                ZZT_PRINTF("%s %s (%lu ms)\n", result, test->test_name, testMs);
             }
             else
             {
-                ZZT_PRINTF("[%s] %s\n", result, test->test_name);
+                ZZT_PRINTF("%s %s\n", result, test->test_name);
             }
         }
 
         suiteMs = zzt_ms() - startSuiteMs;
         if (suiteMs)
         {
-            ZZT_PRINTF("[----------] %lu tests from %s (%lu ms total)\n\n", suite->tests_count, suite->suite_name,
+            ZZT_PRINTF(ZZTLOG_H2 " %lu tests from %s (%lu ms total)\n\n", suite->tests_count, suite->suite_name,
                        suiteMs);
         }
         else
         {
-            ZZT_PRINTF("[----------] %lu tests from %s\n\n", suite->tests_count, suite->suite_name);
+            ZZT_PRINTF(ZZTLOG_H2 " %lu tests from %s\n\n", suite->tests_count, suite->suite_name);
         }
     }
 
     allMs = zzt_ms() - startAllMs;
     if (allMs)
     {
-        ZZT_PRINTF("[==========] %lu tests from %lu test suites ran. (%lu ms total)\n", g_testsCount, g_suitesCount,
+        ZZT_PRINTF(ZZTLOG_H1 " %lu tests from %lu test suites ran. (%lu ms total)\n", g_testsCount, g_suitesCount,
                    allMs);
     }
     else
     {
-        ZZT_PRINTF("[==========] %lu tests from %lu test suites ran.\n", g_testsCount, g_suitesCount);
+        ZZT_PRINTF(ZZTLOG_H1 " %lu tests from %lu test suites ran.\n", g_testsCount, g_suitesCount);
     }
 
-    ZZT_PRINTF("[  PASSED  ] %lu tests.\n", passed);
+    ZZT_PRINTF(ZZTLOG_PASSED " %lu tests.\n", passed);
 
     if (skipped != 0)
     {
-        ZZT_PRINTF("[  SKIPPED ] %lu tests, listed below:\n", skipped);
+        ZZT_PRINTF(ZZTLOG_SKIPPED " %lu tests, listed below:\n", skipped);
 
         test = g_testSkipHead;
         for (; test; test = test->next_skip)
         {
-            ZZT_PRINTF("[  SKIPPED ] %s\n", test->test_name);
+            ZZT_PRINTF(ZZTLOG_SKIPPED " %s\n", test->test_name);
         }
     }
 
     if (failed != 0)
     {
-        ZZT_PRINTF("[  FAILED  ] %lu tests, listed below:\n", failed);
+        ZZT_PRINTF(ZZTLOG_FAILED " %lu tests, listed below:\n", failed);
 
         test = g_testFailHead;
         for (; test; test = test->next_fail)
         {
-            ZZT_PRINTF("[  FAILED  ] %s\n", test->test_name);
+            ZZT_PRINTF(ZZTLOG_FAILED " %s\n", test->test_name);
         }
     }
 
