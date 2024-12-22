@@ -186,7 +186,7 @@ KR_CONSTEXPR int kr_countl_zero32(uint32_t x) KR_NOEXCEPT
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_clz on clang-cl
 #define kr_clz32(x) ((x) != 0 ? __builtin_clz(x) : 32)
-#elif (KR_MSC_VER)
+#elif (KR_MSC_VER >= 1300) // FIXME: Not in VC6, unsure when introduced.
 #include <intrin.h>
 KR_FORCEINLINE int kr_clz32_detail_(unsigned long x)
 {
@@ -228,12 +228,12 @@ KR_CONSTEXPR int kr_countl_one32(uint32_t x) KR_NOEXCEPT
 
 KR_CONSTEXPR int kr_countr_zero32(uint32_t x) KR_NOEXCEPT
 {
+    int rvo = 0;
+
     if (x == 0)
     {
         return sizeof(x) * 8;
     }
-
-    int rvo = 0;
 
     for (; x; x >>= 1, rvo++)
     {
@@ -248,7 +248,7 @@ KR_CONSTEXPR int kr_countr_zero32(uint32_t x) KR_NOEXCEPT
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_ctz on clang-cl
 #define kr_ctz32(x) ((x) != 0 ? __builtin_ctz(x) : 32)
-#elif (KR_MSC_VER)
+#elif (KR_MSC_VER >= 1300) // FIXME: Not in VC6, unsure when introduced.
 #include <intrin.h>
 KR_FORCEINLINE int kr_ctz32_detail_(unsigned long x)
 {
@@ -323,7 +323,7 @@ KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT
     return rvo;
 }
 
-#if (KR_MSC_VER)
+#if (KR_MSC_VER >= 1300) // FIXME: Not in VC6, unsure when introduced.
 #include <intrin.h>
 #define kr_popcnt16(x) (__popcnt16(x))
 #define kr_popcnt32(x) (__popcnt(x))

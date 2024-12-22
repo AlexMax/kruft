@@ -40,27 +40,41 @@ typedef unsigned int uint16_t;
 typedef signed short int16_t;
 typedef unsigned short uint16_t;
 #endif
+#define INT16_C(x) (x)
+#define UINT16_C(x) (x)
 
-#if (UINT_MAX == 0xffffffff)
+#if (UINT_MAX == 0xffffffffu)
 typedef signed int int32_t;
 typedef unsigned int uint32_t;
+#define INT32_C(x) (x)
+#define UINT32_C(x) (x##u)
 #elif (ULONG_MAX == 0xffffffff)
 typedef signed long int32_t;
 typedef unsigned long uint32_t;
+#define INT32_C(x) (x##l)
+#define UINT32_C(x) (x##ul)
 #endif
 
-#if defined(_UI64_MAX)                                                  // MSVC
+#if defined(_UI64_MAX) // MSVC
 typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
-#elif defined(ULONG_LONG_MAX) && (ULONG_LONG_MAX == 0xffffffffffffffff) // GCC
+#define INT64_C(x) (x##i64)
+#define UINT64_C(x) (x##ui64)
+#elif defined(ULONG_LONG_MAX) && (ULONG_LONG_MAX == 0xffffffffffffffffull) // GCC
 typedef signed long long int64_t;
 typedef unsigned long long uint64_t;
-#elif (ULONG_MAX == 0xffffffffffffffff)                                 // LP64
+#define INT64_C(x) (x##ll)
+#define UINT64_C(x) (x##ull)
+#elif (ULONG_MAX == 0xffffffffffffffff) // LP64
 typedef signed long int64_t;
 typedef unsigned long uint64_t;
-#elif defined(ULLONG_MAX) && (ULLONG_MAX == 0xffffffffffffffff)         // LLP64
+#define INT64_C(x) (x##l)
+#define UINT64_C(x) (x##ul)
+#elif defined(ULLONG_MAX) && (ULLONG_MAX == 0xffffffffffffffff) // LLP64
 typedef signed long long int64_t;
 typedef unsigned long long uint64_t;
+#define INT64_C(x) (x##ll)
+#define UINT64_C(x) (x##ull)
 #else
 #define KR_SKIP_64BIT_
 #endif
@@ -84,5 +98,9 @@ typedef unsigned long long uint64_t;
 #endif
 
 #undef KR_SKIP_64BIT_
+
+#if !defined(SIZE_MAX)
+#define SIZE_MAX (~((size_t)0))
+#endif
 
 #endif // defined(KR_USE_STDINT_)

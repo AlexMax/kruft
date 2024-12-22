@@ -1,4 +1,5 @@
 //
+// zztest - A test framework for crufty compilers.
 // Copyright (c) 2024 Lexi Mayfield
 //
 // Distributed under the Boost Software License, Version 1.0. (See
@@ -7,16 +8,23 @@
 //
 
 //
-// zztest - A greenfield subset of Google Test for crufty compilers.
+// ABOUT
+//  zztest is a test framework for crufty compilers.
+//
+// COMPILER SUPPORT
+//  - Modern GCC, Clang, MSVC
+//  - Microsoft Visual C++ 6.0
+//  - Borland C++ 3.1 (DOS)
+//  - Watcom C 9.01 (DOS)
 //
 // Important defines:
-// - ZZTEST_IMPLEMENTATION: You must define this before including zztest.h
-//                          in a single file, otherwise internal functions
-//                          will be missing their implementation.
-// - ZZTEST_SELFCHECK: Define this before including zztest.h to create a
-//                     self-contained program that shows output of sample
-//                     tests.  Useful to sanity check your environment.
-// - ZZTEST_CONFIG_PRINTF: Define this to your own print function.
+//  ZZTEST_IMPLEMENTATION: You must define this before including zztest.h
+//                         in a single file, otherwise internal functions
+//                         will be missing their implementation.
+//  ZZTEST_SELFCHECK: Define this before including zztest.h to create a
+//                    self-contained program that shows output of sample
+//                    tests.  Useful to sanity check your environment.
+//  ZZTEST_CONFIG_PRINTF: Define this to your own print function.
 //
 
 #if !defined(INCLUDE_ZZTEST_H)

@@ -9,6 +9,7 @@
 #include "zztest.h"
 
 #include "krbit.h"
+#include "krint.h"
 
 #pragma warning(push)
 #pragma warning(disable : 4127)
