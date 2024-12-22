@@ -6,8 +6,7 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
-      - name: Get CMake
-        uses: lukka/get-cmake@latest
+#      - run: apt-get install cmake ninja-build
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
@@ -17,8 +16,7 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
-      - name: Get CMake
-        uses: lukka/get-cmake@latest
+#      - run: apt-get install cmake ninja-build
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
