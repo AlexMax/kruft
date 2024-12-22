@@ -5,7 +5,7 @@
 // accompanying file LICENSE.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
-//
+
 //
 // zztest - A greenfield subset of Google Test for crufty compilers.
 //
@@ -77,6 +77,7 @@ enum zzt_fmt_e
     ZZT_FMT_I64,
     ZZT_FMT_UI64,
     ZZT_FMT_XI64,
+    ZZT_FMT_STR,
 };
 
 struct zzt_test_state_s;
@@ -281,10 +282,8 @@ struct zzt_test_suite_s
  */
 #define EXPECT_STREQ(l, r)                                                                                             \
     {                                                                                                                  \
-        if (zzt_test_strcmp((l), (r)) != 0)                                                                            \
-        {                                                                                                              \
-            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "0 != strcmp(" #l ", " #r ")");            \
-        }                                                                                                              \
+        const char *ll = l, *rr = r;                                                                                   \
+        zzt_eq(zzt_test_state, ZZT_FMT_STR, (const void *)ll, (const void *)rr, #l, #r, __FILE__, __LINE__);           \
     }
 
 /**
@@ -328,8 +327,8 @@ struct zzt_test_suite_s
 #define RUN_TESTS() (zzt_run_all())
 
 int zzt_test_strcmp(const char *lhs, const char *rhs);
-ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, void *l, void *r, const char *ls, const char *rs,
-                const char *file, unsigned long line);
+ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *l, const void *r, const char *ls,
+                const char *rs, const char *file, unsigned long line);
 void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long line, enum zzt_result_e msg,
                 const char *msgstr);
 void zzt_add_test_suite(struct zzt_test_suite_s *suite);
@@ -423,7 +422,7 @@ static void zzt_test_sprintf(char *buf, unsigned buflen, const char *fmt, ...)
  * @param v Pointer to underlying value.
  * @param vs String representation of value.
  */
-static void zzt_printv(enum zzt_fmt_e fmt, void *v, const char *vs)
+static void zzt_printv(enum zzt_fmt_e fmt, const void *v, const char *vs)
 {
     char buffer[32];
 
@@ -481,6 +480,9 @@ static void zzt_printv(enum zzt_fmt_e fmt, void *v, const char *vs)
         zzt_test_sprintf(buffer, sizeof(buffer), "0x%" ZZT_PRIx64, *((ZZT_UINT64 *)v));
         break;
 #endif // (ZZT_HAS_64BIT)
+    case ZZT_FMT_STR:
+        zzt_test_sprintf(buffer, sizeof(buffer), "\"%s\"", (const char *)v);
+        break;
     default:
         return;
     }
@@ -535,8 +537,8 @@ int zzt_test_strcmp(const char *lhs, const char *rhs)
 
 //------------------------------------------------------------------------------
 
-ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, void *l, void *r, const char *ls, const char *rs,
-                const char *file, unsigned long line)
+ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *l, const void *r, const char *ls,
+                const char *rs, const char *file, unsigned long line)
 {
     ZZT_BOOL isEqual = ZZT_FALSE;
 
@@ -562,6 +564,10 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, void *l, voi
         isEqual = *((ZZT_UINT64 *)l) == *((ZZT_UINT64 *)r);
     }
 #endif // (ZZT_HAS_64BIT)
+    else if (fmt == ZZT_FMT_STR)
+    {
+        isEqual = strcmp((const char *)l, (const char *)r) == 0;
+    }
     else
     {
         return ZZT_FALSE;
@@ -750,8 +756,19 @@ TEST(zztest, failing)
     EXPECT_TRUE(1 == 2);
     EXPECT_FALSE(1 != 2);
     EXPECT_BOOLEQ(1, 0);
-    EXPECT_STREQ("foo", "bar");
     ADD_FAILURE();
+}
+
+TEST(zztest, failing_char)
+{
+    EXPECT_CHAREQ('a', 'b');
+    EXPECT_CHAREQ('\0', '\xaa');
+    EXPECT_CHAREQ('\n', '\r');
+    EXPECT_CHAREQ('\t', '\\');
+    EXPECT_CHAREQ(0x61, 0x62);
+    EXPECT_CHAREQ(0x00, (char)0xaa);
+    EXPECT_CHAREQ(0x0a, 0x0d);
+    EXPECT_CHAREQ(0x09, 0x5c);
 }
 
 TEST(zztest, failing_int)
@@ -770,16 +787,11 @@ TEST(zztest, failing_int)
     EXPECT_ISIZEEQ(1, (int)2);
 }
 
-TEST(zztest, failing_char)
+TEST(zztest, failing_str)
 {
-    EXPECT_CHAREQ('a', 'b');
-    EXPECT_CHAREQ('\0', '\xaa');
-    EXPECT_CHAREQ('\n', '\r');
-    EXPECT_CHAREQ('\t', '\\');
-    EXPECT_CHAREQ(0x61, 0x62);
-    EXPECT_CHAREQ(0x00, (char)0xaa);
-    EXPECT_CHAREQ(0x0a, 0x0d);
-    EXPECT_CHAREQ(0x09, 0x5c);
+    EXPECT_STREQ("foo", "bar");
+    EXPECT_STREQ("\r\n", "\t\\");
+    EXPECT_STREQ("f\x6F\x6F", "b\x61r");
 }
 
 TEST(zztest, skipping)
@@ -797,8 +809,9 @@ SUITE(zztest)
     SUITE_TEST(zztest, passing);
     SUITE_TEST(zztest, passing_int);
     SUITE_TEST(zztest, failing);
-    SUITE_TEST(zztest, failing_int);
     SUITE_TEST(zztest, failing_char);
+    SUITE_TEST(zztest, failing_int);
+    SUITE_TEST(zztest, failing_str);
     SUITE_TEST(zztest, skipping);
     SUITE_TEST(zztest, skipping2);
 }
