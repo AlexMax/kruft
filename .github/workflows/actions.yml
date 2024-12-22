@@ -4,54 +4,52 @@ jobs:
   ubuntu-gcc:
     runs-on: ubuntu-latest
     steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
-      - run: sudo apt-get install g++ cmake ninja-build
-      - name: Run CMake
-        uses: lukka/run-cmake@v10
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "~3.25.0"
+      - uses: lukka/run-cmake@v10
         with:
           workflowPreset: 'ubuntu-gcc'
   ubuntu-clang:
     runs-on: ubuntu-latest
     steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
-      - run: sudo apt-get install clang cmake ninja-build
-      - name: Run CMake
-        uses: lukka/run-cmake@v10
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "~3.25.0"
+      - run: sudo apt-get install clang
+      - uses: lukka/run-cmake@v10
         with:
           workflowPreset: 'ubuntu-clang'
   windows-msvc:
     runs-on: windows-latest
     steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
-      - name: Get CMake
-        uses: lukka/get-cmake@latest
-      - name: Run CMake
-        uses: lukka/run-cmake@v10
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "~3.25.0"
+      - uses: lukka/run-cmake@v10
         with:
           workflowPreset: 'windows-msvc'
   windows-msvc-clang:
     runs-on: windows-latest
     steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
-      - name: Get CMake
-        uses: lukka/get-cmake@latest
-      - name: Run CMake
-        uses: lukka/run-cmake@v10
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "~3.25.0"
+      - uses: lukka/run-cmake@v10
         with:
           workflowPreset: 'windows-msvc-clang'
   windows-clang:
     runs-on: windows-latest
     steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
-      - name: Get CMake
-        uses: lukka/get-cmake@latest
-      - name: Run CMake
-        uses: lukka/run-cmake@v10
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "~3.25.0"
+      - uses: lukka/run-cmake@v10
         with:
           configurePreset: 'windows-clang'
   # macos-arm64:
