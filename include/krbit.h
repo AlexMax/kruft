@@ -287,7 +287,7 @@ KR_CONSTEXPR int kr_countr_one32(uint32_t x) KR_NOEXCEPT
 #elif (KR_MSC_HAS_INTRIN_)
 #define kr_cto32(x) (kr_ctz32_detail_(~(x)))
 #else
-#define kr_cto32(x) (kr_countr_zero32(x))
+#define kr_cto32(x) (kr_countr_one32(x))
 #endif
 
 //------------------------------------------------------------------------------
