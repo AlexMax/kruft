@@ -22,6 +22,10 @@
 #if !defined(INCLUDE_ZZTEST_H)
 #define INCLUDE_ZZTEST_H
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS // Say the line, Bart!
+#endif
+
 #if defined(ZZTEST_CONFIG_PRINTF)
 #define ZZT_PRINTF ZZTEST_CONFIG_PRINTF
 #else
@@ -66,6 +70,7 @@ typedef unsigned __int64 ZZT_UINT64;
 
 enum zzt_fmt_e
 {
+    ZZT_FMT_CHAR,
     ZZT_FMT_LONG,
     ZZT_FMT_ULONG,
     ZZT_FMT_XLONG,
@@ -267,10 +272,8 @@ struct zzt_test_suite_s
  */
 #define EXPECT_CHAREQ(l, r)                                                                                            \
     {                                                                                                                  \
-        if (!((l) == (r)))                                                                                             \
-        {                                                                                                              \
-            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "!(" #l " == " #r ")");                    \
-        }                                                                                                              \
+        char ll = l, rr = r;                                                                                           \
+        zzt_eq(zzt_test_state, ZZT_FMT_CHAR, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
     }
 
 /**
@@ -403,7 +406,6 @@ static void zzt_test_sprintf(char *buf, unsigned buflen, const char *fmt, ...)
 #if defined(__GNUC__)
     vsnprintf(buf, buflen, fmt, args);
 #elif defined(_MSC_VER) // FIXME: When was this added?
-#define _CRT_SECURE_NO_WARNINGS // Say the line, Bart!
     _vsnprintf(buf, buflen, fmt, args);
     buf[buflen - 1] = '\0';
 #else
@@ -427,6 +429,38 @@ static void zzt_printv(enum zzt_fmt_e fmt, void *v, const char *vs)
 
     switch (fmt)
     {
+    case ZZT_FMT_CHAR: {
+        const char ch = *((char *)v);
+        if (ch == '\0')
+        {
+            zzt_test_sprintf(buffer, sizeof(buffer), "'\\0'", ch);
+        }
+        else if (ch == '\n')
+        {
+            zzt_test_sprintf(buffer, sizeof(buffer), "'\\n'", ch);
+        }
+        else if (ch == '\r')
+        {
+            zzt_test_sprintf(buffer, sizeof(buffer), "'\\r'", ch);
+        }
+        else if (ch == '\t')
+        {
+            zzt_test_sprintf(buffer, sizeof(buffer), "'\\t'", ch);
+        }
+        else if (ch == '\\')
+        {
+            zzt_test_sprintf(buffer, sizeof(buffer), "'\\\\'", ch);
+        }
+        else if (ch >= ' ' && ch <= '~')
+        {
+            zzt_test_sprintf(buffer, sizeof(buffer), "'%c'", ch);
+        }
+        else
+        {
+            zzt_test_sprintf(buffer, sizeof(buffer), "'\\x%02x'", ((unsigned)ch) & 0xFF);
+        }
+        break;
+    }
     case ZZT_FMT_LONG:
         zzt_test_sprintf(buffer, sizeof(buffer), "%ld", *((long *)v));
         break;
@@ -506,7 +540,11 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, void *l, voi
 {
     ZZT_BOOL isEqual = ZZT_FALSE;
 
-    if (fmt == ZZT_FMT_LONG)
+    if (fmt == ZZT_FMT_CHAR)
+    {
+        isEqual = *((char *)l) == *((char *)r);
+    }
+    else if (fmt == ZZT_FMT_LONG)
     {
         isEqual = *((long *)l) == *((long *)r);
     }
@@ -712,7 +750,6 @@ TEST(zztest, failing)
     EXPECT_TRUE(1 == 2);
     EXPECT_FALSE(1 != 2);
     EXPECT_BOOLEQ(1, 0);
-    EXPECT_CHAREQ('a', 'b');
     EXPECT_STREQ("foo", "bar");
     ADD_FAILURE();
 }
@@ -733,6 +770,18 @@ TEST(zztest, failing_int)
     EXPECT_ISIZEEQ(1, (int)2);
 }
 
+TEST(zztest, failing_char)
+{
+    EXPECT_CHAREQ('a', 'b');
+    EXPECT_CHAREQ('\0', '\xaa');
+    EXPECT_CHAREQ('\n', '\r');
+    EXPECT_CHAREQ('\t', '\\');
+    EXPECT_CHAREQ(0x61, 0x62);
+    EXPECT_CHAREQ(0x00, (char)0xaa);
+    EXPECT_CHAREQ(0x0a, 0x0d);
+    EXPECT_CHAREQ(0x09, 0x5c);
+}
+
 TEST(zztest, skipping)
 {
     SKIP();
@@ -749,6 +798,7 @@ SUITE(zztest)
     SUITE_TEST(zztest, passing_int);
     SUITE_TEST(zztest, failing);
     SUITE_TEST(zztest, failing_int);
+    SUITE_TEST(zztest, failing_char);
     SUITE_TEST(zztest, skipping);
     SUITE_TEST(zztest, skipping2);
 }
