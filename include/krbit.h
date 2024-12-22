@@ -23,6 +23,13 @@
 
 //------------------------------------------------------------------------------
 
+#if (KR_MSC_VER >= 1300) // FIXME: Not in VC6, unsure when introduced.
+#include <intrin.h>
+#define KR_MSC_HAS_INTRIN_ (1)
+#else
+#define KR_MSC_HAS_INTRIN_ (0)
+#endif
+
 /**
  * @brief Byteswap a 16-bit value.
  */
@@ -62,7 +69,7 @@ KR_CONSTEXPR uint64_t kr_byteswap64(uint64_t x)
 
 #endif // defined(UINT64_MAX)
 
-#if (KR_MSC_VER)
+#if (KR_MSC_HAS_INTRIN_)
 #define kr_bswap16(x) (_byteswap_ushort(x))
 #define kr_bswap32(x) (_byteswap_ulong(x))
 #if defined(UINT64_MAX)
@@ -138,7 +145,7 @@ KR_CONSTEXPR uint64_t kr_rotl64(uint64_t x, int c) KR_NOEXCEPT
     return (x << c) | (x >> (-c & 0x3F));
 }
 
-#if (KR_MSC_VER)
+#if (KR_MSC_HAS_INTRIN_)
 #define kr_rol32(x, c) (_rotl((x), (c)))
 #define kr_rol64(x, c) (_rotl64((x), (c)))
 #else
@@ -158,7 +165,7 @@ KR_CONSTEXPR uint64_t kr_rotr64(uint64_t x, int c) KR_NOEXCEPT
     return (x >> c) | (x << (-c & 0x3F));
 }
 
-#if (KR_MSC_VER)
+#if (KR_MSC_HAS_INTRIN_)
 #define kr_ror32(x, c) (_rotr((x), (c)))
 #define kr_ror64(x, c) (_rotr64((x), (c)))
 #else
@@ -186,8 +193,7 @@ KR_CONSTEXPR int kr_countl_zero32(uint32_t x) KR_NOEXCEPT
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_clz on clang-cl
 #define kr_clz32(x) ((x) != 0 ? __builtin_clz(x) : 32)
-#elif (KR_MSC_VER >= 1300) // FIXME: Not in VC6, unsure when introduced.
-#include <intrin.h>
+#elif (KR_MSC_HAS_INTRIN_)
 KR_FORCEINLINE int kr_clz32_detail_(unsigned long x)
 {
     unsigned long index;
@@ -218,7 +224,7 @@ KR_CONSTEXPR int kr_countl_one32(uint32_t x) KR_NOEXCEPT
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_clz on clang-cl
 #define kr_clo32(x) ((x) != 0xFFFFFFFF ? __builtin_clz(~(x)) : 32)
-#elif (KR_MSC_VER)
+#elif (KR_MSC_HAS_INTRIN_)
 #define kr_clo32(x) (kr_clz32_detail_(~(x)))
 #else
 #define kr_clo32(x) (kr_countl_one32(x))
@@ -248,8 +254,7 @@ KR_CONSTEXPR int kr_countr_zero32(uint32_t x) KR_NOEXCEPT
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_ctz on clang-cl
 #define kr_ctz32(x) ((x) != 0 ? __builtin_ctz(x) : 32)
-#elif (KR_MSC_VER >= 1300) // FIXME: Not in VC6, unsure when introduced.
-#include <intrin.h>
+#elif (KR_MSC_HAS_INTRIN_)
 KR_FORCEINLINE int kr_ctz32_detail_(unsigned long x)
 {
     unsigned long index;
@@ -279,7 +284,7 @@ KR_CONSTEXPR int kr_countr_one32(uint32_t x) KR_NOEXCEPT
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_ctz on clang-cl
 #define kr_cto32(x) ((x) != 0xFFFFFFFF ? __builtin_ctz(~(x)) : 32)
-#elif (KR_MSC_VER)
+#elif (KR_MSC_HAS_INTRIN_)
 #define kr_cto32(x) (kr_ctz32_detail_(~(x)))
 #else
 #define kr_cto32(x) (kr_countr_zero32(x))
@@ -323,8 +328,7 @@ KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT
     return rvo;
 }
 
-#if (KR_MSC_VER >= 1300) // FIXME: Not in VC6, unsure when introduced.
-#include <intrin.h>
+#if (KR_MSC_HAS_INTRIN_)
 #define kr_popcnt16(x) (__popcnt16(x))
 #define kr_popcnt32(x) (__popcnt(x))
 #define kr_popcnt64(x) (__popcnt64(x))
@@ -337,3 +341,5 @@ KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT
 #define kr_popcnt32(x) (kr_popcount32(x))
 #define kr_popcnt64(x) (kr_popcount64(x))
 #endif
+
+#undef KR_MSC_HAS_INTRIN_

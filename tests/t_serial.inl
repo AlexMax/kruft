@@ -64,20 +64,20 @@ TEST(serial, kr_load_u64be)
 
 TEST(serial, kr_store_u16le)
 {
+    unsigned i = 0;
     unsigned char buf[2] = {0x00, 0x00};
     kr_store_u16le(buf, 0x9988);
 
-    unsigned i = 0;
     EXPECT_UINTEQ(0x88, buf[i++]);
     EXPECT_UINTEQ(0x99, buf[i++]);
 }
 
 TEST(serial, kr_store_u16be)
 {
+    unsigned i = 0;
     unsigned char buf[2] = {0x00, 0x00};
     kr_store_u16be(buf, 0x9988);
 
-    unsigned i = 0;
     EXPECT_UINTEQ(0x99, buf[i++]);
     EXPECT_UINTEQ(0x88, buf[i++]);
 }
@@ -86,10 +86,10 @@ TEST(serial, kr_store_u16be)
 
 TEST(serial, kr_store_u32le)
 {
+    unsigned i = 0;
     unsigned char buf[4] = {0x00, 0x00, 0x00, 0x00};
     kr_store_u32le(buf, 0xbbaa9988);
 
-    unsigned i = 0;
     EXPECT_UINTEQ(0x88, buf[i++]);
     EXPECT_UINTEQ(0x99, buf[i++]);
     EXPECT_UINTEQ(0xaa, buf[i++]);
@@ -98,10 +98,10 @@ TEST(serial, kr_store_u32le)
 
 TEST(serial, kr_store_u32be)
 {
+    unsigned i = 0;
     unsigned char buf[4] = {0x00, 0x00, 0x00, 0x00};
     kr_store_u32be(buf, 0xbbaa9988);
 
-    unsigned i = 0;
     EXPECT_UINTEQ(0xbb, buf[i++]);
     EXPECT_UINTEQ(0xaa, buf[i++]);
     EXPECT_UINTEQ(0x99, buf[i++]);
@@ -112,13 +112,14 @@ TEST(serial, kr_store_u32be)
 
 TEST(serial, kr_store_u64le)
 {
+
 #if !defined(UINT64_MAX)
     SKIP();
 #else
+    unsigned i = 0;
     unsigned char buf[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     kr_store_u64le(buf, 0xffeeddccbbaa9988);
 
-    unsigned i = 0;
     EXPECT_UINTEQ(0x88, buf[i++]);
     EXPECT_UINTEQ(0x99, buf[i++]);
     EXPECT_UINTEQ(0xaa, buf[i++]);
@@ -135,10 +136,10 @@ TEST(serial, kr_store_u64be)
 #if !defined(UINT64_MAX)
     SKIP();
 #else
+    unsigned i = 0;
     unsigned char buf[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     kr_store_u64be(buf, 0xffeeddccbbaa9988);
 
-    unsigned i = 0;
     EXPECT_UINTEQ(0xff, buf[i++]);
     EXPECT_UINTEQ(0xee, buf[i++]);
     EXPECT_UINTEQ(0xdd, buf[i++]);
