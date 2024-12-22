@@ -33,6 +33,7 @@
 #endif
 
 #include <limits.h>
+#include <stddef.h>
 
 // Boolean datatype.
 typedef int ZZT_BOOL;
@@ -865,7 +866,7 @@ int zzt_run_all(void)
         }
     }
 
-    return 0;
+    return failed != 0;
 }
 
 #if defined(ZZTEST_SELFCHECK)
