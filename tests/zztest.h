@@ -70,6 +70,7 @@ typedef unsigned __int64 ZZT_UINT64;
 
 enum zzt_fmt_e
 {
+    ZZT_FMT_BOOL,
     ZZT_FMT_CHAR,
     ZZT_FMT_LONG,
     ZZT_FMT_ULONG,
@@ -176,7 +177,8 @@ struct zzt_test_suite_s
     {                                                                                                                  \
         if (!(t))                                                                                                      \
         {                                                                                                              \
-            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, #t);                                       \
+            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL,                                            \
+                       "Value of: " #t "\n  Actual: false\nExpected: true");                                           \
         }                                                                                                              \
     }
 
@@ -185,9 +187,10 @@ struct zzt_test_suite_s
  */
 #define EXPECT_FALSE(t)                                                                                                \
     {                                                                                                                  \
-        if (!!(t))                                                                                                     \
+        if ((t))                                                                                                       \
         {                                                                                                              \
-            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "!" #t);                                   \
+            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL,                                            \
+                       "Value of: " #t "\n  Actual: true\nExpected: false");                                           \
         }                                                                                                              \
     }
 
@@ -196,10 +199,17 @@ struct zzt_test_suite_s
  */
 #define EXPECT_BOOLEQ(l, r)                                                                                            \
     {                                                                                                                  \
-        if (!!(l) != !!(r))                                                                                            \
-        {                                                                                                              \
-            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "!!" #l " != !!" #r);                      \
-        }                                                                                                              \
+        int ll = (l) ? 1 : 0, rr = (r) ? 1 : 0;                                                                        \
+        zzt_eq(zzt_test_state, ZZT_FMT_BOOL, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+    }
+
+/**
+ * @brief Expect char equality.
+ */
+#define EXPECT_CHAREQ(l, r)                                                                                            \
+    {                                                                                                                  \
+        char ll = l, rr = r;                                                                                           \
+        zzt_eq(zzt_test_state, ZZT_FMT_CHAR, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
     }
 
 /**
@@ -269,15 +279,6 @@ struct zzt_test_suite_s
 #endif
 
 /**
- * @brief Expect char equality.
- */
-#define EXPECT_CHAREQ(l, r)                                                                                            \
-    {                                                                                                                  \
-        char ll = l, rr = r;                                                                                           \
-        zzt_eq(zzt_test_state, ZZT_FMT_CHAR, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
-    }
-
-/**
  * @brief Expect string equality.
  */
 #define EXPECT_STREQ(l, r)                                                                                             \
@@ -326,7 +327,7 @@ struct zzt_test_suite_s
  */
 #define RUN_TESTS() (zzt_run_all())
 
-int zzt_test_strcmp(const char *lhs, const char *rhs);
+int zzt_strcmp(const char *lhs, const char *rhs);
 ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *l, const void *r, const char *ls,
                 const char *rs, const char *file, unsigned long line);
 void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long line, enum zzt_result_e msg,
@@ -397,7 +398,7 @@ static unsigned long zzt_ms(void)
  * @param fmt Format string.
  * @param ... Format parameters.
  */
-static void zzt_test_sprintf(char *buf, unsigned buflen, const char *fmt, ...)
+static void zzt_sprintf(char *buf, unsigned buflen, const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -416,6 +417,100 @@ static void zzt_test_sprintf(char *buf, unsigned buflen, const char *fmt, ...)
 }
 
 /**
+ * @brief Turn a string into a typical quoted string literal.
+ *
+ * @param buf Buffer to write to.
+ * @param buflen Length of destination buffer.
+ * @param str Input string to convert.
+ */
+static void zzt_stringify(char *buf, unsigned long buflen, const char *str)
+{
+    ZZT_BOOL partial = ZZT_FALSE;
+    const char *cur = str;
+    char *w = buf;
+    char *end = buf + buflen;
+#define REMAIN_() (end - w)
+#define WRITE_(c) (*w++ = (c))
+
+    if (buflen == 0)
+    {
+        return;
+    }
+    else if (REMAIN_() < 5) // Needs to contain at least "...\0
+    {
+        WRITE_('\0');
+        return;
+    }
+
+    WRITE_('\"');
+    while (*cur != '\0')
+    {
+        if (*cur == '\t' || *cur == '\n' || *cur == '\r' || *cur == '\\')
+        {
+            if (REMAIN_() < 3)
+            {
+                partial = ZZT_TRUE;
+                break;
+            }
+
+            WRITE_('\\');
+            if (*cur == '\t')
+            {
+                WRITE_('t');
+            }
+            else if (*cur == '\n')
+            {
+                WRITE_('n');
+            }
+            else if (*cur == '\r')
+            {
+                WRITE_('r');
+            }
+            else if (*cur == '\\')
+            {
+                WRITE_('\\');
+            }
+        }
+        else if (*cur >= ' ' && *cur <= '~')
+        {
+            if (REMAIN_() < 2)
+            {
+                partial = ZZT_TRUE;
+                break;
+            }
+            WRITE_(*cur);
+        }
+        else
+        {
+            if (REMAIN_() < 5)
+            {
+                partial = ZZT_TRUE;
+                break;
+            }
+
+            zzt_sprintf(w, 5, "\\x%02x", ((unsigned)*cur) & 0xFF);
+            w += 4;
+        }
+
+        cur += 1;
+    }
+
+    if (partial)
+    {
+        w = end - 5;
+        WRITE_('.');
+        WRITE_('.');
+        WRITE_('.');
+        WRITE_('\0');
+        return;
+    }
+
+    WRITE_('\"');
+    WRITE_('\0');
+#undef REMAIN_
+}
+
+/**
  * @brief Print a value based on its desired format.
  *
  * @param fmt Format type.
@@ -424,64 +519,76 @@ static void zzt_test_sprintf(char *buf, unsigned buflen, const char *fmt, ...)
  */
 static void zzt_printv(enum zzt_fmt_e fmt, const void *v, const char *vs)
 {
-    char buffer[32];
+    char buffer[64];
 
     switch (fmt)
     {
+    case ZZT_FMT_BOOL: {
+        const int boolean = *((int *)v);
+        if (boolean)
+        {
+            zzt_sprintf(buffer, sizeof(buffer), "true");
+        }
+        else
+        {
+            zzt_sprintf(buffer, sizeof(buffer), "false");
+        }
+        break;
+    }
     case ZZT_FMT_CHAR: {
         const char ch = *((char *)v);
         if (ch == '\0')
         {
-            zzt_test_sprintf(buffer, sizeof(buffer), "'\\0'", ch);
-        }
-        else if (ch == '\n')
-        {
-            zzt_test_sprintf(buffer, sizeof(buffer), "'\\n'", ch);
-        }
-        else if (ch == '\r')
-        {
-            zzt_test_sprintf(buffer, sizeof(buffer), "'\\r'", ch);
+            zzt_sprintf(buffer, sizeof(buffer), "'\\0'", ch);
         }
         else if (ch == '\t')
         {
-            zzt_test_sprintf(buffer, sizeof(buffer), "'\\t'", ch);
+            zzt_sprintf(buffer, sizeof(buffer), "'\\t'", ch);
+        }
+        else if (ch == '\n')
+        {
+            zzt_sprintf(buffer, sizeof(buffer), "'\\n'", ch);
+        }
+        else if (ch == '\r')
+        {
+            zzt_sprintf(buffer, sizeof(buffer), "'\\r'", ch);
         }
         else if (ch == '\\')
         {
-            zzt_test_sprintf(buffer, sizeof(buffer), "'\\\\'", ch);
+            zzt_sprintf(buffer, sizeof(buffer), "'\\\\'", ch);
         }
         else if (ch >= ' ' && ch <= '~')
         {
-            zzt_test_sprintf(buffer, sizeof(buffer), "'%c'", ch);
+            zzt_sprintf(buffer, sizeof(buffer), "'%c'", ch);
         }
         else
         {
-            zzt_test_sprintf(buffer, sizeof(buffer), "'\\x%02x'", ((unsigned)ch) & 0xFF);
+            zzt_sprintf(buffer, sizeof(buffer), "'\\x%02x'", ((unsigned)ch) & 0xFF);
         }
         break;
     }
     case ZZT_FMT_LONG:
-        zzt_test_sprintf(buffer, sizeof(buffer), "%ld", *((long *)v));
+        zzt_sprintf(buffer, sizeof(buffer), "%ld", *((long *)v));
         break;
     case ZZT_FMT_ULONG:
-        zzt_test_sprintf(buffer, sizeof(buffer), "%lu", *((unsigned long *)v));
+        zzt_sprintf(buffer, sizeof(buffer), "%lu", *((unsigned long *)v));
         break;
     case ZZT_FMT_XLONG:
-        zzt_test_sprintf(buffer, sizeof(buffer), "0x%lx", *((unsigned long *)v));
+        zzt_sprintf(buffer, sizeof(buffer), "0x%lx", *((unsigned long *)v));
         break;
 #if (ZZTEST_HAS_64BIT)
     case ZZT_FMT_I64:
-        zzt_test_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIi64, *((ZZT_INT64 *)v));
+        zzt_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIi64, *((ZZT_INT64 *)v));
         break;
     case ZZT_FMT_UI64:
-        zzt_test_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIu64, *((ZZT_UINT64 *)v));
+        zzt_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIu64, *((ZZT_UINT64 *)v));
         break;
     case ZZT_FMT_XI64:
-        zzt_test_sprintf(buffer, sizeof(buffer), "0x%" ZZT_PRIx64, *((ZZT_UINT64 *)v));
+        zzt_sprintf(buffer, sizeof(buffer), "0x%" ZZT_PRIx64, *((ZZT_UINT64 *)v));
         break;
 #endif // (ZZT_HAS_64BIT)
     case ZZT_FMT_STR:
-        zzt_test_sprintf(buffer, sizeof(buffer), "\"%s\"", (const char *)v);
+        zzt_stringify(buffer, sizeof(buffer), (const char *)v);
         break;
     default:
         return;
@@ -530,7 +637,7 @@ static void zzt_add_skip(struct zzt_test_s *test)
 
 //------------------------------------------------------------------------------
 
-int zzt_test_strcmp(const char *lhs, const char *rhs)
+int zzt_strcmp(const char *lhs, const char *rhs)
 {
     return strcmp(lhs, rhs);
 }
@@ -542,7 +649,11 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *
 {
     ZZT_BOOL isEqual = ZZT_FALSE;
 
-    if (fmt == ZZT_FMT_CHAR)
+    if (fmt == ZZT_FMT_BOOL)
+    {
+        isEqual = *((int *)l) == *((int *)r);
+    }
+    else if (fmt == ZZT_FMT_CHAR)
     {
         isEqual = *((char *)l) == *((char *)r);
     }
@@ -792,6 +903,7 @@ TEST(zztest, failing_str)
     EXPECT_STREQ("foo", "bar");
     EXPECT_STREQ("\r\n", "\t\\");
     EXPECT_STREQ("f\x6F\x6F", "b\x61r");
+    EXPECT_STREQ("", "The quick brown fox jumps over the lazy dog.\nLorem ipsum dolor sit amet.");
 }
 
 TEST(zztest, skipping)
