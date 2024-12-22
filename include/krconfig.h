@@ -113,7 +113,7 @@
 #define KR_NODISCARD
 #endif
 
-#if (KR_CPLUSPLUS)
+#if (KR_CPLUSPLUS >= 201103l)
 #define KR_NOEXCEPT noexcept
 #else
 #define KR_NOEXCEPT
