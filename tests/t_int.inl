@@ -75,7 +75,7 @@ TEST(int, ranges)
 
 TEST(int, constants)
 {
-    EXPECT_INTEQ(UINT32_MAX, UINT32_C(0) - 1);
+    EXPECT_UINTEQ(UINT32_MAX, UINT32_C(0) - 1);
     EXPECT_UINT64EQ(UINT64_MAX, UINT64_C(0) - 1);
 }
 

@@ -40,8 +40,8 @@ KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT;
  */
 KR_CONSTEXPR uint16_t kr_byteswap16(uint16_t x)
 {
-    return ((x & UINT16_C(0xFF00)) >> UINT16_C(8)) | //
-           ((x & UINT16_C(0x00FF)) << UINT16_C(8));  //
+    return KR_CASTS(uint16_t, (x & 0xFF00) >> 8) | //
+           KR_CASTS(uint16_t, (x & 0x00FF) << 8);  //
 }
 
 /**
@@ -49,10 +49,10 @@ KR_CONSTEXPR uint16_t kr_byteswap16(uint16_t x)
  */
 KR_CONSTEXPR uint32_t kr_byteswap32(uint32_t x)
 {
-    return ((x & UINT32_C(0xFF000000)) >> UINT32_C(24)) | //
-           ((x & UINT32_C(0x00FF0000)) >> UINT32_C(8)) |  //
-           ((x & UINT32_C(0x0000FF00)) << UINT32_C(8)) |  //
-           ((x & UINT32_C(0x000000FF)) << UINT32_C(24));  //
+    return ((x & 0xFF000000) >> 24) | //
+           ((x & 0x00FF0000) >> 8) |  //
+           ((x & 0x0000FF00) << 8) |  //
+           ((x & 0x000000FF) << 24);  //
 }
 
 #if defined(UINT64_MAX)
@@ -218,7 +218,7 @@ KR_CONSTEXPR int kr_bit_width64(uint64_t x) KR_NOEXCEPT
 
 KR_CONSTEXPR uint16_t kr_rotl16(uint16_t x, int c) KR_NOEXCEPT
 {
-    return (x << c) | (x >> (-c & 0x0F));
+    return KR_CASTS(uint16_t, x << c) | KR_CASTS(uint16_t, x >> (-c & 0x0F));
 }
 
 KR_CONSTEXPR uint32_t kr_rotl32(uint32_t x, int c) KR_NOEXCEPT
@@ -245,7 +245,7 @@ KR_CONSTEXPR uint64_t kr_rotl64(uint64_t x, int c) KR_NOEXCEPT
 
 KR_CONSTEXPR uint16_t kr_rotr16(uint16_t x, int c) KR_NOEXCEPT
 {
-    return (x >> c) | (x << (-c & 0x0F));
+    return KR_CASTS(uint16_t, x >> c) | KR_CASTS(uint16_t, x << (-c & 0x0F));
 }
 
 KR_CONSTEXPR uint32_t kr_rotr32(uint32_t x, int c) KR_NOEXCEPT
@@ -354,8 +354,8 @@ KR_CONSTEXPR int kr_countl_one64(uint64_t x) KR_NOEXCEPT
 }
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_clz on clang-cl
-#define kr_clo32(x) ((x) != 0xFFFFFFFF ? __builtin_clz(~(x)) : 32)
-#define kr_clo64(x) ((x) != 0xFFFFFFFFFFFFFFFF ? __builtin_clzll(~(x)) : 64)
+#define kr_clo32(x) ((x) != 0xFFFFFFFF ? __builtin_clz(~KR_CASTS(uint32_t, (x))) : 32)
+#define kr_clo64(x) ((x) != 0xFFFFFFFFFFFFFFFF ? __builtin_clzll(~KR_CASTS(uint64_t, (x))) : 64)
 #elif (KR_MSC_HAS_INTRIN_)
 #define kr_clo32(x) (kr_clz32_detail_(~(x)))
 #define kr_clo64(x) (kr_clz64_detail_(~(x)))
@@ -446,8 +446,8 @@ KR_CONSTEXPR int kr_countr_one64(uint64_t x) KR_NOEXCEPT
 }
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_ctz on clang-cl
-#define kr_cto32(x) ((x) != UINT32_C(0xFFFFFFFF) ? __builtin_ctz(~(x)) : 32)
-#define kr_cto64(x) ((x) != UINT64_C(0xFFFFFFFFFFFFFFFF) ? __builtin_ctzll(~(x)) : 64)
+#define kr_cto32(x) ((x) != UINT32_C(0xFFFFFFFF) ? __builtin_ctz(~KR_CASTS(uint32_t, (x))) : 32)
+#define kr_cto64(x) ((x) != UINT64_C(0xFFFFFFFFFFFFFFFF) ? __builtin_ctzll(~KR_CASTS(uint64_t, (x))) : 64)
 #elif (KR_MSC_HAS_INTRIN_)
 #define kr_cto32(x) (kr_ctz32_detail_(~(x)))
 #define kr_cto64(x) (kr_ctz64_detail_(~(x)))

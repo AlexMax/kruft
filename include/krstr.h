@@ -94,7 +94,7 @@ KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRIC
         return -1;
     }
 
-    return tail + len;
+    return KR_CASTS(ptrdiff_t, tail) + len;
 }
 
 KR_CONSTEXPR size_t kr_strlcpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
@@ -146,7 +146,7 @@ KR_CONSTEXPR char *kr_stpecpy(char *dest, char *srcEnd, const char *KR_RESTRICT 
         return NULL;
     }
 
-    len = kr_strscpy(dest, src, srcEnd - dest);
+    len = kr_strscpy(dest, src, KR_CASTS(size_t, srcEnd - dest));
     if (len == -1)
     {
         return NULL;

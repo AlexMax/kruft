@@ -35,6 +35,12 @@ if(W_MOST)
     target_compile_options(kruft_test_cxx PRIVATE "-Wmost")
 endif()
 
+check_compiler_flag(CXX -Wconversion W_CONVERSION)
+if(W_MOST)
+    target_compile_options(kruft_test_c PRIVATE "-Wconversion")
+    target_compile_options(kruft_test_cxx PRIVATE "-Wconversion")
+endif()
+
 check_compiler_flag(CXX -Werror=c++17-extensions WERROR_CXX17_EXTENSIONS)
 if(WERROR_CXX17_EXTENSIONS)
     target_compile_options(kruft_test_cxx PRIVATE "-Werror=c++17-extensions")

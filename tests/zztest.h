@@ -235,7 +235,7 @@ struct zzt_test_suite_s
  */
 #define EXPECT_UINTEQ(l, r)                                                                                            \
     {                                                                                                                  \
-        long ll = l, rr = r;                                                                                           \
+        unsigned long ll = l, rr = r;                                                                                  \
         zzt_eq(zzt_test_state, ZZT_FMT_ULONG, &ll, &rr, #l, #r, __FILE__, __LINE__);                                   \
     }
 
@@ -244,7 +244,7 @@ struct zzt_test_suite_s
  */
 #define EXPECT_XINTEQ(l, r)                                                                                            \
     {                                                                                                                  \
-        long ll = l, rr = r;                                                                                           \
+        unsigned long ll = l, rr = r;                                                                                  \
         zzt_eq(zzt_test_state, ZZT_FMT_XLONG, &ll, &rr, #l, #r, __FILE__, __LINE__);                                   \
     }
 
