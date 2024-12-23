@@ -216,6 +216,11 @@ KR_CONSTEXPR int kr_bit_width64(uint64_t x) KR_NOEXCEPT
 
 //------------------------------------------------------------------------------
 
+KR_CONSTEXPR uint16_t kr_rotl16(uint16_t x, int c) KR_NOEXCEPT
+{
+    return (x << c) | (x >> (-c & 0x0F));
+}
+
 KR_CONSTEXPR uint32_t kr_rotl32(uint32_t x, int c) KR_NOEXCEPT
 {
     return (x << c) | (x >> (-c & 0x1F));
@@ -227,14 +232,21 @@ KR_CONSTEXPR uint64_t kr_rotl64(uint64_t x, int c) KR_NOEXCEPT
 }
 
 #if (KR_MSC_HAS_INTRIN_)
+#define kr_rol16(x, c) (kr_rotl16((x), (c)))
 #define kr_rol32(x, c) (_rotl((x), (c)))
 #define kr_rol64(x, c) (_rotl64((x), (c)))
 #else
+#define kr_rol16(x, c) (kr_rotl16((x), (c)))
 #define kr_rol32(x, c) (kr_rotl32((x), (c)))
 #define kr_rol64(x, c) (kr_rotl64((x), (c)))
 #endif
 
 //------------------------------------------------------------------------------
+
+KR_CONSTEXPR uint16_t kr_rotr16(uint16_t x, int c) KR_NOEXCEPT
+{
+    return (x >> c) | (x << (-c & 0x0F));
+}
 
 KR_CONSTEXPR uint32_t kr_rotr32(uint32_t x, int c) KR_NOEXCEPT
 {
@@ -247,9 +259,11 @@ KR_CONSTEXPR uint64_t kr_rotr64(uint64_t x, int c) KR_NOEXCEPT
 }
 
 #if (KR_MSC_HAS_INTRIN_)
+#define kr_ror16(x, c) (kr_rotr16((x), (c)))
 #define kr_ror32(x, c) (_rotr((x), (c)))
 #define kr_ror64(x, c) (_rotr64((x), (c)))
 #else
+#define kr_ror16(x, c) (kr_rotr16((x), (c)))
 #define kr_ror32(x, c) (kr_rotr32((x), (c)))
 #define kr_ror64(x, c) (kr_rotr64((x), (c)))
 #endif
