@@ -446,8 +446,11 @@ SUITE(bit)
     SUITE_TEST(bit, kr_has_single_bit32);
     SUITE_TEST(bit, kr_has_single_bit64);
     SUITE_TEST(bit, kr_bit_ceil32);
+    SUITE_TEST(bit, kr_bit_ceil64);
     SUITE_TEST(bit, kr_bit_floor32);
+    SUITE_TEST(bit, kr_bit_floor64);
     SUITE_TEST(bit, kr_bit_width32);
+    SUITE_TEST(bit, kr_bit_width64);
     SUITE_TEST(bit, kr_rotl16);
     SUITE_TEST(bit, kr_rol16_MACRO);
     SUITE_TEST(bit, kr_rotl32);
