@@ -111,27 +111,67 @@ KR_CONSTEXPR bool kr_has_single_bit64(uint64_t x) KR_NOEXCEPT
     return x && !(x & (x - 1));
 }
 
-#if 0
-
 //------------------------------------------------------------------------------
 
-KR_CONSTEXPR bool kr_bit_ceil(uint32_t x) KR_NOEXCEPT
+/**
+ * @brief Round up to the nearest power of two.
+ *
+ * @link http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2Float
+ */
+KR_CONSTEXPR uint32_t kr_bit_ceil32(uint32_t x) KR_NOEXCEPT
 {
+    if (x <= 1)
+    {
+        return 1;
+    }
+
+    x -= 1;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    x += 1;
+    return x;
 }
 
 //------------------------------------------------------------------------------
 
-KR_CONSTEXPR bool kr_bit_floor(uint32_t x) KR_NOEXCEPT
+/**
+ * @brief Round down to the nearest power of two.
+ *
+ * @link https://www.amazon.com/Hackers-Delight-2nd-Henry-Warren-dp-0321842685/dp/0321842685
+ */
+KR_CONSTEXPR uint32_t kr_bit_floor32(uint32_t x) KR_NOEXCEPT
 {
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    return x - (x >> 1);
 }
 
 //------------------------------------------------------------------------------
 
-KR_CONSTEXPR bool kr_bit_width(uint32_t x) KR_NOEXCEPT
+/**
+ * @brief Count minimum number of bits needed to represent value.
+ */
+KR_CONSTEXPR int kr_bit_width32(uint32_t x) KR_NOEXCEPT
 {
-}
+    int rvo = 0;
+    uint32_t mask = 0x80000000;
 
-#endif
+    for (; mask; mask >>= 1, rvo++)
+    {
+        if (x & mask)
+        {
+            return 32 - rvo;
+        }
+    }
+
+    return 32 - rvo;
+}
 
 //------------------------------------------------------------------------------
 
@@ -304,16 +344,14 @@ KR_CONSTEXPR int kr_popcount16(uint16_t x) KR_NOEXCEPT
     return rvo;
 }
 
+/**
+ * @brief Count number of set bits in an integer.
+ */
 KR_CONSTEXPR int kr_popcount32(uint32_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-
-    for (; x; x >>= 1)
-    {
-        rvo += x & 0x1;
-    }
-
-    return rvo;
+    x = x - ((x >> 1) & 0x55555555);
+    x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
+    return ((x + (x >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
 KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT

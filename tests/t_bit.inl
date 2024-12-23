@@ -86,6 +86,38 @@ TEST(bit, kr_has_single_bit64)
 
 //------------------------------------------------------------------------------
 
+TEST(bit, kr_bit_ceil32)
+{
+    EXPECT_UINTEQ(1, kr_bit_ceil32(0));
+    EXPECT_UINTEQ(1, kr_bit_ceil32(1));
+    EXPECT_UINTEQ(2, kr_bit_ceil32(2));
+    EXPECT_UINTEQ(4, kr_bit_ceil32(3));
+    EXPECT_UINTEQ(4, kr_bit_ceil32(4));
+    EXPECT_UINTEQ(8, kr_bit_ceil32(5));
+}
+
+TEST(bit, kr_bit_floor32)
+{
+    EXPECT_UINTEQ(0, kr_bit_floor32(0));
+    EXPECT_UINTEQ(1, kr_bit_floor32(1));
+    EXPECT_UINTEQ(2, kr_bit_floor32(2));
+    EXPECT_UINTEQ(2, kr_bit_floor32(3));
+    EXPECT_UINTEQ(4, kr_bit_floor32(4));
+    EXPECT_UINTEQ(4, kr_bit_floor32(5));
+}
+
+TEST(bit, kr_bit_width32)
+{
+    EXPECT_UINTEQ(0, kr_bit_width32(0));
+    EXPECT_UINTEQ(1, kr_bit_width32(1));
+    EXPECT_UINTEQ(2, kr_bit_width32(2));
+    EXPECT_UINTEQ(2, kr_bit_width32(3));
+    EXPECT_UINTEQ(3, kr_bit_width32(4));
+    EXPECT_UINTEQ(32, kr_bit_width32(UINT32_MAX));
+}
+
+//------------------------------------------------------------------------------
+
 TEST(bit, kr_rotl32)
 {
     EXPECT_UINTEQ(0x0799aa80, kr_rotl32(0x00f33550, 3));
@@ -270,6 +302,9 @@ SUITE(bit)
     SUITE_TEST(bit, kr_has_single_bit16);
     SUITE_TEST(bit, kr_has_single_bit32);
     SUITE_TEST(bit, kr_has_single_bit64);
+    SUITE_TEST(bit, kr_bit_ceil32);
+    SUITE_TEST(bit, kr_bit_floor32);
+    SUITE_TEST(bit, kr_bit_width32);
     SUITE_TEST(bit, kr_rotl32);
     SUITE_TEST(bit, kr_rol32_MACRO);
     SUITE_TEST(bit, kr_rotl64);
