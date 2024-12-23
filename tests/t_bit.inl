@@ -94,6 +94,19 @@ TEST(bit, kr_bit_ceil32)
     EXPECT_UINTEQ(4, kr_bit_ceil32(3));
     EXPECT_UINTEQ(4, kr_bit_ceil32(4));
     EXPECT_UINTEQ(8, kr_bit_ceil32(5));
+    EXPECT_UINTEQ(INT32_MAX + UINT32_C(1), kr_bit_ceil32(INT32_MAX));
+}
+
+TEST(bit, kr_bit_ceil64)
+{
+    EXPECT_UINT64EQ(1, kr_bit_ceil64(0));
+    EXPECT_UINT64EQ(1, kr_bit_ceil64(1));
+    EXPECT_UINT64EQ(2, kr_bit_ceil64(2));
+    EXPECT_UINT64EQ(4, kr_bit_ceil64(3));
+    EXPECT_UINT64EQ(4, kr_bit_ceil64(4));
+    EXPECT_UINT64EQ(8, kr_bit_ceil64(5));
+    EXPECT_UINT64EQ(INT32_MAX + UINT64_C(1), kr_bit_ceil64(INT32_MAX));
+    EXPECT_UINT64EQ(INT64_MAX + UINT64_C(1), kr_bit_ceil64(INT64_MAX));
 }
 
 TEST(bit, kr_bit_floor32)
@@ -104,6 +117,19 @@ TEST(bit, kr_bit_floor32)
     EXPECT_UINTEQ(2, kr_bit_floor32(3));
     EXPECT_UINTEQ(4, kr_bit_floor32(4));
     EXPECT_UINTEQ(4, kr_bit_floor32(5));
+    EXPECT_UINTEQ(INT32_MAX + UINT32_C(1), kr_bit_floor32(UINT32_MAX));
+}
+
+TEST(bit, kr_bit_floor64)
+{
+    EXPECT_UINT64EQ(0, kr_bit_floor64(0));
+    EXPECT_UINT64EQ(1, kr_bit_floor64(1));
+    EXPECT_UINT64EQ(2, kr_bit_floor64(2));
+    EXPECT_UINT64EQ(2, kr_bit_floor64(3));
+    EXPECT_UINT64EQ(4, kr_bit_floor64(4));
+    EXPECT_UINT64EQ(4, kr_bit_floor64(5));
+    EXPECT_UINT64EQ(INT32_MAX + UINT64_C(1), kr_bit_floor64(UINT32_MAX));
+    EXPECT_UINT64EQ(INT64_MAX + UINT64_C(1), kr_bit_floor64(UINT64_MAX));
 }
 
 TEST(bit, kr_bit_width32)
@@ -114,6 +140,17 @@ TEST(bit, kr_bit_width32)
     EXPECT_UINTEQ(2, kr_bit_width32(3));
     EXPECT_UINTEQ(3, kr_bit_width32(4));
     EXPECT_UINTEQ(32, kr_bit_width32(UINT32_MAX));
+}
+
+TEST(bit, kr_bit_width64)
+{
+    EXPECT_UINT64EQ(0, kr_bit_width64(0));
+    EXPECT_UINT64EQ(1, kr_bit_width64(1));
+    EXPECT_UINT64EQ(2, kr_bit_width64(2));
+    EXPECT_UINT64EQ(2, kr_bit_width64(3));
+    EXPECT_UINT64EQ(3, kr_bit_width64(4));
+    EXPECT_UINT64EQ(32, kr_bit_width64(UINT32_MAX));
+    EXPECT_UINT64EQ(64, kr_bit_width64(UINT64_MAX));
 }
 
 //------------------------------------------------------------------------------

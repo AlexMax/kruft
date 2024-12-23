@@ -135,6 +135,29 @@ KR_CONSTEXPR uint32_t kr_bit_ceil32(uint32_t x) KR_NOEXCEPT
     return x;
 }
 
+/**
+ * @brief Round up to the nearest power of two.
+ *
+ * @link http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2Float
+ */
+KR_CONSTEXPR uint64_t kr_bit_ceil64(uint64_t x) KR_NOEXCEPT
+{
+    if (x <= 1)
+    {
+        return 1;
+    }
+
+    x -= 1;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    x |= x >> 32;
+    x += 1;
+    return x;
+}
+
 //------------------------------------------------------------------------------
 
 /**
@@ -149,6 +172,22 @@ KR_CONSTEXPR uint32_t kr_bit_floor32(uint32_t x) KR_NOEXCEPT
     x |= x >> 4;
     x |= x >> 8;
     x |= x >> 16;
+    return x - (x >> 1);
+}
+
+/**
+ * @brief Round down to the nearest power of two.
+ *
+ * @link https://www.amazon.com/Hackers-Delight-2nd-Henry-Warren-dp-0321842685/dp/0321842685
+ */
+KR_CONSTEXPR uint64_t kr_bit_floor64(uint64_t x) KR_NOEXCEPT
+{
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    x |= x >> 32;
     return x - (x >> 1);
 }
 
@@ -171,6 +210,25 @@ KR_CONSTEXPR int kr_bit_width32(uint32_t x) KR_NOEXCEPT
     }
 
     return 32 - rvo;
+}
+
+/**
+ * @brief Count minimum number of bits needed to represent value.
+ */
+KR_CONSTEXPR int kr_bit_width64(uint64_t x) KR_NOEXCEPT
+{
+    int rvo = 0;
+    uint64_t mask = 0x8000000000000000;
+
+    for (; mask; mask >>= 1, rvo++)
+    {
+        if (x & mask)
+        {
+            return 64 - rvo;
+        }
+    }
+
+    return 64 - rvo;
 }
 
 //------------------------------------------------------------------------------
