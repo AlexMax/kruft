@@ -30,6 +30,9 @@
 #define KR_MSC_HAS_INTRIN_ (0)
 #endif
 
+KR_CONSTEXPR int kr_popcount32(uint32_t x) KR_NOEXCEPT;
+KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT;
+
 /**
  * @brief Byteswap a 16-bit value.
  */
@@ -273,20 +276,19 @@ KR_CONSTEXPR uint64_t kr_rotr64(uint64_t x, int c) KR_NOEXCEPT
 
 //------------------------------------------------------------------------------
 
+/**
+ * @brief Count leading (starting at MSB) zero bits.
+ *
+ * @link http://aggregate.ee.engr.uky.edu/MAGIC/#Leading%20Zero%20Count
+ */
 KR_CONSTEXPR int kr_countl_zero32(uint32_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-    uint32_t mask = 0x80000000;
-
-    for (; mask; mask >>= 1, rvo++)
-    {
-        if (x & mask)
-        {
-            return rvo;
-        }
-    }
-
-    return rvo;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    return 32 - kr_popcount32(x);
 }
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_clz on clang-cl
@@ -304,20 +306,18 @@ KR_FORCEINLINE int kr_clz32_detail_(unsigned long x)
 
 //------------------------------------------------------------------------------
 
+/**
+ * @brief Count leading (starting at MSB) one bits.
+ */
 KR_CONSTEXPR int kr_countl_one32(uint32_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-    uint32_t mask = 0x80000000;
-
-    for (; mask; mask >>= 1, rvo++)
-    {
-        if (!(x & mask))
-        {
-            return rvo;
-        }
-    }
-
-    return rvo;
+    x = ~x;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    return 32 - kr_popcount32(x);
 }
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_clz on clang-cl
@@ -330,24 +330,17 @@ KR_CONSTEXPR int kr_countl_one32(uint32_t x) KR_NOEXCEPT
 
 //------------------------------------------------------------------------------
 
+/**
+ * @brief Count trailing (starting at LSB) zero bits.
+ */
 KR_CONSTEXPR int kr_countr_zero32(uint32_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-
-    if (x == 0)
-    {
-        return sizeof(x) * 8;
-    }
-
-    for (; x; x >>= 1, rvo++)
-    {
-        if (x & 0x01)
-        {
-            return rvo;
-        }
-    }
-
-    return rvo;
+    x |= x << 1;
+    x |= x << 2;
+    x |= x << 4;
+    x |= x << 8;
+    x |= x << 16;
+    return 32 - kr_popcount32(x);
 }
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_ctz on clang-cl
@@ -365,19 +358,18 @@ KR_FORCEINLINE int kr_ctz32_detail_(unsigned long x)
 
 //------------------------------------------------------------------------------
 
+/**
+ * @brief Count trailing (starting at LSB) one bits.
+ */
 KR_CONSTEXPR int kr_countr_one32(uint32_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-
-    for (; x; x >>= 1, rvo++)
-    {
-        if (!(x & 0x01))
-        {
-            return rvo;
-        }
-    }
-
-    return rvo;
+    x = ~x;
+    x |= x << 1;
+    x |= x << 2;
+    x |= x << 4;
+    x |= x << 8;
+    x |= x << 16;
+    return 32 - kr_popcount32(x);
 }
 
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_ctz on clang-cl
@@ -390,38 +382,43 @@ KR_CONSTEXPR int kr_countr_one32(uint32_t x) KR_NOEXCEPT
 
 //------------------------------------------------------------------------------
 
+/**
+ * @brief Count number of set bits in an integer.
+ *
+ * @link https://graphics.stanford.edu/%7Eseander/bithacks.html#CountBitsSetParallel
+ */
 KR_CONSTEXPR int kr_popcount16(uint16_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-
-    for (; x; x >>= 1)
-    {
-        rvo += x & 0x1;
-    }
-
-    return rvo;
+    x = x - ((x >> 1) & UINT16_C(0x5555));
+    x = (x & UINT16_C(0x3333)) + ((x >> 2) & UINT16_C(0x3333));
+    x = (x + (x >> 4)) & UINT16_C(0x0f0f);
+    return KR_CASTS(uint16_t, x * UINT16_C(0x0101)) >> 8;
 }
 
 /**
  * @brief Count number of set bits in an integer.
+ *
+ * @link https://graphics.stanford.edu/%7Eseander/bithacks.html#CountBitsSetParallel
  */
 KR_CONSTEXPR int kr_popcount32(uint32_t x) KR_NOEXCEPT
 {
-    x = x - ((x >> 1) & 0x55555555);
-    x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
-    return ((x + (x >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+    x = x - ((x >> 1) & UINT32_C(0x55555555));
+    x = (x & UINT32_C(0x33333333)) + ((x >> 2) & UINT32_C(0x33333333));
+    x = (x + (x >> 4)) & UINT32_C(0x0f0f0f0f);
+    return KR_CASTS(uint32_t, x * UINT32_C(0x01010101)) >> 24;
 }
 
+/**
+ * @brief Count number of set bits in an integer.
+ *
+ * @link https://graphics.stanford.edu/%7Eseander/bithacks.html#CountBitsSetParallel
+ */
 KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-
-    for (; x; x >>= 1)
-    {
-        rvo += x & 0x1;
-    }
-
-    return rvo;
+    x = x - ((x >> 1) & UINT64_C(0x5555555555555555));
+    x = (x & UINT64_C(0x3333333333333333)) + ((x >> 2) & UINT64_C(0x3333333333333333));
+    x = (x + (x >> 4)) & UINT64_C(0x0f0f0f0f0f0f0f0f);
+    return KR_CASTS(uint64_t, x * UINT64_C(0x0101010101010101)) >> 56;
 }
 
 #if (KR_MSC_HAS_INTRIN_)

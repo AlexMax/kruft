@@ -300,11 +300,13 @@ TEST(bit, kr_popcnt16_MACRO)
 TEST(bit, kr_popcount32)
 {
     EXPECT_UINTEQ(6, kr_popcount32(0x04c7));
+    EXPECT_UINTEQ(12, kr_popcount32(0x04c704c7));
 }
 
 TEST(bit, kr_popcnt32_MACRO)
 {
     EXPECT_UINTEQ(6, kr_popcnt32(0x04c7));
+    EXPECT_UINTEQ(12, kr_popcnt32(0x04c704c7));
 }
 
 TEST(bit, kr_popcount64)
@@ -313,6 +315,8 @@ TEST(bit, kr_popcount64)
     SKIP();
 #else  // !defined(UINT64_MAX)
     EXPECT_UINTEQ(6, kr_popcount64(0x04c7));
+    EXPECT_UINTEQ(12, kr_popcount64(0x04c704c7));
+    EXPECT_UINTEQ(24, kr_popcount64(0x04c704c704c704c7));
 #endif // !defined(UINT64_MAX)
 }
 
@@ -322,6 +326,8 @@ TEST(bit, kr_popcnt64_MACRO)
     SKIP();
 #else  // !defined(UINT64_MAX)
     EXPECT_UINT64EQ(6, kr_popcnt64(0x04c7));
+    EXPECT_UINTEQ(12, kr_popcnt64(0x04c704c7));
+    EXPECT_UINTEQ(24, kr_popcnt64(0x04c704c704c704c7));
 #endif // !defined(UINT64_MAX)
 }
 
