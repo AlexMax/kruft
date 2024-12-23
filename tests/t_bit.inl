@@ -155,6 +155,20 @@ TEST(bit, kr_bit_width64)
 
 //------------------------------------------------------------------------------
 
+TEST(bit, kr_rotl8)
+{
+    EXPECT_XINTEQ(0xa6u, kr_rotl8(0xd4, 3));
+    EXPECT_XINTEQ(0x9au, kr_rotl8(0xd4, 5));
+    EXPECT_XINTEQ(0xd4u, kr_rotl8(0xd4, 0));
+}
+
+TEST(bit, kr_rol8_MACRO)
+{
+    EXPECT_XINTEQ(0xa6u, kr_rol8(0xd4, 3));
+    EXPECT_XINTEQ(0x9au, kr_rol8(0xd4, 5));
+    EXPECT_XINTEQ(0xd4u, kr_rol8(0xd4, 0));
+}
+
 TEST(bit, kr_rotl16)
 {
     EXPECT_XINTEQ(0xe6a1, kr_rotl16(0x3cd4, 3));
@@ -202,6 +216,20 @@ TEST(bit, kr_rol64_MACRO)
 }
 
 //------------------------------------------------------------------------------
+
+TEST(bit, kr_rotr8)
+{
+    EXPECT_XINTEQ(0x9au, kr_rotr8(0xd4, 3));
+    EXPECT_XINTEQ(0xa6u, kr_rotr8(0xd4, 5));
+    EXPECT_XINTEQ(0xd4u, kr_rotr8(0xd4, 0));
+}
+
+TEST(bit, kr_ror8_MACRO)
+{
+    EXPECT_XINTEQ(0x9au, kr_ror8(0xd4, 3));
+    EXPECT_XINTEQ(0xa6u, kr_ror8(0xd4, 5));
+    EXPECT_XINTEQ(0xd4u, kr_ror8(0xd4, 0));
+}
 
 TEST(bit, kr_rotr16)
 {
@@ -451,12 +479,16 @@ SUITE(bit)
     SUITE_TEST(bit, kr_bit_floor64);
     SUITE_TEST(bit, kr_bit_width32);
     SUITE_TEST(bit, kr_bit_width64);
+    SUITE_TEST(bit, kr_rotl8);
+    SUITE_TEST(bit, kr_rol8_MACRO);
     SUITE_TEST(bit, kr_rotl16);
     SUITE_TEST(bit, kr_rol16_MACRO);
     SUITE_TEST(bit, kr_rotl32);
     SUITE_TEST(bit, kr_rol32_MACRO);
     SUITE_TEST(bit, kr_rotl64);
     SUITE_TEST(bit, kr_rol64_MACRO);
+    SUITE_TEST(bit, kr_rotr8);
+    SUITE_TEST(bit, kr_ror8_MACRO);
     SUITE_TEST(bit, kr_rotr16);
     SUITE_TEST(bit, kr_ror16_MACRO);
     SUITE_TEST(bit, kr_rotr32);
