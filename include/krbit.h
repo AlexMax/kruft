@@ -30,6 +30,8 @@
 #define KR_MSC_HAS_INTRIN_ (0)
 #endif
 
+KR_CONSTEXPR int kr_countl_zero32(uint32_t x) KR_NOEXCEPT;
+KR_CONSTEXPR int kr_countl_zero64(uint64_t x) KR_NOEXCEPT;
 KR_CONSTEXPR int kr_popcount32(uint32_t x) KR_NOEXCEPT;
 KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT;
 
@@ -201,18 +203,7 @@ KR_CONSTEXPR uint64_t kr_bit_floor64(uint64_t x) KR_NOEXCEPT
  */
 KR_CONSTEXPR int kr_bit_width32(uint32_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-    uint32_t mask = 0x80000000;
-
-    for (; mask; mask >>= 1, rvo++)
-    {
-        if (x & mask)
-        {
-            return 32 - rvo;
-        }
-    }
-
-    return 32 - rvo;
+    return 32 - kr_countl_zero32(x);
 }
 
 /**
@@ -220,18 +211,7 @@ KR_CONSTEXPR int kr_bit_width32(uint32_t x) KR_NOEXCEPT
  */
 KR_CONSTEXPR int kr_bit_width64(uint64_t x) KR_NOEXCEPT
 {
-    int rvo = 0;
-    uint64_t mask = 0x8000000000000000;
-
-    for (; mask; mask >>= 1, rvo++)
-    {
-        if (x & mask)
-        {
-            return 64 - rvo;
-        }
-    }
-
-    return 64 - rvo;
+    return 64 - kr_countl_zero64(x);
 }
 
 //------------------------------------------------------------------------------
@@ -291,17 +271,41 @@ KR_CONSTEXPR int kr_countl_zero32(uint32_t x) KR_NOEXCEPT
     return 32 - kr_popcount32(x);
 }
 
+/**
+ * @brief Count leading (starting at MSB) zero bits.
+ *
+ * @link http://aggregate.ee.engr.uky.edu/MAGIC/#Leading%20Zero%20Count
+ */
+KR_CONSTEXPR int kr_countl_zero64(uint64_t x) KR_NOEXCEPT
+{
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    x |= x >> 32;
+    return 64 - kr_popcount64(x);
+}
+
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_clz on clang-cl
 #define kr_clz32(x) ((x) != 0 ? __builtin_clz(x) : 32)
+#define kr_clz64(x) ((x) != 0 ? __builtin_clzll(x) : 64)
 #elif (KR_MSC_HAS_INTRIN_)
 KR_FORCEINLINE int kr_clz32_detail_(unsigned long x)
 {
     unsigned long index;
     return _BitScanReverse(&index, x) ? 31 - KR_CASTS(int, index) : 32;
 }
+KR_FORCEINLINE int kr_clz64_detail_(unsigned long long x)
+{
+    unsigned long index;
+    return _BitScanReverse64(&index, x) ? 63 - KR_CASTS(int, index) : 64;
+}
 #define kr_clz32(x) (kr_clz32_detail_(x))
+#define kr_clz64(x) (kr_clz64_detail_(x))
 #else
 #define kr_clz32(x) (kr_countl_zero32(x))
+#define kr_clz64(x) (kr_countl_zero64(x))
 #endif
 
 //------------------------------------------------------------------------------
@@ -320,12 +324,30 @@ KR_CONSTEXPR int kr_countl_one32(uint32_t x) KR_NOEXCEPT
     return 32 - kr_popcount32(x);
 }
 
+/**
+ * @brief Count leading (starting at MSB) one bits.
+ */
+KR_CONSTEXPR int kr_countl_one64(uint64_t x) KR_NOEXCEPT
+{
+    x = ~x;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    x |= x >> 32;
+    return 64 - kr_popcount64(x);
+}
+
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_clz on clang-cl
 #define kr_clo32(x) ((x) != 0xFFFFFFFF ? __builtin_clz(~(x)) : 32)
+#define kr_clo64(x) ((x) != 0xFFFFFFFFFFFFFFFF ? __builtin_clzll(~(x)) : 64)
 #elif (KR_MSC_HAS_INTRIN_)
 #define kr_clo32(x) (kr_clz32_detail_(~(x)))
+#define kr_clo64(x) (kr_clz64_detail_(~(x)))
 #else
 #define kr_clo32(x) (kr_countl_one32(x))
+#define kr_clo64(x) (kr_countl_one64(x))
 #endif
 
 //------------------------------------------------------------------------------
@@ -343,17 +365,39 @@ KR_CONSTEXPR int kr_countr_zero32(uint32_t x) KR_NOEXCEPT
     return 32 - kr_popcount32(x);
 }
 
+/**
+ * @brief Count trailing (starting at LSB) zero bits.
+ */
+KR_CONSTEXPR int kr_countr_zero64(uint64_t x) KR_NOEXCEPT
+{
+    x |= x << 1;
+    x |= x << 2;
+    x |= x << 4;
+    x |= x << 8;
+    x |= x << 16;
+    x |= x << 32;
+    return 64 - kr_popcount64(x);
+}
+
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_ctz on clang-cl
 #define kr_ctz32(x) ((x) != 0 ? __builtin_ctz(x) : 32)
+#define kr_ctz64(x) ((x) != 0 ? __builtin_ctzll(x) : 64)
 #elif (KR_MSC_HAS_INTRIN_)
 KR_FORCEINLINE int kr_ctz32_detail_(unsigned long x)
 {
     unsigned long index;
     return _BitScanForward(&index, x) ? KR_CASTS(int, index) : 32;
 }
+KR_FORCEINLINE int kr_ctz64_detail_(unsigned long long x)
+{
+    unsigned long index;
+    return _BitScanForward64(&index, x) ? KR_CASTS(int, index) : 64;
+}
 #define kr_ctz32(x) (kr_ctz32_detail_(x))
+#define kr_ctz64(x) (kr_ctz64_detail_(x))
 #else
 #define kr_ctz32(x) (kr_countr_zero32(x))
+#define kr_ctz64(x) (kr_countr_zero64(x))
 #endif
 
 //------------------------------------------------------------------------------
@@ -372,12 +416,30 @@ KR_CONSTEXPR int kr_countr_one32(uint32_t x) KR_NOEXCEPT
     return 32 - kr_popcount32(x);
 }
 
+/**
+ * @brief Count trailing (starting at LSB) one bits.
+ */
+KR_CONSTEXPR int kr_countr_one64(uint64_t x) KR_NOEXCEPT
+{
+    x = ~x;
+    x |= x << 1;
+    x |= x << 2;
+    x |= x << 4;
+    x |= x << 8;
+    x |= x << 16;
+    x |= x << 32;
+    return 64 - kr_popcount64(x);
+}
+
 #if (KR_GNUC || KR_CLANG) // Prefer __builtin_ctz on clang-cl
-#define kr_cto32(x) ((x) != 0xFFFFFFFF ? __builtin_ctz(~(x)) : 32)
+#define kr_cto32(x) ((x) != UINT32_C(0xFFFFFFFF) ? __builtin_ctz(~(x)) : 32)
+#define kr_cto64(x) ((x) != UINT64_C(0xFFFFFFFFFFFFFFFF) ? __builtin_ctzll(~(x)) : 64)
 #elif (KR_MSC_HAS_INTRIN_)
 #define kr_cto32(x) (kr_ctz32_detail_(~(x)))
+#define kr_cto64(x) (kr_ctz64_detail_(~(x)))
 #else
 #define kr_cto32(x) (kr_countr_one32(x))
+#define kr_cto64(x) (kr_countr_one64(x))
 #endif
 
 //------------------------------------------------------------------------------

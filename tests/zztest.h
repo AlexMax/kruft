@@ -703,8 +703,6 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *
 
     if (isEqual)
     {
-        state->failed = 0;
-        state->skipped = 0;
         return ZZT_TRUE;
     }
 
@@ -726,8 +724,6 @@ void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long 
     switch (msg)
     {
     case ZZT_RESULT_SUCCESS:
-        state->failed = 0;
-        state->skipped = 0;
         break;
     case ZZT_RESULT_FAIL:
         ZZT_PRINTF("%s(%lu): error: %s\n\n", file, line, msgstr);
