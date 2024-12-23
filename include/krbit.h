@@ -371,8 +371,8 @@ KR_CONSTEXPR int kr_countl_one64(uint64_t x) KR_NOEXCEPT
 #define kr_clo32(x) ((x) != 0xFFFFFFFF ? __builtin_clz(~KR_CASTS(uint32_t, (x))) : 32)
 #define kr_clo64(x) ((x) != 0xFFFFFFFFFFFFFFFF ? __builtin_clzll(~KR_CASTS(uint64_t, (x))) : 64)
 #elif (KR_MSC_HAS_INTRIN_)
-#define kr_clo32(x) (kr_clz32_detail_(~(x)))
-#define kr_clo64(x) (kr_clz64_detail_(~(x)))
+#define kr_clo32(x) (kr_clz32_detail_(~KR_CASTS(uint32_t, x)))
+#define kr_clo64(x) (kr_clz64_detail_(~KR_CASTS(uint64_t, x)))
 #else
 #define kr_clo32(x) (kr_countl_one32(x))
 #define kr_clo64(x) (kr_countl_one64(x))
@@ -463,8 +463,8 @@ KR_CONSTEXPR int kr_countr_one64(uint64_t x) KR_NOEXCEPT
 #define kr_cto32(x) ((x) != UINT32_C(0xFFFFFFFF) ? __builtin_ctz(~KR_CASTS(uint32_t, (x))) : 32)
 #define kr_cto64(x) ((x) != UINT64_C(0xFFFFFFFFFFFFFFFF) ? __builtin_ctzll(~KR_CASTS(uint64_t, (x))) : 64)
 #elif (KR_MSC_HAS_INTRIN_)
-#define kr_cto32(x) (kr_ctz32_detail_(~(x)))
-#define kr_cto64(x) (kr_ctz64_detail_(~(x)))
+#define kr_cto32(x) (kr_ctz32_detail_(~KR_CASTS(uint32_t, x)))
+#define kr_cto64(x) (kr_ctz64_detail_(~KR_CASTS(uint64_t, x)))
 #else
 #define kr_cto32(x) (kr_countr_one32(x))
 #define kr_cto64(x) (kr_countr_one64(x))
@@ -512,9 +512,9 @@ KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT
 }
 
 #if (KR_MSC_HAS_INTRIN_)
-#define kr_popcnt16(x) (__popcnt16(x))
-#define kr_popcnt32(x) (__popcnt(x))
-#define kr_popcnt64(x) (__popcnt64(x))
+#define kr_popcnt16(x) (KR_CASTS(int, __popcnt16(x)))
+#define kr_popcnt32(x) (KR_CASTS(int, __popcnt(x)))
+#define kr_popcnt64(x) (KR_CASTS(int, __popcnt64(x)))
 #elif (KR_GNUC)
 #define kr_popcnt16(x) (__builtin_popcount(x))
 #define kr_popcnt32(x) (__builtin_popcount(x))
