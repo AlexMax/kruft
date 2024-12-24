@@ -1,7 +1,11 @@
+#
 # NMAKE makefile
+#
+# Assumes that the current shell has Visual Studio's environment set up with
+# one of the vcvars batch files.
+#
 
 CFLAGS = /nologo /W4 /I"../include"
-LDFLAGS = /nologo
 
 all: test_c.exe test_cxx.exe
 

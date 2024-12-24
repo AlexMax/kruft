@@ -1,4 +1,5 @@
 include(CheckCompilerFlag)
+include(FindSanitizers)
 
 set(KRUFT_C_STANDARD "90" CACHE STRING "C Standard to use")
 set(KRUFT_CXX_STANDARD "14" CACHE STRING "C++ Standard to use")
@@ -66,3 +67,26 @@ set_target_properties(kruft_test_cxx PROPERTIES CXX_STANDARD "${KRUFT_CXX_STANDA
 enable_testing()
 add_test(NAME kruft_test_c COMMAND $<TARGET_FILE:kruft_test_c>)
 add_test(NAME kruft_test_cxx COMMAND $<TARGET_FILE:kruft_test_cxx>)
+
+if(KRUFT_ENABLE_COVERAGE)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        include(CodeCoverage)
+        append_coverage_compiler_flags_to_target(kruft_test_c)
+        setup_target_for_coverage_lcov(
+            NAME kruft_test_c_cov
+            EXECUTABLE kruft_test_c
+            DEPENDENCIES kruft_test_c
+            EXCLUDE "build/*" "tests" "/usr/include/*"
+            LCOV_ARGS --ignore-errors mismatch)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        include(LLVMCov)
+        append_llvmcov_compiler_flags_to_target(kruft_test_c)
+        setup_target_for_coverage_llvmcov(
+            NAME kruft_test_c_cov
+            EXECUTABLE kruft_test_c
+            DEPENDENCIES kruft_test_c
+            SOURCES ${KRUFT_HEADERS})
+    else()
+        message(FATAL_ERROR "KRUFT_ENABLE_COVERAGE not supported by compiler")
+    endif()
+endif()

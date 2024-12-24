@@ -87,22 +87,24 @@
 
 #if (KR_CPLUSPLUS >= 201103)
 #define KR_CONSTEXPR constexpr
-#elif (KR_MSC_VER != 0 && KR_MSC_VER < 1900) // Visual C++ 2015
-#define KR_CONSTEXPR __inline
 #else
-#define KR_CONSTEXPR inline
+#define KR_CONSTEXPR KR_INLINE
 #endif
 
 #if (KR_MSC_VER)
 #define KR_FORCEINLINE __forceinline
 #else
-#define KR_FORCEINLINE inline __attribute__((always_inline))
+#define KR_FORCEINLINE KR_INLINE __attribute__((always_inline))
 #endif
 
-#if (KR_MSC_VER < 1900) // Visual C++ 2015
+#if (KR_MSC_VER && KR_MSC_VER < 1900) // Visual C++ 2015
 #define KR_INLINE __inline
-#else
+#elif (KR_CPLUSPLUS) // C++ inline.
 #define KR_INLINE inline
+#elif (KR_STDC_VERSION >= 199901) // C++-style inline in C99.
+#define KR_INLINE static inline
+#else // Last resort
+#define KR_INLINE static
 #endif
 
 #if (KR_MSC_VER) && defined(_Check_return_)

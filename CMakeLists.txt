@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.25)
 
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-option(KRUFT_ENABLE_TESTS "Enable tests for LPC")
-option(KRUFT_ENABLE_BENCHES "Enable benchmarks for LPC")
+option(KRUFT_ENABLE_TESTS "Enable tests")
+option(KRUFT_ENABLE_BENCHES "Enable benchmarks")
+option(KRUFT_ENABLE_COVERAGE "Enable code coverage on tests")
 
 project(kruft LANGUAGES C CXX)
 
