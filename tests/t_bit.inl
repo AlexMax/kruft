@@ -58,23 +58,23 @@ TEST(bit, kr_bswap64_MACRO)
 
 TEST(bit, kr_has_single_bit8)
 {
-    EXPECT_UINTEQ(false, kr_has_single_bit8(0x00));
-    EXPECT_UINTEQ(false, kr_has_single_bit8(0xFF));
-    EXPECT_UINTEQ(true, kr_has_single_bit8(0x80));
+    EXPECT_BOOLEQ(false, kr_has_single_bit8(0x00));
+    EXPECT_BOOLEQ(false, kr_has_single_bit8(0xFF));
+    EXPECT_BOOLEQ(true, kr_has_single_bit8(0x80));
 }
 
 TEST(bit, kr_has_single_bit16)
 {
-    EXPECT_UINTEQ(false, kr_has_single_bit16(0x00));
-    EXPECT_UINTEQ(false, kr_has_single_bit16(0xFF));
-    EXPECT_UINTEQ(true, kr_has_single_bit16(0x80));
+    EXPECT_BOOLEQ(false, kr_has_single_bit16(0x00));
+    EXPECT_BOOLEQ(false, kr_has_single_bit16(0xFF));
+    EXPECT_BOOLEQ(true, kr_has_single_bit16(0x80));
 }
 
 TEST(bit, kr_has_single_bit32)
 {
-    EXPECT_UINTEQ(false, kr_has_single_bit32(0x00));
-    EXPECT_UINTEQ(false, kr_has_single_bit32(0xFF));
-    EXPECT_UINTEQ(true, kr_has_single_bit32(0x80));
+    EXPECT_BOOLEQ(false, kr_has_single_bit32(0x00));
+    EXPECT_BOOLEQ(false, kr_has_single_bit32(0xFF));
+    EXPECT_BOOLEQ(true, kr_has_single_bit32(0x80));
 }
 
 TEST(bit, kr_has_single_bit64)
@@ -82,9 +82,9 @@ TEST(bit, kr_has_single_bit64)
 #if !defined(UINT64_MAX)
     SKIP();
 #else  // !defined(UINT64_MAX)
-    EXPECT_UINTEQ(false, kr_has_single_bit64(0x00));
-    EXPECT_UINTEQ(false, kr_has_single_bit64(0xFF));
-    EXPECT_UINTEQ(true, kr_has_single_bit64(0x80));
+    EXPECT_BOOLEQ(false, kr_has_single_bit64(0x00));
+    EXPECT_BOOLEQ(false, kr_has_single_bit64(0xFF));
+    EXPECT_BOOLEQ(true, kr_has_single_bit64(0x80));
 #endif // !defined(UINT64_MAX)
 }
 

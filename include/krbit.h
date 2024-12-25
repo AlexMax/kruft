@@ -77,25 +77,25 @@ KR_CONSTEXPR uint64_t kr_byteswap64(uint64_t x)
 
 #endif // defined(UINT64_MAX)
 
-#if (KR_MSC_HAS_INTRIN_)
-#define kr_bswap16(x) (_byteswap_ushort(x))
-#define kr_bswap32(x) (_byteswap_ulong(x))
-#if defined(UINT64_MAX)
-#define kr_bswap64(x) (_byteswap_uint64(x))
-#endif // defined(UINT64_MAX)
-#elif (KR_GNUC)
+#if (KR_GNUC || KR_CLANG)
 #define kr_bswap16(x) (__builtin_bswap16(x))
 #define kr_bswap32(x) (__builtin_bswap32(x))
 #if defined(UINT64_MAX)
 #define kr_bswap64(x) (__builtin_bswap64(x))
 #endif // defined(UINT64_MAX)
-#else  // (KR_MSC_HAS_INTRIN_)
+#elif (KR_MSC_HAS_INTRIN_)
+#define kr_bswap16(x) (_byteswap_ushort(x))
+#define kr_bswap32(x) (_byteswap_ulong(x))
+#if defined(UINT64_MAX)
+#define kr_bswap64(x) (_byteswap_uint64(x))
+#endif // defined(UINT64_MAX)
+#else
 #define kr_bswap16(x) (kr_byteswap16(x))
 #define kr_bswap32(x) (kr_byteswap32(x))
 #if defined(UINT64_MAX)
 #define kr_bswap64(x) (kr_byteswap64(x))
 #endif // defined(UINT64_MAX)
-#endif // (KR_MSC_HAS_INTRIN_)
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -259,21 +259,28 @@ KR_CONSTEXPR uint64_t kr_rotl64(uint64_t x, int c) KR_NOEXCEPT
 
 #endif // #if defined(UINT64_MAX)
 
-#if (KR_MSC_HAS_INTRIN_)
+#if (KR_CLANG)
+#define kr_rol8(x, c) (__builtin_rotateleft8((x), (c)))
+#define kr_rol16(x, c) (__builtin_rotateleft16((x), (c)))
+#define kr_rol32(x, c) (__builtin_rotateleft32((x), (c)))
+#if defined(UINT64_MAX)
+#define kr_rol64(x, c) (__builtin_rotateleft64((x), (c)))
+#endif // defined(UINT64_MAX)
+#elif (KR_MSC_HAS_INTRIN_)
 #define kr_rol8(x, c) (_rotl8((x), (c)))
 #define kr_rol16(x, c) (_rotl16((x), (c)))
 #define kr_rol32(x, c) (_rotl((x), (c)))
 #if defined(UINT64_MAX)
 #define kr_rol64(x, c) (_rotl64((x), (c)))
 #endif // defined(UINT64_MAX)
-#else  // (KR_MSC_HAS_INTRIN_)
+#else
 #define kr_rol8(x, c) (kr_rotl8((x), (c)))
 #define kr_rol16(x, c) (kr_rotl16((x), (c)))
 #define kr_rol32(x, c) (kr_rotl32((x), (c)))
 #if defined(UINT64_MAX)
 #define kr_rol64(x, c) (kr_rotl64((x), (c)))
 #endif // #if defined(UINT64_MAX)
-#endif // (KR_MSC_HAS_INTRIN_)
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -301,21 +308,28 @@ KR_CONSTEXPR uint64_t kr_rotr64(uint64_t x, int c) KR_NOEXCEPT
 
 #endif // defined(UINT64_MAX)
 
-#if (KR_MSC_HAS_INTRIN_)
+#if (KR_CLANG)
+#define kr_ror8(x, c) (__builtin_rotateright8((x), (c)))
+#define kr_ror16(x, c) (__builtin_rotateright16((x), (c)))
+#define kr_ror32(x, c) (__builtin_rotateright32((x), (c)))
+#if defined(UINT64_MAX)
+#define kr_ror64(x, c) (__builtin_rotateright64((x), (c)))
+#endif // defined(UINT64_MAX)
+#elif (KR_MSC_HAS_INTRIN_)
 #define kr_ror8(x, c) (_rotr8((x), (c)))
 #define kr_ror16(x, c) (_rotr16((x), (c)))
 #define kr_ror32(x, c) (_rotr((x), (c)))
 #if defined(UINT64_MAX)
 #define kr_ror64(x, c) (_rotr64((x), (c)))
 #endif // defined(UINT64_MAX)
-#else  // (KR_MSC_HAS_INTRIN_)
+#else
 #define kr_ror8(x, c) (kr_rotr8((x), (c)))
 #define kr_ror16(x, c) (kr_rotr16((x), (c)))
 #define kr_ror32(x, c) (kr_rotr32((x), (c)))
 #if defined(UINT64_MAX)
 #define kr_ror64(x, c) (kr_rotr64((x), (c)))
 #endif // defined(UINT64_MAX)
-#endif // (KR_MSC_HAS_INTRIN_)
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -374,12 +388,12 @@ KR_FORCEINLINE int kr_clz64_detail_(unsigned long long x)
 }
 #define kr_clz64(x) (kr_clz64_detail_(x))
 #endif // defined(UINT64_MAX)
-#else  // (KR_GNUC || KR_CLANG)
+#else
 #define kr_clz32(x) (kr_countl_zero32(x))
 #if defined(UINT64_MAX)
 #define kr_clz64(x) (kr_countl_zero64(x))
 #endif // defined(UINT64_MAX)
-#endif // (KR_GNUC || KR_CLANG)
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -426,12 +440,12 @@ KR_CONSTEXPR int kr_countl_one64(uint64_t x) KR_NOEXCEPT
 #if defined(UINT64_MAX)
 #define kr_clo64(x) (kr_clz64_detail_(~KR_CASTS(uint64_t, x)))
 #endif // defined(UINT64_MAX)
-#else  // (KR_GNUC || KR_CLANG)
+#else
 #define kr_clo32(x) (kr_countl_one32(x))
 #if defined(UINT64_MAX)
 #define kr_clo64(x) (kr_countl_one64(x))
 #endif // defined(UINT64_MAX)
-#endif // (KR_GNUC || KR_CLANG)
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -486,12 +500,12 @@ KR_FORCEINLINE int kr_ctz64_detail_(unsigned long long x)
 }
 #define kr_ctz64(x) (kr_ctz64_detail_(x))
 #endif // defined(UINT64_MAX)
-#else  // (KR_GNUC || KR_CLANG)
+#else
 #define kr_ctz32(x) (kr_countr_zero32(x))
 #if defined(UINT64_MAX)
 #define kr_ctz64(x) (kr_countr_zero64(x))
 #endif // defined(UINT64_MAX)
-#endif // (KR_GNUC || KR_CLANG)
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -538,12 +552,12 @@ KR_CONSTEXPR int kr_countr_one64(uint64_t x) KR_NOEXCEPT
 #if defined(UINT64_MAX)
 #define kr_cto64(x) (kr_ctz64_detail_(~KR_CASTS(uint64_t, x)))
 #endif // defined(UINT64_MAX)
-#else  // (KR_GNUC || KR_CLANG)
+#else
 #define kr_cto32(x) (kr_countr_one32(x))
 #if defined(UINT64_MAX)
 #define kr_cto64(x) (kr_countr_one64(x))
 #endif // defined(UINT64_MAX)
-#endif // (KR_GNUC || KR_CLANG)
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -590,25 +604,25 @@ KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT
 
 #endif // defined(UINT64_MAX)
 
-#if (KR_MSC_HAS_INTRIN_)
-#define kr_popcnt16(x) (KR_CASTS(int, __popcnt16(x)))
-#define kr_popcnt32(x) (KR_CASTS(int, __popcnt(x)))
-#if defined(UINT64_MAX)
-#define kr_popcnt64(x) (KR_CASTS(int, __popcnt64(x)))
-#endif // defined(UINT64_MAX)
-#elif (KR_GNUC)
+#if (KR_GNUC || KR_CLANG)
 #define kr_popcnt16(x) (__builtin_popcount(x))
 #define kr_popcnt32(x) (__builtin_popcount(x))
 #if defined(UINT64_MAX)
 #define kr_popcnt64(x) (__builtin_popcountll(x))
 #endif // defined(UINT64_MAX)
-#else  // (KR_MSC_HAS_INTRIN_)
+#elif (KR_MSC_HAS_INTRIN_)
+#define kr_popcnt16(x) (KR_CASTS(int, __popcnt16(x)))
+#define kr_popcnt32(x) (KR_CASTS(int, __popcnt(x)))
+#if defined(UINT64_MAX)
+#define kr_popcnt64(x) (KR_CASTS(int, __popcnt64(x)))
+#endif // defined(UINT64_MAX)
+#else
 #define kr_popcnt16(x) (kr_popcount16(x))
 #define kr_popcnt32(x) (kr_popcount32(x))
 #if defined(UINT64_MAX)
 #define kr_popcnt64(x) (kr_popcount64(x))
 #endif // defined(UINT64_MAX)
-#endif // (KR_MSC_HAS_INTRIN_)
+#endif
 
 #undef KR_MSC_HAS_INTRIN_
 

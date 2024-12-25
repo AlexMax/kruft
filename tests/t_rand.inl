@@ -37,10 +37,10 @@ TEST(rand, jsf32)
     struct kr_jsf32_ctx_s ctx;
     kr_jsf32_srand(&ctx, 1993);
 
-    EXPECT_UINTEQ(1323812269, kr_jsf32_rand(&ctx));
-    EXPECT_UINTEQ(1220648136, kr_jsf32_rand(&ctx));
-    EXPECT_UINTEQ(3832904144, kr_jsf32_rand(&ctx));
-    EXPECT_UINTEQ(178104823, kr_jsf32_rand(&ctx));
+    EXPECT_UINTEQ(UINT32_C(1323812269), kr_jsf32_rand(&ctx));
+    EXPECT_UINTEQ(UINT32_C(1220648136), kr_jsf32_rand(&ctx));
+    EXPECT_UINTEQ(UINT32_C(3832904144), kr_jsf32_rand(&ctx));
+    EXPECT_UINTEQ(UINT32_C(178104823), kr_jsf32_rand(&ctx));
 }
 
 TEST(rand, jsf64)
