@@ -46,8 +46,8 @@ TEST(limits, longlong)
     i = LLONG_MAX;
     EXPECT_INT64EQ(i, LLONG_MAX);
 
-    i = ULLONG_MAX;
-    EXPECT_INT64EQ(i, ULLONG_MAX);
+    unsigned long long u = ULLONG_MAX;
+    EXPECT_UINT64EQ(u, ULLONG_MAX);
 
     EXPECT_SIZEEQ(LLONG_WIDTH, sizeof(long long) * CHAR_BIT);
     EXPECT_SIZEEQ(ULLONG_WIDTH, sizeof(unsigned long long) * CHAR_BIT);
