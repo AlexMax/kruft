@@ -77,13 +77,15 @@
 #define KR_ORDER_LITTLE_ENDIAN (__ORDER_LITTLE_ENDIAN__)
 #define KR_ORDER_BIG_ENDIAN (__ORDER_BIG_ENDIAN__)
 #define KR_BYTE_ORDER (__BYTE_ORDER__)
-#elif (KR_MSC_VER)
+#else // (KR_GNUC || KR_CLANG)
 #define KR_ORDER_LITTLE_ENDIAN (1234)
 #define KR_ORDER_BIG_ENDIAN (4321)
-#define KR_BYTE_ORDER (KR_ORDER_LITTLE_ENDIAN)
+#if defined(__BIG_ENDIAN__)
+#define KR_BYTE_ORDER (KR_ORDER_BIG_ENDIAN)
 #else
-#error "platform not detected"
-#endif
+#define KR_BYTE_ORDER (KR_ORDER_LITTLE_ENDIAN)
+#endif // defined(__BIG_ENDIAN__)
+#endif // (KR_GNUC || KR_CLANG)
 
 // Size of pointer types.
 
@@ -98,9 +100,12 @@
 #define KR_SIZEOF_POINTER (4)
 #define KR_SIZEOF_PTRDIFF (4)
 #endif // defined(_WIN64)
-#else  // (KR_GNUC || KR_CLANG)
-#define KR_SIZEOF_POINTER (INT_WIDTH)
-#define KR_SIZEOF_PTRDIFF (INT_WIDTH)
+#elif defined(__LARGE__) || defined(__HUGE__) // DOS memory models
+#define KR_SIZEOF_POINTER (LONG_WIDTH / CHAR_BIT)
+#define KR_SIZEOF_PTRDIFF (LONG_WIDTH / CHAR_BIT)
+#else
+#define KR_SIZEOF_POINTER (INT_WIDTH / CHAR_BIT)
+#define KR_SIZEOF_PTRDIFF (INT_WIDTH / CHAR_BIT)
 #endif // (KR_GNUC || KR_CLANG)
 
 // Language and compiler feature shims.
@@ -125,8 +130,10 @@
 
 #if (KR_MSC_VER)
 #define KR_FORCEINLINE __forceinline
-#else
+#elif (KR_GNUC || KR_CLANG)
 #define KR_FORCEINLINE KR_INLINE __attribute__((always_inline))
+#else
+#define KR_FORCEINLINE KR_INLINE
 #endif
 
 #if (KR_MSC_VER && KR_MSC_VER < 1900) // Visual C++ 2015
@@ -155,18 +162,24 @@
 
 #if (KR_MSC_VER)
 #define KR_RESTRICT __restrict
-#else
+#elif (KR_GNUC || KR_CLANG)
 #define KR_RESTRICT __restrict__
+#else
+#define KR_RESTRICT
 #endif
 
 #if (KR_MSC_VER)
 #define KR_THREAD __declspec(thread)
-#else
+#elif (KR_GNUC || KR_CLANG)
 #define KR_THREAD __thread
+#else
+#define KR_THREAD
 #endif
 
 #if (KR_MSC_VER)
 #define KR_UNREACHABLE() (__assume(0))
-#else
+#elif (KR_GNUC || KR_CLANG)
 #define KR_UNREACHABLE() (__builtin_unreachable())
+#else
+#define KR_UNREACHABLE()
 #endif
