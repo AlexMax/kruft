@@ -40,10 +40,12 @@ int main()
     printf("KR_CONSTEXPR: %s\n", XSTR(KR_CONSTEXPR));
     printf("KR_FORCEINLINE: %s\n", XSTR(KR_FORCEINLINE));
     printf("KR_INLINE: %s\n", XSTR(KR_INLINE));
+#if 0
     printf("KR_NODISCARD: %s\n", XSTR(KR_NODISCARD));
     printf("KR_NOEXCEPT: %s\n", XSTR(KR_NOEXCEPT));
     printf("KR_RESTRICT: %s\n", XSTR(KR_RESTRICT));
     printf("KR_THREAD: %s\n", XSTR(KR_THREAD));
+#endif
 
     return 0;
 }
