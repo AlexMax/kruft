@@ -144,7 +144,11 @@
 #elif (KR_STDC_VERSION >= 199901) // C++-style inline in C99.
 #define KR_INLINE static inline
 #else // Last resort
+#if (KR_GNUC || KR_CLANG) // Try to avoid "unused definition."
+#define KR_INLINE __attribute__((unused)) static
+#else // (KR_GNUC || KR_CLANG)
 #define KR_INLINE static
+#endif // (KR_GNUC || KR_CLANG)
 #endif
 
 #if (KR_MSC_VER) && defined(_Check_return_)
