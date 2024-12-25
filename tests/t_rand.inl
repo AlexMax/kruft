@@ -45,6 +45,9 @@ TEST(rand, jsf32)
 
 TEST(rand, jsf64)
 {
+#if !defined(UINT64_MAX)
+    SKIP();
+#else
     struct kr_jsf64_ctx_s ctx;
     kr_jsf64_srand(&ctx, 1993);
 
@@ -52,6 +55,7 @@ TEST(rand, jsf64)
     EXPECT_UINT64EQ(UINT64_C(4516034199495256649), kr_jsf64_rand(&ctx));
     EXPECT_UINT64EQ(UINT64_C(10153722626954818142), kr_jsf64_rand(&ctx));
     EXPECT_UINT64EQ(UINT64_C(16680399593301785108), kr_jsf64_rand(&ctx));
+#endif // !defined(UINT64_MAX)
 }
 
 SUITE(rand)

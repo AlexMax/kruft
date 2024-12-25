@@ -13,7 +13,8 @@
 //                      automatically.
 //
 
-#pragma once
+#if !defined(KRCONFIG_H)
+#define KRCONFIG_H
 
 // Configuration options.
 
@@ -183,3 +184,5 @@
 #else
 #define KR_UNREACHABLE()
 #endif
+
+#endif // !defined(KRCONFIG_H)

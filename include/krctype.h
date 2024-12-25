@@ -14,7 +14,8 @@
 // - These functions only deal with ASCII and do not care about locales.
 //
 
-#pragma once
+#if !defined(KRCTYPE_H)
+#define KRCTYPE_H
 
 #include "./krconfig.h"
 
@@ -183,3 +184,5 @@ KR_CONSTEXPR char kr_toupper(char ch)
     }
     return ch;
 }
+
+#endif // !defined(KRCTYPE_H)

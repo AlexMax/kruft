@@ -14,7 +14,8 @@
 // individual functions should still allow for easy copy-pasting.
 //
 
-#pragma once
+#if !defined(KRBIT_H)
+#define KRBIT_H
 
 #include "./krconfig.h"
 
@@ -610,3 +611,5 @@ KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT
 #endif // (KR_MSC_HAS_INTRIN_)
 
 #undef KR_MSC_HAS_INTRIN_
+
+#endif // !defined(KRBIT_H)

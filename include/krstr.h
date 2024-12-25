@@ -6,7 +6,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
+#if !defined(KRSTR_H)
+#define KRSTR_H
 
 #include "./krconfig.h"
 
@@ -181,3 +182,5 @@ KR_NODISCARD char *kr_strndup(const char *str, size_t len)
     dup[strl] = '\0';
     return dup;
 }
+
+#endif // !defined(KRSTR_H)

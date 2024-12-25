@@ -19,7 +19,8 @@
 // comes with a recommended seeding routine out of the box.
 //
 
-#pragma once
+#if !defined(KRRAND_H)
+#define KRRAND_H
 
 #include "./krconfig.h"
 
@@ -43,10 +44,14 @@ struct kr_jsf32_ctx_s
     uint32_t a, b, c, d;
 };
 
+#if defined(UINT64_MAX)
+
 struct kr_jsf64_ctx_s
 {
     uint64_t a, b, c, d;
 };
+
+#endif // defined(UINT64_MAX)
 
 //------------------------------------------------------------------------------
 
@@ -89,6 +94,8 @@ KR_CONSTEXPR uint32_t kr_jsf32_rand(struct kr_jsf32_ctx_s *x)
     return x->d;
 }
 
+#if defined(UINT64_MAX)
+
 /**
  * @brief Return a random number.
  */
@@ -101,6 +108,8 @@ KR_CONSTEXPR uint64_t kr_jsf64_rand(struct kr_jsf64_ctx_s *x)
     x->d = e + x->a;
     return x->d;
 }
+
+#endif // defined(UINT64_MAX)
 
 //------------------------------------------------------------------------------
 
@@ -209,6 +218,8 @@ KR_CONSTEXPR uint32_t kr_jsf32_rand_uniform(struct kr_jsf32_ctx_s *x, uint32_t u
     return i % upper_bound;
 }
 
+#if defined(UINT64_MAX)
+
 /**
  * @brief Return a uniformly distributed random number in the half-open range
  *        of [0, upper_bound).
@@ -243,6 +254,8 @@ KR_CONSTEXPR uint64_t kr_jsf64_rand_uniform(struct kr_jsf64_ctx_s *x, uint64_t u
     // Map our random number back to the original bounds.
     return i % upper_bound;
 }
+
+#endif // defined(UINT64_MAX)
 
 //------------------------------------------------------------------------------
 
@@ -294,6 +307,8 @@ KR_CONSTEXPR void kr_jsf32_srand(struct kr_jsf32_ctx_s *x, uint32_t seed)
     }
 }
 
+#if defined(UINT64_MAX)
+
 /**
  * @brief Seed an 64-bit PRNG with 256-bits of state.
  *
@@ -309,3 +324,7 @@ KR_CONSTEXPR void kr_jsf64_srand(struct kr_jsf64_ctx_s *x, uint64_t seed)
         (void)kr_jsf64_rand(x);
     }
 }
+
+#endif // defined(UINT64_MAX)
+
+#endif // !defined(KRRAND_H)

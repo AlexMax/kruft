@@ -6,7 +6,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
+#if !defined(KRLIB_H)
+#define KRLIB_H
 
 #include "./krconfig.h"
 
@@ -24,3 +25,5 @@ KR_NODISCARD KR_INLINE void *kr_reallocarray(void *ptr, size_t nmemb, size_t siz
     }
     return KR_REALLOC(ptr, nmemb * size);
 }
+
+#endif // !defined(KRLIB_H)

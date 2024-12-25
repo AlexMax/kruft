@@ -6,7 +6,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
+#if !defined(KRBOOL_H)
+#define KRBOOL_H
 
 #include "./krconfig.h"
 
@@ -25,3 +26,5 @@
 
 #endif // (KR_STDC_VERSION >= 199901)
 #endif // (!KR_CPLUSPLUS)
+
+#endif // !defined(KRBOOL_H)

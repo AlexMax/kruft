@@ -6,7 +6,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
+#if !defined(KRINT_H)
+#define KRINT_H
 
 #include "./krconfig.h"
 
@@ -306,3 +307,5 @@ typedef uint_fast64_t uintptr_t;
 #undef KR_NO32_
 #undef KR_NO64_
 #undef KR_USE_STDINT_
+
+#endif // !defined(KRINT_H)

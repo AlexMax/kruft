@@ -10,7 +10,8 @@
 // Serialization helpers
 //
 
-#pragma once
+#if !defined(KRSERIAL_H)
+#define KRSERIAL_H
 
 #include "./krconfig.h"
 
@@ -66,6 +67,8 @@ KR_INLINE uint32_t kr_load_u32be(void *in)
 
 //------------------------------------------------------------------------------
 
+#if defined(UINT64_MAX)
+
 KR_INLINE uint64_t kr_load_u64le(void *in)
 {
     uint64_t rvo;
@@ -85,6 +88,8 @@ KR_INLINE uint64_t kr_load_u64be(void *in)
 #endif
     return rvo;
 }
+
+#endif // defined(UINT64_MAX)
 
 //------------------------------------------------------------------------------
 
@@ -124,6 +129,8 @@ KR_INLINE void kr_store_u32be(void *out, uint32_t in)
 
 //------------------------------------------------------------------------------
 
+#if defined(UINT64_MAX)
+
 KR_INLINE void kr_store_u64le(void *out, uint64_t in)
 {
 #if (KR_BYTE_ORDER == KR_ORDER_BIG_ENDIAN)
@@ -139,3 +146,7 @@ KR_INLINE void kr_store_u64be(void *out, uint64_t in)
 #endif
     memcpy(out, &in, sizeof(in));
 }
+
+#endif // defined(UINT64_MAX)
+
+#endif // !defined(KRSERIAL_H)

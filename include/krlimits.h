@@ -6,7 +6,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
+#if !defined(KRLIMITS_H)
+#define KRLIMITS_H
 
 #include "./krconfig.h"
 
@@ -89,3 +90,5 @@
 #if !defined(ULLONG_WIDTH)
 #define ULLONG_WIDTH LLONG_WIDTH
 #endif
+
+#endif // !defined(KRLIMITS_H)
