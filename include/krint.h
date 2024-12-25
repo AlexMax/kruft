@@ -26,7 +26,7 @@
 #define KR_USE_STDINT_
 #endif
 
-#if defined(KR_USE_STDINT_) && 0
+#if defined(KR_USE_STDINT_)
 #if (!KR_CONFIG_NOINCLUDE)
 #include <stdint.h>
 #endif // (!KR_CONFIG_NOINCLUDE)
