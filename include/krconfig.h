@@ -71,6 +71,38 @@
 #define KR_CPLUSPLUS (0)
 #endif
 
+// Endian detection.
+
+#if (KR_GNUC || KR_CLANG)
+#define KR_ORDER_LITTLE_ENDIAN (__ORDER_LITTLE_ENDIAN__)
+#define KR_ORDER_BIG_ENDIAN (__ORDER_BIG_ENDIAN__)
+#define KR_BYTE_ORDER (__BYTE_ORDER__)
+#elif (KR_MSC_VER)
+#define KR_ORDER_LITTLE_ENDIAN (1234)
+#define KR_ORDER_BIG_ENDIAN (4321)
+#define KR_BYTE_ORDER (KR_ORDER_LITTLE_ENDIAN)
+#else
+#error "platform not detected"
+#endif
+
+// Size of pointer types.
+
+#if (KR_GNUC || KR_CLANG)
+#define KR_SIZEOF_POINTER (__SIZEOF_POINTER__)
+#define KR_SIZEOF_PTRDIFF (__SIZEOF_PTRDIFF_T__)
+#elif (KR_MSC_VER)
+#if defined(_WIN64)
+#define KR_SIZEOF_POINTER (8)
+#define KR_SIZEOF_PTRDIFF (8)
+#else // defined(_WIN64)
+#define KR_SIZEOF_POINTER (4)
+#define KR_SIZEOF_PTRDIFF (4)
+#endif // defined(_WIN64)
+#else  // (KR_GNUC || KR_CLANG)
+#define KR_SIZEOF_POINTER (INT_WIDTH)
+#define KR_SIZEOF_PTRDIFF (INT_WIDTH)
+#endif // (KR_GNUC || KR_CLANG)
+
 // Language and compiler feature shims.
 
 #if (KR_CPLUSPLUS)
@@ -137,16 +169,4 @@
 #define KR_UNREACHABLE() (__assume(0))
 #else
 #define KR_UNREACHABLE() (__builtin_unreachable())
-#endif
-
-// Endian detection.
-
-#if (KR_MSC_VER && !KR_CLANG)
-#define KR_ORDER_LITTLE_ENDIAN (1234)
-#define KR_ORDER_BIG_ENDIAN (4321)
-#define KR_BYTE_ORDER (KR_ORDER_LITTLE_ENDIAN)
-#else
-#define KR_ORDER_LITTLE_ENDIAN (__ORDER_LITTLE_ENDIAN__)
-#define KR_ORDER_BIG_ENDIAN (__ORDER_BIG_ENDIAN__)
-#define KR_BYTE_ORDER (__BYTE_ORDER__)
 #endif

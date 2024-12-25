@@ -50,11 +50,11 @@ typedef int ZZT_BOOL;
 
 // Determine our 64-bit data type.
 #if defined(ULLONG_MAX) // C99
-#if (ULLONG_MAX == 0xFFFFFFFFFFFFFFFFull)
+#if (ULLONG_MAX == 0xFFFFFFFFFFFFFFFF)
 #define ZZT_64BIT_LL_
 #endif
 #elif defined(ULONG_LONG_MAX) // GNU
-#if (ULONG_LONG_MAX == 0xFFFFFFFFFFFFFFFFull)
+#if (ULONG_LONG_MAX == 0xFFFFFFFFFFFFFFFF)
 #define ZZT_64BIT_LL_
 #endif
 #endif

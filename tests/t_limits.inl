@@ -40,6 +40,15 @@ TEST(limits, longlong)
 #if !defined(ULLONG_MAX)
     SKIP();
 #else
+    long long i = LLONG_MIN;
+    EXPECT_INT64EQ(i, LLONG_MIN);
+
+    i = LLONG_MAX;
+    EXPECT_INT64EQ(i, LLONG_MAX);
+
+    i = ULLONG_MAX;
+    EXPECT_INT64EQ(i, ULLONG_MAX);
+
     EXPECT_SIZEEQ(LLONG_WIDTH, sizeof(long long) * CHAR_BIT);
     EXPECT_SIZEEQ(ULLONG_WIDTH, sizeof(unsigned long long) * CHAR_BIT);
 #endif

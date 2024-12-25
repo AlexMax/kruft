@@ -90,3 +90,7 @@ if(KRUFT_ENABLE_COVERAGE)
         message(FATAL_ERROR "KRUFT_ENABLE_COVERAGE not supported by compiler")
     endif()
 endif()
+
+# Minimal defines dump.
+add_executable(kruft_defs "${CMAKE_CURRENT_SOURCE_DIR}/defs.c")
+target_link_libraries(kruft_defs PRIVATE kruft)

@@ -10,6 +10,14 @@
 
 #include "./krconfig.h"
 
+#include "krlimits.h"
+
+//
+// If we have an stdint.h, we should be using it.  Not using stdint.h on
+// a platform that has the header will result in mountains of compatibility
+// issues since our types might not line up.
+//
+
 #if defined(__has_include)
 #if __has_include(<stdint.h>)
 #define KR_USE_STDINT_
@@ -18,89 +26,283 @@
 #define KR_USE_STDINT_
 #endif
 
-#if defined(KR_USE_STDINT_)
+#if defined(KR_USE_STDINT_) && 0
 #if (!KR_CONFIG_NOINCLUDE)
 #include <stdint.h>
-#endif
-#undef KR_USE_STDINT_
-#else // defined(KR_USE_STDINT_)
-#if (!KR_CONFIG_NOINCLUDE)
-#include <limits.h>
-#endif
+#endif // (!KR_CONFIG_NOINCLUDE)
+#else  // defined(KR_USE_STDINT_)
 
-#if (UCHAR_MAX == 0xff)
-typedef signed char int8_t;
-typedef unsigned char uint8_t;
-#endif
+// C99: Lowest-rank type that can fit 8 bits.
 
-#if (UINT_MAX == 0xffff)
-typedef signed int int16_t;
-typedef unsigned int uint16_t;
-#elif (USHRT_MAX == 0xffff)
-typedef signed short int16_t;
-typedef unsigned short uint16_t;
-#endif
+#if (CHAR_WIDTH == 8)
+typedef signed char int_least8_t;
+typedef unsigned char uint_least8_t;
+#define INT8_C(x) (x)
+#define UINT8_C(x) (x)
+#else
+#define KR_NO8_
+#endif // (CHAR_WIDTH == 8)
+
+// C99: Lowest-rank type that can fit 16 bits.
+
+#if (CHAR_WIDTH == 16)
+typedef signed char int_least16_t;
+typedef unsigned char uint_least16_t;
 #define INT16_C(x) (x)
 #define UINT16_C(x) (x)
+#elif (SHRT_WIDTH == 16)
+typedef signed short int_least16_t;
+typedef unsigned short uint_least16_t;
+#define INT16_C(x) (x)
+#define UINT16_C(x) (x)
+#else
+#define KR_NO16_
+#endif // (CHAR_WIDTH == 16)
 
-#if (UINT_MAX == 0xffffffffu)
-typedef signed int int32_t;
-typedef unsigned int uint32_t;
+// C99: Lowest-rank type that can fit 32 bits.
+
+#if (CHAR_WIDTH == 32)
+typedef signed char int_least32_t;
+typedef unsigned char uint_least32_t;
+#define INT32_C(x) (x)
+#define UINT32_C(x) (x)
+#elif (SHRT_WIDTH == 32)
+typedef signed short int_least32_t;
+typedef unsigned short uint_least32_t;
+#define INT32_C(x) (x)
+#define UINT32_C(x) (x)
+#elif (INT_WIDTH == 32)
+typedef signed int int_least32_t;
+typedef unsigned int uint_least32_t;
 #define INT32_C(x) (x)
 #define UINT32_C(x) (x##u)
-#elif (ULONG_MAX == 0xffffffff)
-typedef signed long int32_t;
-typedef unsigned long uint32_t;
+#elif (LONG_WIDTH == 32)
+typedef signed long int_least32_t;
+typedef unsigned long uint_least32_t;
 #define INT32_C(x) (x##l)
 #define UINT32_C(x) (x##ul)
-#endif
+#else
+#define KR_NO32_
+#endif // (CHAR_WIDTH == 32)
 
-#if defined(_UI64_MAX) // MSVC
-typedef signed __int64 int64_t;
-typedef unsigned __int64 uint64_t;
+// C99: Lowest-rank type that can fit 64 bits.
+
+#if defined(_UI64_MAX)
+typedef signed __int64 int_least64_t;
+typedef unsigned __int64 uint_least64_t;
 #define INT64_C(x) (x##i64)
 #define UINT64_C(x) (x##ui64)
-#elif defined(ULONG_LONG_MAX) && (ULONG_LONG_MAX == 0xffffffffffffffffull) // GCC
-typedef signed long long int64_t;
-typedef unsigned long long uint64_t;
-#define INT64_C(x) (x##ll)
-#define UINT64_C(x) (x##ull)
-#elif (ULONG_MAX == 0xffffffffffffffff) // LP64
-typedef signed long int64_t;
-typedef unsigned long uint64_t;
+#elif (CHAR_WIDTH == 64)
+typedef signed char int_least64_t;
+typedef unsigned char uint_least64_t;
+#define INT64_C(x) (x)
+#define UINT64_C(x) (x)
+#elif (SHRT_WIDTH == 64)
+typedef signed short int_least64_t;
+typedef unsigned short uint_least64_t;
+#define INT64_C(x) (x)
+#define UINT64_C(x) (x)
+#elif (INT_WIDTH == 64)
+typedef signed int int_least64_t;
+typedef unsigned int uint_least64_t;
+#define INT64_C(x) (x)
+#define UINT64_C(x) (x##u)
+#elif (LONG_WIDTH == 64)
+typedef signed long int_least64_t;
+typedef unsigned long uint_least64_t;
 #define INT64_C(x) (x##l)
 #define UINT64_C(x) (x##ul)
-#elif defined(ULLONG_MAX) && (ULLONG_MAX == 0xffffffffffffffff) // LLP64
-typedef signed long long int64_t;
-typedef unsigned long long uint64_t;
+#elif (LLONG_WIDTH == 64)
+typedef signed long long int_least64_t;
+typedef unsigned long long uint_least64_t;
 #define INT64_C(x) (x##ll)
 #define UINT64_C(x) (x##ull)
-#else
-#define KR_SKIP_64BIT_
-#endif
+#else // (CHAR_WIDTH == 64)
+#define KR_NO64_
+#endif // (CHAR_WIDTH == 64)
+
+//
+// Next, figure out the "fast" types.  It is assumed that int is the fastest
+// version of a type for a given width.  Everything else is the same as least.
+//
+
+#if !defined(KR_NO8_)
+typedef signed char int_fast8_t;
+typedef unsigned char uint_fast8_t;
+typedef signed char int8_t;
+typedef unsigned char uint8_t;
 
 #define INT8_MIN (-127 - 1)
 #define INT8_MAX (127)
 #define UINT8_MAX (0xff)
 
+#define INT_FAST8_MIN INT8_MIN
+#define INT_FAST8_MAX INT8_MAX
+#define UINT_FAST8_MAX UINT8_MAX
+
+#define INT_LEAST8_MIN INT8_MIN
+#define INT_LEAST8_MAX INT8_MAX
+#define UINT_LEAST8_MAX UINT8_MAX
+#endif // !defined(KR_NO8_)
+
+#if !defined(KR_NO16_)
+#if (INT_WIDTH == 16)
+typedef signed int int_fast16_t;
+typedef unsigned int uint_fast16_t;
+typedef signed int int16_t;
+typedef unsigned int uint16_t;
+#else
+typedef int_least16_t int_fast16_t;
+typedef uint_least16_t uint_fast16_t;
+typedef int_least16_t int16_t;
+typedef uint_least16_t uint16_t;
+#endif
+
 #define INT16_MIN (-32767 - 1)
 #define INT16_MAX (32767)
 #define UINT16_MAX (0xffff)
+
+#define INT_FAST16_MIN INT16_MIN
+#define INT_FAST16_MAX INT16_MAX
+#define UINT_FAST16_MAX UINT16_MAX
+
+#define INT_LEAST16_MIN INT16_MIN
+#define INT_LEAST16_MAX INT16_MAX
+#define UINT_LEAST16_MAX UINT16_MAX
+#endif // !defined(KR_NO16_)
+
+#if !defined(KR_NO32_)
+#if (INT_WIDTH == 32)
+typedef signed int int_fast32_t;
+typedef unsigned int uint_fast32_t;
+typedef signed int int32_t;
+typedef unsigned int uint32_t;
+#else
+typedef int_least32_t int_fast32_t;
+typedef uint_least32_t uint_fast32_t;
+typedef int_least32_t int32_t;
+typedef uint_least32_t uint32_t;
+#endif
 
 #define INT32_MIN (-2147483647 - 1)
 #define INT32_MAX (2147483647)
 #define UINT32_MAX (0xffffffff)
 
-#if !defined(KR_SKIP_64BIT_)
+#define INT_FAST32_MIN INT32_MIN
+#define INT_FAST32_MAX INT32_MAX
+#define UINT_FAST32_MAX UINT32_MAX
+
+#define INT_LEAST32_MIN INT32_MIN
+#define INT_LEAST32_MAX INT32_MAX
+#define UINT_LEAST32_MAX UINT32_MAX
+#endif // !defined(KR_NO32_)
+
+#if !defined(KR_NO64_)
+#if (INT_WIDTH == 64)
+typedef signed int int_fast64_t;
+typedef unsigned int uint_fast64_t;
+typedef signed int int64_t;
+typedef unsigned int uint64_t;
+#else
+typedef int_least64_t int_fast64_t;
+typedef uint_least64_t uint_fast64_t;
+typedef int_least64_t int64_t;
+typedef uint_least64_t uint64_t;
+#endif
+
 #define INT64_MIN (-9223372036854775807 - 1)
 #define INT64_MAX (9223372036854775807)
 #define UINT64_MAX (0xffffffffffffffff)
+
+#define INT_FAST64_MIN INT64_MIN
+#define INT_FAST64_MAX INT64_MAX
+#define UINT_FAST64_MAX UINT64_MAX
+
+#define INT_LEAST64_MIN INT64_MIN
+#define INT_LEAST64_MAX INT64_MAX
+#define UINT_LEAST64_MAX UINT64_MAX
+#endif // #if !defined(KR_NO64_)
+
+// Maximum-size int.
+
+#if !defined(KR_NO64_)
+typedef int_least64_t intmax_t;
+typedef uint_least64_t uintmax_t;
+#elif !defined(KR_NO64_)
+typedef int_least32_t intmax_t;
+typedef uint_least32_t uintmax_t;
+#elif !defined(KR_NO64_)
+typedef int_least16_t intmax_t;
+typedef uint_least16_t uintmax_t;
+#elif !defined(KR_NO64_)
+typedef int_least8_t intmax_t;
+typedef uint_least8_t uintmax_t;
+#endif // !defined(KR_NO64_)
+
+// Types wide enough to hold pointers.
+
+#if (KR_SIZEOF_POINTER == 1)
+typedef int_fast8_t intptr_t;
+typedef uint_fast8_t uintptr_t;
+#elif (KR_SIZEOF_POINTER == 2)
+typedef int_fast16_t intptr_t;
+typedef uint_fast16_t uintptr_t;
+#elif (KR_SIZEOF_POINTER == 4)
+typedef int_fast32_t intptr_t;
+typedef uint_fast32_t uintptr_t;
+#elif (KR_SIZEOF_POINTER == 8)
+typedef int_fast64_t intptr_t;
+typedef uint_fast64_t uintptr_t;
 #endif
 
-#undef KR_SKIP_64BIT_
+#endif // defined(KR_USE_STDINT_)
+
+// C99: Width of size_t.
 
 #if !defined(SIZE_MAX)
 #define SIZE_MAX (~((size_t)0))
 #endif
 
-#endif // defined(KR_USE_STDINT_)
+// C23: Width of size_t.
+
+#if !defined(SIZE_WIDTH)
+#if (SIZE_MAX == 0xff)
+#define SIZE_WIDTH (8)
+#elif (SIZE_MAX == 0xffff)
+#define SIZE_WIDTH (16)
+#elif (SIZE_MAX == 0xffffffff)
+#define SIZE_WIDTH (32)
+#elif (SIZE_MAX == 0xffffffffffffffff)
+#define SIZE_WIDTH (64)
+#endif // (SIZE_MAX == 0xff)
+#endif // !defined(SIZE_WIDTH)
+
+// C23: Width of ptrdiff_t in bits.
+
+#if !defined(PTRDIFF_WIDTH)
+#define PTRDIFF_WIDTH (KR_SIZEOF_PTRDIFF * CHAR_BIT)
+#endif
+
+// C99: Minimum and maximum of ptrdiff_t.
+
+#if !defined(PTRDIFF_MIN) && !defined(PTRDIFF_MAX)
+#if (PTRDIFF_WIDTH == 8)
+#define PTRDIFF_MIN INT8_MIN
+#define PTRDIFF_MAX INT8_MAX
+#elif (PTRDIFF_WIDTH == 16)
+#define PTRDIFF_MIN INT16_MIN
+#define PTRDIFF_MAX INT16_MAX
+#elif (PTRDIFF_WIDTH == 32)
+#define PTRDIFF_MIN INT32_MIN
+#define PTRDIFF_MAX INT32_MAX
+#elif (PTRDIFF_WIDTH == 64)
+#define PTRDIFF_MIN INT64_MIN
+#define PTRDIFF_MAX INT64_MAX
+#endif // (PTRDIFF_WIDTH == 8)
+#endif // !defined(PTRDIFF_MIN) && !defined(PTRDIFF_MAX)
+
+#undef KR_NO8_
+#undef KR_NO16_
+#undef KR_NO32_
+#undef KR_NO64_
+#undef KR_USE_STDINT_
