@@ -133,7 +133,7 @@ KR_CONSTEXPR uint8_t kr_jsf8_rand_uniform(struct kr_jsf8_ctx_s *x, uint8_t upper
     }
 
     /* Expand the range where we can "hit" a good random number. */
-    min = -upper_bound % upper_bound;
+    min = (0u - upper_bound) % upper_bound;
 
     for (;;)
     {
@@ -168,7 +168,7 @@ KR_CONSTEXPR uint16_t kr_jsf16_rand_uniform(struct kr_jsf16_ctx_s *x, uint16_t u
     }
 
     /* Expand the range where we can "hit" a good random number. */
-    min = -upper_bound % upper_bound;
+    min = (0u - upper_bound) % upper_bound;
 
     for (;;)
     {
@@ -203,7 +203,7 @@ KR_CONSTEXPR uint32_t kr_jsf32_rand_uniform(struct kr_jsf32_ctx_s *x, uint32_t u
     }
 
     /* Expand the range where we can "hit" a good random number. */
-    min = -upper_bound % upper_bound;
+    min = (0u - upper_bound) % upper_bound;
 
     for (;;)
     {
@@ -240,7 +240,7 @@ KR_CONSTEXPR uint64_t kr_jsf64_rand_uniform(struct kr_jsf64_ctx_s *x, uint64_t u
     }
 
     /* Expand the range where we can "hit" a good random number. */
-    min = -upper_bound % upper_bound;
+    min = (0u - upper_bound) % upper_bound;
 
     for (;;)
     {
