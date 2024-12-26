@@ -13,6 +13,7 @@ option(KRUFT_ENABLE_COVERAGE "Enable code coverage on tests")
 project(kruft LANGUAGES C CXX)
 
 set(KRUFT_HEADERS
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/krarg.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krbit.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krbool.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krconfig.h"

@@ -1,10 +1,10 @@
-//
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
 #if !defined(KRBOOL_H)
 #define KRBOOL_H
@@ -24,7 +24,7 @@
 #define true (1)
 #define false (0)
 
-#endif // (KR_STDC_VERSION >= 199901)
-#endif // (!KR_CPLUSPLUS)
+#endif /* (KR_STDC_VERSION >= 199901) */
+#endif /* (!KR_CPLUSPLUS) */
 
-#endif // !defined(KRBOOL_H)
+#endif /* !defined(KRBOOL_H) */

@@ -1,33 +1,33 @@
-//
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
-//
-// Deterministic PRNG that gives consistent results across platforms.
-//
-// Uses Bob Jenkins's Small Fast PRNG, also known as jsf:
-//  <http://burtleburtle.net/bob/rand/smallprng.html>
-//
-// The 8 and 16-bit variants are by Melissa E. O'Neill:
-//  <https://www.pcg-random.org/posts/bob-jenkins-small-prng-passes-practrand.html>
-//
-// jsf is well studied, has variations that work at all integer sizes, and
-// comes with a recommended seeding routine out of the box.
-//
+/*
+ * Deterministic PRNG that gives consistent results across platforms.
+ *
+ * Uses Bob Jenkins's Small Fast PRNG, also known as jsf:
+ *  <http://burtleburtle.net/bob/rand/smallprng.html>
+ *
+ * The 8 and 16-bit variants are by Melissa E. O'Neill:
+ *  <https://www.pcg-random.org/posts/bob-jenkins-small-prng-passes-practrand.html>
+ *
+ * jsf is well studied, has variations that work at all integer sizes, and
+ * comes with a recommended seeding routine out of the box.
+ */
 
 #if !defined(KRRAND_H)
 #define KRRAND_H
 
 #include "./krconfig.h"
 
-#include "./krbit.h" // bit rotation
+#include "./krbit.h" /* bit rotation */
 #include "./krint.h"
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 struct kr_jsf8_ctx_s
 {
@@ -51,9 +51,9 @@ struct kr_jsf64_ctx_s
     uint64_t a, b, c, d;
 };
 
-#endif // defined(UINT64_MAX)
+#endif /* defined(UINT64_MAX) */
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 /**
  * @brief Return a random number.
@@ -109,9 +109,9 @@ KR_CONSTEXPR uint64_t kr_jsf64_rand(struct kr_jsf64_ctx_s *x)
     return x->d;
 }
 
-#endif // defined(UINT64_MAX)
+#endif /* defined(UINT64_MAX) */
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 /**
  * @brief Return a uniformly distributed random number in the half-open range
@@ -128,11 +128,11 @@ KR_CONSTEXPR uint8_t kr_jsf8_rand_uniform(struct kr_jsf8_ctx_s *x, uint8_t upper
 
     if (upper_bound <= 1)
     {
-        // Trivial case.
+        /* Trivial case. */
         return 0;
     }
 
-    // Expand the range where we can "hit" a good random number.
+    /* Expand the range where we can "hit" a good random number. */
     min = -upper_bound % upper_bound;
 
     for (;;)
@@ -144,7 +144,7 @@ KR_CONSTEXPR uint8_t kr_jsf8_rand_uniform(struct kr_jsf8_ctx_s *x, uint8_t upper
         }
     }
 
-    // Map our random number back to the original bounds.
+    /* Map our random number back to the original bounds. */
     return i % upper_bound;
 }
 
@@ -163,11 +163,11 @@ KR_CONSTEXPR uint16_t kr_jsf16_rand_uniform(struct kr_jsf16_ctx_s *x, uint16_t u
 
     if (upper_bound <= 1)
     {
-        // Trivial case.
+        /* Trivial case. */
         return 0;
     }
 
-    // Expand the range where we can "hit" a good random number.
+    /* Expand the range where we can "hit" a good random number. */
     min = -upper_bound % upper_bound;
 
     for (;;)
@@ -179,7 +179,7 @@ KR_CONSTEXPR uint16_t kr_jsf16_rand_uniform(struct kr_jsf16_ctx_s *x, uint16_t u
         }
     }
 
-    // Map our random number back to the original bounds.
+    /* Map our random number back to the original bounds. */
     return i % upper_bound;
 }
 
@@ -198,11 +198,11 @@ KR_CONSTEXPR uint32_t kr_jsf32_rand_uniform(struct kr_jsf32_ctx_s *x, uint32_t u
 
     if (upper_bound <= 1)
     {
-        // Trivial case.
+        /* Trivial case. */
         return 0;
     }
 
-    // Expand the range where we can "hit" a good random number.
+    /* Expand the range where we can "hit" a good random number. */
     min = -upper_bound % upper_bound;
 
     for (;;)
@@ -214,7 +214,7 @@ KR_CONSTEXPR uint32_t kr_jsf32_rand_uniform(struct kr_jsf32_ctx_s *x, uint32_t u
         }
     }
 
-    // Map our random number back to the original bounds.
+    /* Map our random number back to the original bounds. */
     return i % upper_bound;
 }
 
@@ -235,11 +235,11 @@ KR_CONSTEXPR uint64_t kr_jsf64_rand_uniform(struct kr_jsf64_ctx_s *x, uint64_t u
 
     if (upper_bound <= 1)
     {
-        // Trivial case.
+        /* Trivial case. */
         return 0;
     }
 
-    // Expand the range where we can "hit" a good random number.
+    /* Expand the range where we can "hit" a good random number. */
     min = -upper_bound % upper_bound;
 
     for (;;)
@@ -251,13 +251,13 @@ KR_CONSTEXPR uint64_t kr_jsf64_rand_uniform(struct kr_jsf64_ctx_s *x, uint64_t u
         }
     }
 
-    // Map our random number back to the original bounds.
+    /* Map our random number back to the original bounds. */
     return i % upper_bound;
 }
 
-#endif // defined(UINT64_MAX)
+#endif /* defined(UINT64_MAX) */
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 /**
  * @brief Seed an 8-bit PRNG with 32-bits of state.
@@ -325,6 +325,6 @@ KR_CONSTEXPR void kr_jsf64_srand(struct kr_jsf64_ctx_s *x, uint64_t seed)
     }
 }
 
-#endif // defined(UINT64_MAX)
+#endif /* defined(UINT64_MAX) */
 
-#endif // !defined(KRRAND_H)
+#endif /* !defined(KRRAND_H) */

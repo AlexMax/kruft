@@ -1,37 +1,37 @@
-//
-// zztest - A test framework for crufty compilers.
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * zztest - A test framework for crufty compilers.
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
-//
-// ABOUT
-//  zztest is a test framework for crufty compilers.
-//
-// COMPILER SUPPORT
-//  - Modern GCC, Clang, MSVC
-//  - Microsoft Visual C++ 6.0
-//  - Borland C++ 3.1 (DOS)
-//  - Watcom C 9.01 (DOS)
-//
-// Important defines:
-//  ZZTEST_IMPLEMENTATION: You must define this before including zztest.h
-//                         in a single file, otherwise internal functions
-//                         will be missing their implementation.
-//  ZZTEST_SELFCHECK: Define this before including zztest.h to create a
-//                    self-contained program that shows output of sample
-//                    tests.  Useful to sanity check your environment.
-//  ZZTEST_CONFIG_PRINTF: Define this to your own print function.
-//
+/*
+ * ABOUT
+ *  zztest is a test framework for crufty compilers.
+ *
+ * COMPILER SUPPORT
+ *  - Modern GCC, Clang, MSVC
+ *  - Microsoft Visual C++ 6.0
+ *  - Borland C++ 3.1 (DOS)
+ *  - Watcom C 9.01 (DOS)
+ *
+ * Important defines:
+ *  ZZTEST_IMPLEMENTATION: You must define this before including zztest.h
+ *                         in a single file, otherwise internal functions
+ *                         will be missing their implementation.
+ *  ZZTEST_SELFCHECK: Define this before including zztest.h to create a
+ *                    self-contained program that shows output of sample
+ *                    tests.  Useful to sanity check your environment.
+ *  ZZTEST_CONFIG_PRINTF: Define this to your own print function.
+ */
 
 #if !defined(INCLUDE_ZZTEST_H)
 #define INCLUDE_ZZTEST_H
 
 #if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS // Say the line, Bart!
+#define _CRT_SECURE_NO_WARNINGS /* Say the line, Bart! */
 #endif
 
 #if defined(ZZTEST_CONFIG_PRINTF)
@@ -43,17 +43,17 @@
 #include <limits.h>
 #include <stddef.h>
 
-// Boolean datatype.
+/* Boolean datatype. */
 typedef int ZZT_BOOL;
 #define ZZT_FALSE (0)
 #define ZZT_TRUE (1)
 
-// Determine our 64-bit data type.
-#if defined(ULLONG_MAX) // C99
+/* Determine our 64-bit data type. */
+#if defined(ULLONG_MAX) /* C99 */
 #if (ULLONG_MAX == 0xFFFFFFFFFFFFFFFF)
 #define ZZT_64BIT_LL_
 #endif
-#elif defined(ULONG_LONG_MAX) // GNU
+#elif defined(ULONG_LONG_MAX) /* GNU */
 #if (ULONG_LONG_MAX == 0xFFFFFFFFFFFFFFFF)
 #define ZZT_64BIT_LL_
 #endif
@@ -66,7 +66,7 @@ typedef unsigned long long ZZT_UINT64;
 #define ZZT_PRIu64 "llu"
 #define ZZT_PRIx64 "llx"
 #undef ZZT_64BIT_LL_
-#elif defined(_UI64_MAX) // MSVC
+#elif defined(_UI64_MAX) /* MSVC */
 #define ZZTEST_HAS_64BIT (1)
 typedef __int64 ZZT_INT64;
 typedef unsigned __int64 ZZT_UINT64;
@@ -344,15 +344,15 @@ void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long 
 void zzt_add_test_suite(struct zzt_test_suite_s *suite);
 int zzt_run_all(void);
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 #if defined(ZZTEST_IMPLEMENTATION)
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 #if defined(_WIN32)
-#pragma comment(lib, "WinMM.Lib") // Timer functions
+#pragma comment(lib, "WinMM.Lib") /* Timer functions */
 #include <Windows.h>
 #elif defined(__unix__)
-#include <sys/time.h> // Timer functions.
+#include <sys/time.h> /* Timer functions. */
 static struct timeval g_cTimeStart;
 #endif
 
@@ -368,7 +368,7 @@ static struct timeval g_cTimeStart;
 #define ZZTLOG_FAILED "[  FAILED  ]"
 #define ZZTLOG_PASSED "[  PASSED  ]"
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 struct zzt_test_state_s
 {
@@ -403,7 +403,7 @@ static unsigned long zzt_ms(void)
     ms = (now.tv_sec - g_cTimeStart.tv_sec) * 1000 + (now.tv_usec - g_cTimeStart.tv_usec) / 1000;
     return ms;
 #else
-    return 0; // oh well...
+    return 0; /* oh well... */
 #endif
 }
 
@@ -422,7 +422,7 @@ static void zzt_sprintf(char *buf, unsigned buflen, const char *fmt, ...)
 
 #if defined(__GNUC__)
     vsnprintf(buf, buflen, fmt, args);
-#elif defined(_MSC_VER) // FIXME: When was this added?
+#elif defined(_MSC_VER) /* FIXME: When was this added? */
     _vsnprintf(buf, buflen, fmt, args);
     buf[buflen - 1] = '\0';
 #else
@@ -453,7 +453,7 @@ static void zzt_stringify(char *buf, unsigned long buflen, const char *str)
     {
         return;
     }
-    else if (REMAIN_() < 5) // Needs to contain at least "...\0
+    else if (REMAIN_() < 5) /* Needs to contain at least "...\0 */
     {
         WRITE_('\0');
         return;
@@ -603,7 +603,7 @@ static void zzt_printv(enum zzt_fmt_e fmt, const void *v, const char *vs)
     case ZZT_FMT_XI64:
         zzt_sprintf(buffer, sizeof(buffer), "0x%" ZZT_PRIx64, *((ZZT_UINT64 *)v));
         break;
-#endif // (ZZT_HAS_64BIT)
+#endif /* (ZZT_HAS_64BIT) */
     case ZZT_FMT_STR:
         zzt_stringify(buffer, sizeof(buffer), (const char *)v);
         break;
@@ -652,14 +652,14 @@ static void zzt_add_skip(struct zzt_test_s *test)
     }
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 int zzt_strcmp(const char *lhs, const char *rhs)
 {
     return strcmp(lhs, rhs);
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *l, const void *r, const char *ls,
                 const char *rs, const char *file, unsigned long line)
@@ -691,7 +691,7 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *
     {
         isEqual = *((ZZT_UINT64 *)l) == *((ZZT_UINT64 *)r);
     }
-#endif // (ZZT_HAS_64BIT)
+#endif /* (ZZT_HAS_64BIT) */
     else if (fmt == ZZT_FMT_STR)
     {
         isEqual = strcmp((const char *)l, (const char *)r) == 0;
@@ -716,7 +716,7 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *
     return ZZT_FALSE;
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long line, enum zzt_result_e msg,
                 const char *msgstr)
@@ -735,7 +735,7 @@ void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long 
     }
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 void zzt_add_test_suite(struct zzt_test_suite_s *suite)
 {
@@ -755,7 +755,7 @@ void zzt_add_test_suite(struct zzt_test_suite_s *suite)
     }
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 int zzt_run_all(void)
 {
@@ -765,7 +765,7 @@ int zzt_run_all(void)
     struct zzt_test_s *test = NULL;
 
 #if defined(_WIN32)
-    // Set timer resolution to 1ms.
+    /* Set timer resolution to 1ms. */
     timeBeginPeriod(1);
 #endif
 
@@ -972,6 +972,6 @@ int main()
     return RUN_TESTS();
 }
 
-#endif // defined(ZZTEST_SELFCHECK)
-#endif // defined(ZZTEST_IMPLEMENTATION)
-#endif // !defined(INCLUDE_ZZTEST_H)
+#endif /* defined(ZZTEST_SELFCHECK) */
+#endif /* defined(ZZTEST_IMPLEMENTATION) */
+#endif /* !defined(INCLUDE_ZZTEST_H) */

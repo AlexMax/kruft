@@ -1,10 +1,10 @@
-//
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
 #if !defined(KRSTR_H)
 #define KRSTR_H
@@ -183,4 +183,4 @@ KR_NODISCARD char *kr_strndup(const char *str, size_t len)
     return dup;
 }
 
-#endif // !defined(KRSTR_H)
+#endif /* !defined(KRSTR_H) */

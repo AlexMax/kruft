@@ -1,16 +1,16 @@
-//
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
 #include "zztest.h"
 
 #include "krserial.h"
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 TEST(serial, kr_load_u16le)
 {
@@ -24,7 +24,7 @@ TEST(serial, kr_load_u16be)
     EXPECT_UINTEQ(0x9988, kr_load_u16be(buf));
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 TEST(serial, kr_load_u32le)
 {
@@ -38,7 +38,7 @@ TEST(serial, kr_load_u32be)
     EXPECT_UINTEQ(0xbbaa9988, kr_load_u32be(buf));
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 TEST(serial, kr_load_u64le)
 {
@@ -47,7 +47,7 @@ TEST(serial, kr_load_u64le)
 #else
     unsigned char buf[8] = {0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
     EXPECT_UINT64EQ(0xffeeddccbbaa9988, kr_load_u64le(buf));
-#endif // !defined(UINT64_MAX)
+#endif /* !defined(UINT64_MAX) */
 }
 
 TEST(serial, kr_load_u64be)
@@ -57,10 +57,10 @@ TEST(serial, kr_load_u64be)
 #else
     unsigned char buf[8] = {0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88};
     EXPECT_UINT64EQ(0xffeeddccbbaa9988, kr_load_u64be(buf));
-#endif // !defined(UINT64_MAX)
+#endif /* !defined(UINT64_MAX) */
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 TEST(serial, kr_store_u16le)
 {
@@ -82,7 +82,7 @@ TEST(serial, kr_store_u16be)
     EXPECT_UINTEQ(0x88, buf[i++]);
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 TEST(serial, kr_store_u32le)
 {
@@ -108,7 +108,7 @@ TEST(serial, kr_store_u32be)
     EXPECT_UINTEQ(0x88, buf[i++]);
 }
 
-//------------------------------------------------------------------------------
+/******************************************************************************/
 
 TEST(serial, kr_store_u64le)
 {
@@ -128,7 +128,7 @@ TEST(serial, kr_store_u64le)
     EXPECT_UINTEQ(0xdd, buf[i++]);
     EXPECT_UINTEQ(0xee, buf[i++]);
     EXPECT_UINTEQ(0xff, buf[i++]);
-#endif // !defined(UINT64_MAX)
+#endif /* !defined(UINT64_MAX) */
 }
 
 TEST(serial, kr_store_u64be)
@@ -148,7 +148,7 @@ TEST(serial, kr_store_u64be)
     EXPECT_UINTEQ(0xaa, buf[i++]);
     EXPECT_UINTEQ(0x99, buf[i++]);
     EXPECT_UINTEQ(0x88, buf[i++]);
-#endif // !defined(UINT64_MAX)
+#endif /* !defined(UINT64_MAX) */
 }
 
 SUITE(serial)

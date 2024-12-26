@@ -1,18 +1,18 @@
-//
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
-//
-// ctype.h functions
-//
-// - These functions accept char and return bool or char.
-// - These functions have no undefined behavior and do not assert.
-// - These functions only deal with ASCII and do not care about locales.
-//
+/*
+ * ctype.h functions
+ *
+ * - These functions accept char and return bool or char.
+ * - These functions have no undefined behavior and do not assert.
+ * - These functions only deal with ASCII and do not care about locales.
+ */
 
 #if !defined(KRCTYPE_H)
 #define KRCTYPE_H
@@ -185,4 +185,4 @@ KR_CONSTEXPR char kr_toupper(char ch)
     return ch;
 }
 
-#endif // !defined(KRCTYPE_H)
+#endif /* !defined(KRCTYPE_H) */

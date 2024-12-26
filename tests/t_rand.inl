@@ -1,10 +1,10 @@
-//
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
 #include "zztest.h"
 
@@ -55,7 +55,7 @@ TEST(rand, jsf64)
     EXPECT_UINT64EQ(UINT64_C(4516034199495256649), kr_jsf64_rand(&ctx));
     EXPECT_UINT64EQ(UINT64_C(10153722626954818142), kr_jsf64_rand(&ctx));
     EXPECT_UINT64EQ(UINT64_C(16680399593301785108), kr_jsf64_rand(&ctx));
-#endif // !defined(UINT64_MAX)
+#endif /* !defined(UINT64_MAX) */
 }
 
 SUITE(rand)

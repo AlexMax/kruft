@@ -1,22 +1,22 @@
-//
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
-//
-// User configuration settings:
-//
-// KR_CONFIG_NOINCLUDE: If defined, does not include any libc header
-//                      automatically.
-//
+/*
+ * User configuration settings:
+ *
+ * KR_CONFIG_NOINCLUDE: If defined, does not include any libc header
+ *                      automatically.
+ */
 
 #if !defined(KRCONFIG_H)
 #define KRCONFIG_H
 
-// Configuration options.
+/* Configuration options. */
 
 #if !defined(KR_CONFIG_NOINCLUDE)
 #define KR_CONFIG_NOINCLUDE (0)
@@ -34,7 +34,7 @@
 #define KR_FREE(p) (free((p)))
 #endif
 
-// Compiler detection.
+/* Compiler detection. */
 
 #if defined(_MSC_VER)
 #define KR_MSC_VER (_MSC_VER)
@@ -54,7 +54,7 @@
 #define KR_CLANG (0)
 #endif
 
-// C standard version.
+/* C standard version. */
 
 #if defined(__STDC_VERSION__)
 #define KR_STDC_VERSION (__STDC_VERSION__)
@@ -62,7 +62,7 @@
 #define KR_STDC_VERSION (0)
 #endif
 
-// C++ standard version.
+/* C++ standard version. */
 
 #if defined(__cplusplus) && defined(_MSVC_LANG)
 #define KR_CPLUSPLUS (_MSVC_LANG)
@@ -72,23 +72,23 @@
 #define KR_CPLUSPLUS (0)
 #endif
 
-// Endian detection.
+/* Endian detection. */
 
 #if (KR_GNUC || KR_CLANG)
 #define KR_ORDER_LITTLE_ENDIAN (__ORDER_LITTLE_ENDIAN__)
 #define KR_ORDER_BIG_ENDIAN (__ORDER_BIG_ENDIAN__)
 #define KR_BYTE_ORDER (__BYTE_ORDER__)
-#else // (KR_GNUC || KR_CLANG)
+#else /* (KR_GNUC || KR_CLANG) */
 #define KR_ORDER_LITTLE_ENDIAN (1234)
 #define KR_ORDER_BIG_ENDIAN (4321)
 #if defined(__BIG_ENDIAN__)
 #define KR_BYTE_ORDER (KR_ORDER_BIG_ENDIAN)
 #else
 #define KR_BYTE_ORDER (KR_ORDER_LITTLE_ENDIAN)
-#endif // defined(__BIG_ENDIAN__)
-#endif // (KR_GNUC || KR_CLANG)
+#endif /* defined(__BIG_ENDIAN__) */
+#endif /* (KR_GNUC || KR_CLANG) */
 
-// Size of pointer types.
+/* Size of pointer types. */
 
 #if (KR_GNUC || KR_CLANG)
 #define KR_SIZEOF_POINTER (__SIZEOF_POINTER__)
@@ -97,19 +97,19 @@
 #if defined(_WIN64)
 #define KR_SIZEOF_POINTER (8)
 #define KR_SIZEOF_PTRDIFF (8)
-#else // defined(_WIN64)
+#else /* defined(_WIN64) */
 #define KR_SIZEOF_POINTER (4)
 #define KR_SIZEOF_PTRDIFF (4)
-#endif // defined(_WIN64)
-#elif defined(__LARGE__) || defined(__HUGE__) // DOS memory models
+#endif /* defined(_WIN64) */
+#elif defined(__LARGE__) || defined(__HUGE__) /* DOS memory models */
 #define KR_SIZEOF_POINTER (LONG_WIDTH / CHAR_BIT)
 #define KR_SIZEOF_PTRDIFF (LONG_WIDTH / CHAR_BIT)
 #else
 #define KR_SIZEOF_POINTER (INT_WIDTH / CHAR_BIT)
 #define KR_SIZEOF_PTRDIFF (INT_WIDTH / CHAR_BIT)
-#endif // (KR_GNUC || KR_CLANG)
+#endif /* (KR_GNUC || KR_CLANG) */
 
-// Language and compiler feature shims.
+/* Language and compiler feature shims. */
 
 #if (KR_CPLUSPLUS)
 #define KR_CASTR(t, u) (reinterpret_cast<t>(u))
@@ -137,18 +137,18 @@
 #define KR_FORCEINLINE KR_INLINE
 #endif
 
-#if (KR_MSC_VER && KR_MSC_VER < 1900) // Visual C++ 2015
+#if (KR_MSC_VER && KR_MSC_VER < 1900) /* Visual C++ 2015 */
 #define KR_INLINE __inline
-#elif (KR_CPLUSPLUS) // C++ inline.
+#elif (KR_CPLUSPLUS) /* C++ inline. */
 #define KR_INLINE inline
-#elif (KR_STDC_VERSION >= 199901) // C++-style inline in C99.
+#elif (KR_STDC_VERSION >= 199901) /* C++-style inline in C99. */
 #define KR_INLINE static inline
-#else // Last resort
-#if (KR_GNUC || KR_CLANG) // Try to avoid "unused definition."
+#else /* Last resort. */
+#if (KR_GNUC || KR_CLANG) /* Try to avoid "unused definition." */
 #define KR_INLINE __attribute__((unused)) static
-#else // (KR_GNUC || KR_CLANG)
+#else /* (KR_GNUC || KR_CLANG) */
 #define KR_INLINE static
-#endif // (KR_GNUC || KR_CLANG)
+#endif /* (KR_GNUC || KR_CLANG) */
 #endif
 
 #if (KR_MSC_VER) && defined(_Check_return_)
@@ -189,4 +189,4 @@
 #define KR_UNREACHABLE()
 #endif
 
-#endif // !defined(KRCONFIG_H)
+#endif /* !defined(KRCONFIG_H) */

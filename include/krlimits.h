@@ -1,10 +1,10 @@
-//
-// Copyright (c) 2024 Lexi Mayfield
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-//
+/*
+ * Copyright (c) 2024 Lexi Mayfield
+ *
+ * Distributed under the Boost Software License, Version 1.0. (See
+ * accompanying file LICENSE.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
 #if !defined(KRLIMITS_H)
 #define KRLIMITS_H
@@ -13,7 +13,7 @@
 
 #include <limits.h>
 
-// Some ancient versions of GCC define LONG_LONG_* macros but not LLONG_*.
+/* Some ancient versions of GCC define LONG_LONG_ *macros but not LLONG_ *. */
 
 #if !defined(LLONG_MIN) && defined(LONG_LONG_MIN)
 #define LLONG_MAX LONG_LONG_MAX
@@ -27,7 +27,7 @@
 #define LLONG_MAX LONG_LONG_MAX
 #endif
 
-// C23 defines.
+/* C23 defines. */
 
 #if !defined(CHAR_WIDTH)
 #define CHAR_WIDTH CHAR_BIT
@@ -47,7 +47,7 @@
 #elif (SHRT_MAX == 0x7fffffff)
 #define SHRT_WIDTH (CHAR_WIDTH * 4)
 #endif
-#endif // !defined(SHRT_WIDTH)
+#endif /* !defined(SHRT_WIDTH) */
 
 #if !defined(USHRT_WIDTH)
 #define USHRT_WIDTH SHRT_WIDTH
@@ -61,7 +61,7 @@
 #elif (INT_MAX == 0x7fffffffffffffff)
 #define INT_WIDTH (CHAR_WIDTH * 8)
 #endif
-#endif // !defined(INT_WIDTH)
+#endif /* !defined(INT_WIDTH) */
 
 #if !defined(UINT_WIDTH)
 #define UINT_WIDTH INT_WIDTH
@@ -73,7 +73,7 @@
 #elif (LONG_MAX == 0x7fffffffffffffff)
 #define LONG_WIDTH (CHAR_WIDTH * 8)
 #endif
-#endif // !defined(LONG_WIDTH)
+#endif /* !defined(LONG_WIDTH) */
 
 #if !defined(ULONG_WIDTH)
 #define ULONG_WIDTH LONG_WIDTH
@@ -84,11 +84,11 @@
 #if (LLONG_MAX == 0x7fffffffffffffff)
 #define LLONG_WIDTH (CHAR_WIDTH * 8)
 #endif
-#endif // defined(LLONG_MAX)
-#endif // !defined(LLONG_WIDTH)
+#endif /* defined(LLONG_MAX) */
+#endif /* !defined(LLONG_WIDTH) */
 
 #if !defined(ULLONG_WIDTH)
 #define ULLONG_WIDTH LLONG_WIDTH
 #endif
 
-#endif // !defined(KRLIMITS_H)
+#endif /* !defined(KRLIMITS_H) */
