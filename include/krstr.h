@@ -17,6 +17,21 @@
 #include <string.h>
 #endif
 
+KR_CONSTEXPR size_t kr_strlen(const char *str);
+KR_CONSTEXPR size_t kr_strnlen(const char *str, size_t len);
+KR_INLINE int kr_strcmp(const char *lhs, const char *rhs);
+KR_CONSTEXPR ptrdiff_t kr_strscpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
+KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
+KR_CONSTEXPR size_t kr_strlcpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
+KR_CONSTEXPR size_t kr_strlcat(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
+KR_CONSTEXPR char *kr_stpecpy(char *dest, char *destEnd, const char *KR_RESTRICT src);
+KR_NODISCARD char *kr_strdup(const char *str);
+KR_NODISCARD char *kr_strndup(const char *str, size_t len);
+
+/******************************************************************************/
+#if !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION)
+/******************************************************************************/
+
 KR_CONSTEXPR size_t kr_strlen(const char *str)
 {
     size_t i = 0;
@@ -44,6 +59,8 @@ KR_CONSTEXPR size_t kr_strnlen(const char *str, size_t len)
     return len;
 }
 
+/******************************************************************************/
+
 KR_INLINE int kr_strcmp(const char *lhs, const char *rhs)
 {
     for (;; lhs++, rhs++)
@@ -55,6 +72,8 @@ KR_INLINE int kr_strcmp(const char *lhs, const char *rhs)
     }
     return *(KR_CASTR(const unsigned char *, lhs)) - *(KR_CASTR(const unsigned char *, rhs));
 }
+
+/******************************************************************************/
 
 KR_CONSTEXPR ptrdiff_t kr_strscpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
 {
@@ -98,6 +117,8 @@ KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRIC
     return KR_CASTS(ptrdiff_t, tail) + len;
 }
 
+/******************************************************************************/
+
 KR_CONSTEXPR size_t kr_strlcpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen)
 {
     size_t i = 0;
@@ -138,7 +159,9 @@ KR_CONSTEXPR size_t kr_strlcat(char *KR_RESTRICT dest, const char *KR_RESTRICT s
     return kr_strlcpy(dest + tail, src, destLen - tail) + tail;
 }
 
-KR_CONSTEXPR char *kr_stpecpy(char *dest, char *srcEnd, const char *KR_RESTRICT src)
+/******************************************************************************/
+
+KR_CONSTEXPR char *kr_stpecpy(char *dest, char *destEnd, const char *KR_RESTRICT src)
 {
     ptrdiff_t len = 0;
 
@@ -147,7 +170,7 @@ KR_CONSTEXPR char *kr_stpecpy(char *dest, char *srcEnd, const char *KR_RESTRICT 
         return NULL;
     }
 
-    len = kr_strscpy(dest, src, KR_CASTS(size_t, srcEnd - dest));
+    len = kr_strscpy(dest, src, KR_CASTS(size_t, destEnd - dest));
     if (len == -1)
     {
         return NULL;
@@ -155,6 +178,8 @@ KR_CONSTEXPR char *kr_stpecpy(char *dest, char *srcEnd, const char *KR_RESTRICT 
 
     return dest + len;
 }
+
+/******************************************************************************/
 
 KR_NODISCARD char *kr_strdup(const char *str)
 {
@@ -182,5 +207,7 @@ KR_NODISCARD char *kr_strndup(const char *str, size_t len)
     dup[strl] = '\0';
     return dup;
 }
+
+#endif /* !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION) */
 
 #endif /* !defined(KRSTR_H) */

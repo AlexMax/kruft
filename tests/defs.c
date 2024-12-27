@@ -36,7 +36,7 @@ int main()
     printf("KR_STDC_VERSION: %ld\n", (long)KR_STDC_VERSION);
     printf("KR_BYTE_ORDER: %d\n", KR_BYTE_ORDER);
     printf("KR_SIZEOF_POINTER: %d\n", KR_SIZEOF_POINTER);
-    printf("KR_SIZEOF_PTRDIFF: %d\n", KR_SIZEOF_PTRDIFF);
+    printf("KR_SIZEOF_PTRDIFF_T: %d\n", KR_SIZEOF_PTRDIFF_T);
     printf("KR_CONSTEXPR: %s\n", XSTR(KR_CONSTEXPR));
     printf("KR_FORCEINLINE: %s\n", XSTR(KR_FORCEINLINE));
     printf("KR_INLINE: %s\n", XSTR(KR_INLINE));

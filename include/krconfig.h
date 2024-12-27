@@ -9,14 +9,21 @@
 /*
  * User configuration settings:
  *
- * KR_CONFIG_NOINCLUDE: If defined, does not include any libc header
- *                      automatically.
+ * KRUFT_CONFIG_USEIMPLEMENTATION:
+ *	If defined, don't include function implementations unless you define
+ *  KRUFT_IMPLEMENTATION before including.
+ * KR_CONFIG_NOINCLUDE:
+ *	If defined, does not include any libc header automatically.
  */
 
 #if !defined(KRCONFIG_H)
 #define KRCONFIG_H
 
 /* Configuration options. */
+
+#if !defined(KRUFT_CONFIG_USEIMPLEMENTATION)
+#define KRUFT_CONFIG_USEIMPLEMENTATION (0)
+#endif
 
 #if !defined(KR_CONFIG_NOINCLUDE)
 #define KR_CONFIG_NOINCLUDE (0)
@@ -88,25 +95,39 @@
 #endif /* defined(__BIG_ENDIAN__) */
 #endif /* (KR_GNUC || KR_CLANG) */
 
-/* Size of pointer types. */
+/*
+ * Size of pointer and size types.
+ *
+ * GCC and Clang have nice constants that tell us.  Modern MSVC only targets
+ * a few specific platforms with fewer possibilities.
+ *
+ * On older and obscure platforms, int is a good guess - except when compiling
+ * with certain memory models under DOS, which uses 32-bit sizes despite
+ * int remaining 16-bit.
+ *
+ * TODO: Non-GNU/Clang/MSVC compilers targeting 64-bit.
+ */
 
 #if (KR_GNUC || KR_CLANG)
 #define KR_SIZEOF_POINTER (__SIZEOF_POINTER__)
-#define KR_SIZEOF_PTRDIFF (__SIZEOF_PTRDIFF_T__)
-#elif (KR_MSC_VER)
-#if defined(_WIN64)
+#define KR_SIZEOF_PTRDIFF_T (__SIZEOF_PTRDIFF_T__)
+#define KR_SIZEOF_SIZE_T (__SIZEOF_SIZE_T__)
+#elif (KR_MSC_VER) && defined(_WIN64)
 #define KR_SIZEOF_POINTER (8)
-#define KR_SIZEOF_PTRDIFF (8)
-#else /* defined(_WIN64) */
+#define KR_SIZEOF_PTRDIFF_T (8)
+#define KR_SIZEOF_SIZE_T (8)
+#elif (KR_MSC_VER) && defined(_WIN32)
 #define KR_SIZEOF_POINTER (4)
-#define KR_SIZEOF_PTRDIFF (4)
-#endif /* defined(_WIN64) */
-#elif defined(__LARGE__) || defined(__HUGE__) /* DOS memory models */
+#define KR_SIZEOF_PTRDIFF_T (4)
+#define KR_SIZEOF_SIZE_T (4)
+#elif defined(__LARGE__) || defined(__HUGE__) /* DOS memory models. */
 #define KR_SIZEOF_POINTER (LONG_WIDTH / CHAR_BIT)
-#define KR_SIZEOF_PTRDIFF (LONG_WIDTH / CHAR_BIT)
-#else
+#define KR_SIZEOF_PTRDIFF_T (LONG_WIDTH / CHAR_BIT)
+#define KR_SIZEOF_SIZE_T (LONG_WIDTH / CHAR_BIT)
+#else /* A good guess on most obscure platforms. */
 #define KR_SIZEOF_POINTER (INT_WIDTH / CHAR_BIT)
-#define KR_SIZEOF_PTRDIFF (INT_WIDTH / CHAR_BIT)
+#define KR_SIZEOF_PTRDIFF_T (INT_WIDTH / CHAR_BIT)
+#define KR_SIZEOF_SIZE_T (INT_WIDTH / CHAR_BIT)
 #endif /* (KR_GNUC || KR_CLANG) */
 
 /* Language and compiler feature shims. */
@@ -143,7 +164,7 @@
 #define KR_INLINE inline
 #elif (KR_STDC_VERSION >= 199901) /* C++-style inline in C99. */
 #define KR_INLINE static inline
-#else /* Last resort. */
+#else                     /* Last resort. */
 #if (KR_GNUC || KR_CLANG) /* Try to avoid "unused definition." */
 #define KR_INLINE __attribute__((unused)) static
 #else /* (KR_GNUC || KR_CLANG) */

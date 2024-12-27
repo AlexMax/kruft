@@ -11,8 +11,8 @@
 
 #include "./krconfig.h"
 
-#include <stddef.h>
 #include "krlimits.h"
+#include <stddef.h>
 
 /*
  * If we have an stdint.h, we should be using it.  Not using stdint.h on
@@ -259,55 +259,49 @@ typedef uint_fast64_t uintptr_t;
 
 #endif /* defined(KR_USE_STDINT_) */
 
-/* C99: Width of size_t. */
+/* C99: Maximum value of size_t. */
 
 #if !defined(SIZE_MAX)
-#if (KR_MSC_VER) && defined(_WIN64)
-#define SIZE_MAX (0xffffffffffffffff)
-#elif (KR_MSC_VER) && defined(_WIN32)
+#if (KR_SIZEOF_SIZE_T == 1)
+#define SIZE_MAX (0xff)
+#elif (KR_SIZEOF_SIZE_T == 2)
+#define SIZE_MAX (0xffff)
+#elif (KR_SIZEOF_SIZE_T == 4)
 #define SIZE_MAX (0xffffffff)
-#else
-#define SIZE_MAX (~((size_t)0))
-#endif
-#endif // !defined(SIZE_MAX)
+#elif (KR_SIZEOF_SIZE_T == 8)
+#define SIZE_MAX (0xffffffffffffffff)
+#endif /* (KR_SIZEOF_SIZE_T == 1) */
+#endif /* !defined(SIZE_MAX) */
+
+/* C99: Minimum and maximum of ptrdiff_t. */
+
+#if !defined(PTRDIFF_MIN) && !defined(PTRDIFF_MAX)
+#if (KR_SIZEOF_PTRDIFF_T == 1)
+#define PTRDIFF_MIN INT8_MIN
+#define PTRDIFF_MAX INT8_MAX
+#elif (KR_SIZEOF_PTRDIFF_T == 2)
+#define PTRDIFF_MIN INT16_MIN
+#define PTRDIFF_MAX INT16_MAX
+#elif (KR_SIZEOF_PTRDIFF_T == 4)
+#define PTRDIFF_MIN INT32_MIN
+#define PTRDIFF_MAX INT32_MAX
+#elif (KR_SIZEOF_PTRDIFF_T == 8)
+#define PTRDIFF_MIN INT64_MIN
+#define PTRDIFF_MAX INT64_MAX
+#endif /* (PTRDIFF_WIDTH == 8) */
+#endif /* !defined(PTRDIFF_MIN) && !defined(PTRDIFF_MAX) */
 
 /* C23: Width of size_t. */
 
 #if !defined(SIZE_WIDTH)
-#if (SIZE_MAX == 0xff)
-#define SIZE_WIDTH (8)
-#elif (SIZE_MAX == 0xffff)
-#define SIZE_WIDTH (16)
-#elif (SIZE_MAX == 0xffffffff)
-#define SIZE_WIDTH (32)
-#elif (SIZE_MAX == 0xffffffffffffffff)
-#define SIZE_WIDTH (64)
-#endif /* (SIZE_MAX == 0xff) */
+#define SIZE_WIDTH (KR_SIZEOF_SIZE_T * CHAR_BIT)
 #endif /* !defined(SIZE_WIDTH) */
 
 /* C23: Width of ptrdiff_t in bits. */
 
 #if !defined(PTRDIFF_WIDTH)
-#define PTRDIFF_WIDTH (KR_SIZEOF_PTRDIFF * CHAR_BIT)
+#define PTRDIFF_WIDTH (KR_SIZEOF_PTRDIFF_T * CHAR_BIT)
 #endif
-
-/* C99: Minimum and maximum of ptrdiff_t. */
-
-#if !defined(PTRDIFF_MIN) && !defined(PTRDIFF_MAX)
-#if (PTRDIFF_WIDTH == 8)
-#define PTRDIFF_MIN INT8_MIN
-#define PTRDIFF_MAX INT8_MAX
-#elif (PTRDIFF_WIDTH == 16)
-#define PTRDIFF_MIN INT16_MIN
-#define PTRDIFF_MAX INT16_MAX
-#elif (PTRDIFF_WIDTH == 32)
-#define PTRDIFF_MIN INT32_MIN
-#define PTRDIFF_MAX INT32_MAX
-#elif (PTRDIFF_WIDTH == 64)
-#define PTRDIFF_MIN INT64_MIN
-#define PTRDIFF_MAX INT64_MAX
-#endif /* (PTRDIFF_WIDTH == 8) */
-#endif /* !defined(PTRDIFF_MIN) && !defined(PTRDIFF_MAX) */
 
 #undef KR_NO8_
 #undef KR_NO16_

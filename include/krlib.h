@@ -16,6 +16,12 @@
 #include <stdlib.h>
 #endif
 
+KR_NODISCARD KR_INLINE void *kr_reallocarray(void *ptr, size_t nmemb, size_t size);
+
+/******************************************************************************/
+#if !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION)
+/******************************************************************************/
+
 KR_NODISCARD KR_INLINE void *kr_reallocarray(void *ptr, size_t nmemb, size_t size)
 {
     const size_t x = nmemb * size;
@@ -25,5 +31,7 @@ KR_NODISCARD KR_INLINE void *kr_reallocarray(void *ptr, size_t nmemb, size_t siz
     }
     return KR_REALLOC(ptr, nmemb * size);
 }
+
+#endif /* !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION) */
 
 #endif /* !defined(KRLIB_H) */

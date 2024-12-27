@@ -19,9 +19,26 @@
 
 #include "./krconfig.h"
 
-#if (!KR_CONFIG_NOINCLUDE)
 #include "./krbool.h"
-#endif
+
+KR_CONSTEXPR bool kr_isalnum(char ch);
+KR_CONSTEXPR bool kr_isalpha(char ch);
+KR_CONSTEXPR bool kr_islower(char ch);
+KR_CONSTEXPR bool kr_isupper(char ch);
+KR_CONSTEXPR bool kr_isdigit(char ch);
+KR_CONSTEXPR bool kr_isxdigit(char ch);
+KR_CONSTEXPR bool kr_iscntrl(char ch);
+KR_CONSTEXPR bool kr_isgraph(char ch);
+KR_CONSTEXPR bool kr_isspace(char ch);
+KR_CONSTEXPR bool kr_isblank(char ch);
+KR_CONSTEXPR bool kr_isprint(char ch);
+KR_CONSTEXPR bool kr_ispunct(char ch);
+KR_CONSTEXPR char kr_tolower(char ch);
+KR_CONSTEXPR char kr_toupper(char ch);
+
+/******************************************************************************/
+#if !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION)
+/******************************************************************************/
 
 KR_CONSTEXPR bool kr_isalnum(char ch)
 {
@@ -184,5 +201,7 @@ KR_CONSTEXPR char kr_toupper(char ch)
     }
     return ch;
 }
+
+#endif /* !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION) */
 
 #endif /* !defined(KRCTYPE_H) */
