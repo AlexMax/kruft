@@ -11,6 +11,7 @@
 
 #include "./krconfig.h"
 
+#include <stddef.h>
 #include "krlimits.h"
 
 /*
@@ -261,8 +262,14 @@ typedef uint_fast64_t uintptr_t;
 /* C99: Width of size_t. */
 
 #if !defined(SIZE_MAX)
+#if (KR_MSC_VER) && defined(_WIN64)
+#define SIZE_MAX (0xffffffffffffffff)
+#elif (KR_MSC_VER) && defined(_WIN32)
+#define SIZE_MAX (0xffffffff)
+#else
 #define SIZE_MAX (~((size_t)0))
 #endif
+#endif // !defined(SIZE_MAX)
 
 /* C23: Width of size_t. */
 
