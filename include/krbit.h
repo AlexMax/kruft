@@ -23,6 +23,13 @@
 #include "./krint.h"
 
 /**
+ * @brief Bit-reverse a 32-bit value.
+ *
+ * @link http://aggregate.org/MAGIC/#Bit%20Reversal
+ */
+KR_CONSTEXPR uint32_t kr_bitreverse32(uint32_t x);
+
+/**
  * @brief Byteswap a 16-bit value.
  */
 KR_CONSTEXPR uint16_t kr_byteswap16(uint16_t x);
@@ -157,6 +164,42 @@ KR_CONSTEXPR int kr_popcount64(uint64_t x) KR_NOEXCEPT;
 
 /******************************************************************************/
 #if !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION)
+/******************************************************************************/
+
+KR_CONSTEXPR uint8_t kr_bitreverse8(uint8_t x)
+{
+    x = KR_CASTS(uint8_t, (x & 0xaa) >> 1) | KR_CASTS(uint8_t, (x & 0x55) << 1);
+    x = KR_CASTS(uint8_t, (x & 0xcc) >> 2) | KR_CASTS(uint8_t, (x & 0x33) << 2);
+    return KR_CASTS(uint8_t, x >> 4) | KR_CASTS(uint8_t, x << 4);
+}
+
+KR_CONSTEXPR uint16_t kr_bitreverse16(uint16_t x)
+{
+    x = KR_CASTS(uint16_t, (x & 0xaaaa) >> 1) | KR_CASTS(uint16_t, (x & 0x5555) << 1);
+    x = KR_CASTS(uint16_t, (x & 0xcccc) >> 2) | KR_CASTS(uint16_t, (x & 0x3333) << 2);
+    x = KR_CASTS(uint16_t, (x & 0xf0f0) >> 4) | KR_CASTS(uint16_t, (x & 0x0f0f) << 4);
+    return KR_CASTS(uint16_t, x >> 8) | KR_CASTS(uint16_t, x << 8);
+}
+
+KR_CONSTEXPR uint32_t kr_bitreverse32(uint32_t x)
+{
+    x = ((x & 0xaaaaaaaa) >> 1) | ((x & 0x55555555) << 1);
+    x = ((x & 0xcccccccc) >> 2) | ((x & 0x33333333) << 2);
+    x = ((x & 0xf0f0f0f0) >> 4) | ((x & 0x0f0f0f0f) << 4);
+    x = ((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8);
+    return (x >> 16) | (x << 16);
+}
+
+KR_CONSTEXPR uint64_t kr_bitreverse64(uint64_t x)
+{
+    x = ((x & 0xaaaaaaaaaaaaaaaa) >> 1) | ((x & 0x5555555555555555u) << 1);
+    x = ((x & 0xcccccccccccccccc) >> 2) | ((x & 0x3333333333333333u) << 2);
+    x = ((x & 0xf0f0f0f0f0f0f0f0) >> 4) | ((x & 0x0f0f0f0f0f0f0f0fu) << 4);
+    x = ((x & 0xff00ff00ff00ff00) >> 8) | ((x & 0x00ff00ff00ff00ffu) << 8);
+    x = ((x & 0xffff0000ffff0000) >> 16) | ((x & 0x0000ffff0000ffffu) << 16);
+    return (x >> 32) | (x << 32);
+}
+
 /******************************************************************************/
 
 KR_CONSTEXPR uint16_t kr_byteswap16(uint16_t x)

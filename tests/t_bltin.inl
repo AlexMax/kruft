@@ -12,6 +12,28 @@
 
 /******************************************************************************/
 
+TEST(bltin, kr_rbit8_MACRO)
+{
+    EXPECT_UINTEQ(0x35u, kr_rbit8(0xacu));
+}
+
+TEST(bltin, kr_rbit16_MACRO)
+{
+    EXPECT_UINTEQ(0x0f35u, kr_rbit16(0xacf0u));
+}
+
+TEST(bltin, kr_rbit32_MACRO)
+{
+    EXPECT_UINTEQ(0x00ff0f35u, kr_rbit32(0xacf0ff00u));
+}
+
+TEST(bltin, kr_rbit64_MACRO)
+{
+    EXPECT_UINT64EQ(0x0000ffff00ff0f35u, kr_rbit64(0xacf0ff00ffff0000u));
+}
+
+/******************************************************************************/
+
 TEST(bltin, kr_bswap16_MACRO)
 {
     EXPECT_UINTEQ(0x2301, kr_bswap16(0x0123));
@@ -219,6 +241,10 @@ TEST(bltin, kr_popcnt64_MACRO)
 
 SUITE(bltin)
 {
+    SUITE_TEST(bltin, kr_rbit8_MACRO);
+    SUITE_TEST(bltin, kr_rbit16_MACRO);
+    SUITE_TEST(bltin, kr_rbit32_MACRO);
+    SUITE_TEST(bltin, kr_rbit64_MACRO);
     SUITE_TEST(bltin, kr_bswap16_MACRO);
     SUITE_TEST(bltin, kr_bswap32_MACRO);
     SUITE_TEST(bltin, kr_bswap64_MACRO);

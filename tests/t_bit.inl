@@ -17,6 +17,28 @@
 
 /******************************************************************************/
 
+TEST(bit, kr_bitreverse8)
+{
+    EXPECT_UINTEQ(0x35u, kr_bitreverse8(0xacu));
+}
+
+TEST(bit, kr_bitreverse16)
+{
+    EXPECT_UINTEQ(0x0f35u, kr_bitreverse16(0xacf0u));
+}
+
+TEST(bit, kr_bitreverse32)
+{
+    EXPECT_UINTEQ(0x00ff0f35u, kr_bitreverse32(0xacf0ff00u));
+}
+
+TEST(bit, kr_bitreverse64)
+{
+    EXPECT_UINT64EQ(0x0000ffff00ff0f35u, kr_bitreverse64(0xacf0ff00ffff0000u));
+}
+
+/******************************************************************************/
+
 TEST(bit, kr_byteswap16)
 {
     EXPECT_UINTEQ(0x2301, kr_byteswap16(0x0123));
@@ -339,6 +361,10 @@ TEST(bit, kr_popcount64)
 
 SUITE(bit)
 {
+    SUITE_TEST(bit, kr_bitreverse8);
+    SUITE_TEST(bit, kr_bitreverse16);
+    SUITE_TEST(bit, kr_bitreverse32);
+    SUITE_TEST(bit, kr_bitreverse64);
     SUITE_TEST(bit, kr_byteswap16);
     SUITE_TEST(bit, kr_byteswap32);
     SUITE_TEST(bit, kr_byteswap64);

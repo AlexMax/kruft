@@ -27,6 +27,24 @@
 
 /******************************************************************************/
 
+#if (KR_CLANG)
+#define kr_rbit8(x) (__builtin_bitreverse8(x))
+#define kr_rbit16(x) (__builtin_bitreverse16(x))
+#define kr_rbit32(x) (__builtin_bitreverse32(x))
+#if defined(UINT64_MAX)
+#define kr_rbit64(x) (__builtin_bitreverse64(x))
+#endif /* defined(UINT64_MAX) */
+#else
+#define kr_rbit8(x) (kr_bitreverse8(x))
+#define kr_rbit16(x) (kr_bitreverse16(x))
+#define kr_rbit32(x) (kr_bitreverse32(x))
+#if defined(UINT64_MAX)
+#define kr_rbit64(x) (kr_bitreverse64(x))
+#endif /* defined(UINT64_MAX) */
+#endif /* (KR_CLANG) */
+
+/******************************************************************************/
+
 #if (KR_GNUC || KR_CLANG)
 #define kr_bswap16(x) (__builtin_bswap16(x))
 #define kr_bswap32(x) (__builtin_bswap32(x))
