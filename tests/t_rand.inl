@@ -51,10 +51,10 @@ TEST(rand, jsf64)
     struct kr_jsf64_ctx_s ctx;
     kr_jsf64_srand(&ctx, 1993);
 
-    EXPECT_UINT64EQ(UINT64_C(866240615393628892), kr_jsf64_rand(&ctx));
-    EXPECT_UINT64EQ(UINT64_C(4516034199495256649), kr_jsf64_rand(&ctx));
-    EXPECT_UINT64EQ(UINT64_C(10153722626954818142), kr_jsf64_rand(&ctx));
-    EXPECT_UINT64EQ(UINT64_C(16680399593301785108), kr_jsf64_rand(&ctx));
+    EXPECT_UINTEQ(UINT64_C(866240615393628892), kr_jsf64_rand(&ctx));
+    EXPECT_UINTEQ(UINT64_C(4516034199495256649), kr_jsf64_rand(&ctx));
+    EXPECT_UINTEQ(UINT64_C(10153722626954818142), kr_jsf64_rand(&ctx));
+    EXPECT_UINTEQ(UINT64_C(16680399593301785108), kr_jsf64_rand(&ctx));
 #endif /* !defined(UINT64_MAX) */
 }
 

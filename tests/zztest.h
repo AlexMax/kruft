@@ -51,42 +51,40 @@ typedef int ZZT_BOOL;
 /* Determine our 64-bit data type. */
 #if defined(ULLONG_MAX) /* C99 */
 #if (ULLONG_MAX == 0xFFFFFFFFFFFFFFFF)
-#define ZZT_64BIT_LL_
+#define ZZT_HAS_LONGLONG_
 #endif
 #elif defined(ULONG_LONG_MAX) /* GNU */
 #if (ULONG_LONG_MAX == 0xFFFFFFFFFFFFFFFF)
-#define ZZT_64BIT_LL_
+#define ZZT_HAS_LONGLONG_
 #endif
 #endif
-#if defined(ZZT_64BIT_LL_)
-#define ZZTEST_HAS_64BIT (1)
-typedef long long ZZT_INT64;
-typedef unsigned long long ZZT_UINT64;
-#define ZZT_PRIi64 "lld"
-#define ZZT_PRIu64 "llu"
-#define ZZT_PRIx64 "llx"
-#undef ZZT_64BIT_LL_
+#if defined(ZZT_HAS_LONGLONG_)
+typedef long long ZZT_INTMAX;
+typedef unsigned long long ZZT_UINTMAX;
+#define ZZT_PRIiMAX "lld"
+#define ZZT_PRIuMAX "llu"
+#define ZZT_PRIxMAX "llx"
 #elif defined(_UI64_MAX) /* MSVC */
-#define ZZTEST_HAS_64BIT (1)
-typedef __int64 ZZT_INT64;
-typedef unsigned __int64 ZZT_UINT64;
-#define ZZT_PRIi64 "I64d"
-#define ZZT_PRIu64 "I64u"
-#define ZZT_PRIx64 "I64x"
+typedef __int64 ZZT_INTMAX;
+typedef unsigned __int64 ZZT_UINTMAX;
+#define ZZT_PRIiMAX "I64d"
+#define ZZT_PRIuMAX "I64u"
+#define ZZT_PRIxMAX "I64x"
 #else
-#define ZZTEST_HAS_64BIT (0)
+typedef long ZZT_INTMAX;
+typedef unsigned long ZZT_UINTMAX;
+#define ZZT_PRIiMAX "ld"
+#define ZZT_PRIuMAX "lu"
+#define ZZT_PRIxMAX "lx"
 #endif
 
 enum zzt_fmt_e
 {
     ZZT_FMT_BOOL,
     ZZT_FMT_CHAR,
-    ZZT_FMT_LONG,
-    ZZT_FMT_ULONG,
-    ZZT_FMT_XLONG,
-    ZZT_FMT_I64,
-    ZZT_FMT_UI64,
-    ZZT_FMT_XI64,
+    ZZT_FMT_INT,
+    ZZT_FMT_UINT,
+    ZZT_FMT_XINT,
     ZZT_FMT_STR,
 };
 
@@ -226,8 +224,8 @@ struct zzt_test_suite_s
  */
 #define EXPECT_INTEQ(l, r)                                                                                             \
     {                                                                                                                  \
-        long ll = l, rr = r;                                                                                           \
-        zzt_eq(zzt_test_state, ZZT_FMT_LONG, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+        ZZT_INTMAX ll = l, rr = r;                                                                                     \
+        zzt_eq(zzt_test_state, ZZT_FMT_INT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                     \
     }
 
 /**
@@ -235,8 +233,8 @@ struct zzt_test_suite_s
  */
 #define EXPECT_UINTEQ(l, r)                                                                                            \
     {                                                                                                                  \
-        unsigned long ll = l, rr = r;                                                                                  \
-        zzt_eq(zzt_test_state, ZZT_FMT_ULONG, &ll, &rr, #l, #r, __FILE__, __LINE__);                                   \
+        ZZT_UINTMAX ll = l, rr = r;                                                                                    \
+        zzt_eq(zzt_test_state, ZZT_FMT_UINT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
     }
 
 /**
@@ -244,48 +242,9 @@ struct zzt_test_suite_s
  */
 #define EXPECT_XINTEQ(l, r)                                                                                            \
     {                                                                                                                  \
-        unsigned long ll = l, rr = r;                                                                                  \
-        zzt_eq(zzt_test_state, ZZT_FMT_XLONG, &ll, &rr, #l, #r, __FILE__, __LINE__);                                   \
+        ZZT_UINTMAX ll = l, rr = r;                                                                                    \
+        zzt_eq(zzt_test_state, ZZT_FMT_XINT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
     }
-
-/**
- * @brief Expect exact 64-bit integer equality.
- */
-#define EXPECT_INT64EQ(l, r)                                                                                           \
-    {                                                                                                                  \
-        ZZT_INT64 ll = l, rr = r;                                                                                      \
-        zzt_eq(zzt_test_state, ZZT_FMT_I64, &ll, &rr, #l, #r, __FILE__, __LINE__);                                     \
-    }
-
-/**
- * @brief Expect exact 64-bit integer equality.
- */
-#define EXPECT_UINT64EQ(l, r)                                                                                          \
-    {                                                                                                                  \
-        ZZT_UINT64 ll = l, rr = r;                                                                                     \
-        zzt_eq(zzt_test_state, ZZT_FMT_UI64, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
-    }
-
-/**
- * @brief Expect exact 64-bit integer equality, failures are shown in hex.
- */
-#define EXPECT_XINT64EQ(l, r)                                                                                          \
-    {                                                                                                                  \
-        ZZT_UINT64 ll = l, rr = r;                                                                                     \
-        zzt_eq(zzt_test_state, ZZT_FMT_XI64, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
-    }
-
-#if (ZZTEST_HAS_64BIT)
-#define EXPECT_IMAXEQ EXPECT_INT64EQ
-#define EXPECT_UIMAXEQ EXPECT_UINT64EQ
-#define EXPECT_SIZEEQ EXPECT_UINT64EQ
-#define EXPECT_ISIZEEQ EXPECT_INT64EQ
-#else
-#define EXPECT_IMAXEQ EXPECT_INTEQ
-#define EXPECT_UIMAXEQ EXPECT_UINTEQ
-#define EXPECT_SIZEEQ EXPECT_UINTEQ
-#define EXPECT_ISIZEEQ EXPECT_INTEQ
-#endif
 
 /**
  * @brief Expect string equality.
@@ -584,26 +543,15 @@ static void zzt_printv(enum zzt_fmt_e fmt, const void *v, const char *vs)
         }
         break;
     }
-    case ZZT_FMT_LONG:
-        zzt_sprintf(buffer, sizeof(buffer), "%ld", *((long *)v));
+    case ZZT_FMT_INT:
+        zzt_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIiMAX, *((ZZT_INTMAX *)v));
         break;
-    case ZZT_FMT_ULONG:
-        zzt_sprintf(buffer, sizeof(buffer), "%lu", *((unsigned long *)v));
+    case ZZT_FMT_UINT:
+        zzt_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIuMAX, *((ZZT_UINTMAX *)v));
         break;
-    case ZZT_FMT_XLONG:
-        zzt_sprintf(buffer, sizeof(buffer), "0x%lx", *((unsigned long *)v));
+    case ZZT_FMT_XINT:
+        zzt_sprintf(buffer, sizeof(buffer), "0x%" ZZT_PRIuMAX, *((ZZT_UINTMAX *)v));
         break;
-#if (ZZTEST_HAS_64BIT)
-    case ZZT_FMT_I64:
-        zzt_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIi64, *((ZZT_INT64 *)v));
-        break;
-    case ZZT_FMT_UI64:
-        zzt_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIu64, *((ZZT_UINT64 *)v));
-        break;
-    case ZZT_FMT_XI64:
-        zzt_sprintf(buffer, sizeof(buffer), "0x%" ZZT_PRIx64, *((ZZT_UINT64 *)v));
-        break;
-#endif /* (ZZT_HAS_64BIT) */
     case ZZT_FMT_STR:
         zzt_stringify(buffer, sizeof(buffer), (const char *)v);
         break;
@@ -674,24 +622,14 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *
     {
         isEqual = *((char *)l) == *((char *)r);
     }
-    else if (fmt == ZZT_FMT_LONG)
+    else if (fmt == ZZT_FMT_INT)
     {
-        isEqual = *((long *)l) == *((long *)r);
+        isEqual = *((ZZT_INTMAX *)l) == *((ZZT_INTMAX *)r);
     }
-    else if (fmt == ZZT_FMT_ULONG || fmt == ZZT_FMT_XLONG)
+    else if (fmt == ZZT_FMT_UINT || fmt == ZZT_FMT_XINT)
     {
-        isEqual = *((unsigned long *)l) == *((unsigned long *)r);
+        isEqual = *((ZZT_UINTMAX *)l) == *((ZZT_UINTMAX *)r);
     }
-#if (ZZTEST_HAS_64BIT)
-    else if (fmt == ZZT_FMT_I64)
-    {
-        isEqual = *((ZZT_INT64 *)l) == *((ZZT_INT64 *)r);
-    }
-    else if (fmt == ZZT_FMT_UI64 || fmt == ZZT_FMT_XI64)
-    {
-        isEqual = *((ZZT_UINT64 *)l) == *((ZZT_UINT64 *)r);
-    }
-#endif /* (ZZT_HAS_64BIT) */
     else if (fmt == ZZT_FMT_STR)
     {
         isEqual = strcmp((const char *)l, (const char *)r) == 0;
@@ -889,15 +827,6 @@ TEST(zztest, passing_int)
     EXPECT_INTEQ(1, 1);
     EXPECT_UINTEQ(1, 1);
     EXPECT_XINTEQ(1, 1);
-#if (ZZTEST_HAS_64BIT)
-    EXPECT_INT64EQ(1, 1);
-    EXPECT_UINT64EQ(1, 1);
-    EXPECT_XINT64EQ(1, 1);
-#endif
-    EXPECT_IMAXEQ(1, 1);
-    EXPECT_UIMAXEQ(1, 1);
-    EXPECT_SIZEEQ(1, 1);
-    EXPECT_ISIZEEQ(1, 1);
 }
 
 TEST(zztest, failing)
@@ -925,15 +854,6 @@ TEST(zztest, failing_int)
     EXPECT_INTEQ(1, (int)2);
     EXPECT_UINTEQ(1, 2u);
     EXPECT_XINTEQ(0xabc, 0x0DEF);
-#if (ZZTEST_HAS_64BIT)
-    EXPECT_INT64EQ(1, (int)2);
-    EXPECT_UINT64EQ(1, 2u);
-    EXPECT_XINT64EQ(0xabc, 0x0DEF);
-#endif
-    EXPECT_IMAXEQ(1, (int)2);
-    EXPECT_UIMAXEQ(1, 2u);
-    EXPECT_SIZEEQ(1, 2u);
-    EXPECT_ISIZEEQ(1, (int)2);
 }
 
 TEST(zztest, failing_str)

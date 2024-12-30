@@ -46,7 +46,7 @@ TEST(serial, kr_load_u64le)
     SKIP();
 #else
     unsigned char buf[8] = {0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
-    EXPECT_UINT64EQ(0xffeeddccbbaa9988, kr_load_u64le(buf));
+    EXPECT_UINTEQ(0xffeeddccbbaa9988, kr_load_u64le(buf));
 #endif /* !defined(UINT64_MAX) */
 }
 
@@ -56,7 +56,7 @@ TEST(serial, kr_load_u64be)
     SKIP();
 #else
     unsigned char buf[8] = {0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88};
-    EXPECT_UINT64EQ(0xffeeddccbbaa9988, kr_load_u64be(buf));
+    EXPECT_UINTEQ(0xffeeddccbbaa9988, kr_load_u64be(buf));
 #endif /* !defined(UINT64_MAX) */
 }
 

@@ -18,27 +18,27 @@ TEST(str, kr_strscpy)
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strscpy(buffer, "abcd", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcd");
-    EXPECT_ISIZEEQ(len, 4);
+    EXPECT_INTEQ(len, 4);
 
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strscpy(buffer, "abcdefg", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcdefg");
-    EXPECT_ISIZEEQ(len, 7);
+    EXPECT_INTEQ(len, 7);
 
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strscpy(buffer, "", sizeof(buffer));
     EXPECT_STREQ(buffer, "");
-    EXPECT_ISIZEEQ(len, 0);
+    EXPECT_INTEQ(len, 0);
 
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strscpy(buffer, "abcdefghijkl", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcdefg");
-    EXPECT_ISIZEEQ(len, -1);
+    EXPECT_INTEQ(len, -1);
 
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strscpy(buffer, "abcd", 0);
     EXPECT_CHAREQ(buffer[0], '\xff');
-    EXPECT_ISIZEEQ(len, 0);
+    EXPECT_INTEQ(len, 0);
 }
 
 TEST(str, kr_strscat)
@@ -50,25 +50,25 @@ TEST(str, kr_strscat)
     kr_strscpy(buffer, "abc", sizeof(buffer));
     len = kr_strscat(buffer, "def", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcdef");
-    EXPECT_ISIZEEQ(len, 6);
+    EXPECT_INTEQ(len, 6);
 
     memset(buffer, 0xFF, sizeof(buffer));
     kr_strscpy(buffer, "abc", sizeof(buffer));
     len = kr_strscat(buffer, "defghi", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcdefg");
-    EXPECT_ISIZEEQ(len, -1);
+    EXPECT_INTEQ(len, -1);
 
     memset(buffer, 0xFF, sizeof(buffer));
     kr_strscpy(buffer, "abc", sizeof(buffer));
     len = kr_strscat(buffer, "", sizeof(buffer));
     EXPECT_STREQ(buffer, "abc");
-    EXPECT_ISIZEEQ(len, 3);
+    EXPECT_INTEQ(len, 3);
 
     memset(buffer, 0xFF, sizeof(buffer));
     kr_strscpy(buffer, "abc", sizeof(buffer));
     len = kr_strscat(buffer, "def", 0);
     EXPECT_STREQ(buffer, "abc");
-    EXPECT_ISIZEEQ(len, -1);
+    EXPECT_INTEQ(len, -1);
 }
 
 TEST(str, kr_strlcpy)
@@ -79,27 +79,27 @@ TEST(str, kr_strlcpy)
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strlcpy(buffer, "abcd", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcd");
-    EXPECT_SIZEEQ(len, 4);
+    EXPECT_UINTEQ(len, 4);
 
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strlcpy(buffer, "abcdefg", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcdefg");
-    EXPECT_SIZEEQ(len, 7);
+    EXPECT_UINTEQ(len, 7);
 
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strlcpy(buffer, "", sizeof(buffer));
     EXPECT_STREQ(buffer, "");
-    EXPECT_SIZEEQ(len, 0);
+    EXPECT_UINTEQ(len, 0);
 
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strlcpy(buffer, "abcdefghijkl", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcdefg");
-    EXPECT_SIZEEQ(len, 12);
+    EXPECT_UINTEQ(len, 12);
 
     memset(buffer, 0xFF, sizeof(buffer));
     len = kr_strlcpy(buffer, "abcd", 0);
     EXPECT_CHAREQ(buffer[0], '\xff');
-    EXPECT_SIZEEQ(len, 0);
+    EXPECT_UINTEQ(len, 0);
 }
 
 TEST(str, kr_strlcat)
@@ -111,25 +111,25 @@ TEST(str, kr_strlcat)
     kr_strlcpy(buffer, "abc", sizeof(buffer));
     len = kr_strlcat(buffer, "def", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcdef");
-    EXPECT_SIZEEQ(len, 6);
+    EXPECT_UINTEQ(len, 6);
 
     memset(buffer, 0xFF, sizeof(buffer));
     kr_strlcpy(buffer, "abc", sizeof(buffer));
     len = kr_strlcat(buffer, "defghi", sizeof(buffer));
     EXPECT_STREQ(buffer, "abcdefg");
-    EXPECT_SIZEEQ(len, 9);
+    EXPECT_UINTEQ(len, 9);
 
     memset(buffer, 0xFF, sizeof(buffer));
     kr_strlcpy(buffer, "abc", sizeof(buffer));
     len = kr_strlcat(buffer, "", sizeof(buffer));
     EXPECT_STREQ(buffer, "abc");
-    EXPECT_SIZEEQ(len, 3);
+    EXPECT_UINTEQ(len, 3);
 
     memset(buffer, 0xFF, sizeof(buffer));
     kr_strlcpy(buffer, "abc", sizeof(buffer));
     len = kr_strlcat(buffer, "def", 0);
     EXPECT_STREQ(buffer, "abc");
-    EXPECT_SIZEEQ(len, 0);
+    EXPECT_UINTEQ(len, 0);
 }
 
 TEST(str, kr_stpecpy)

@@ -34,7 +34,7 @@ TEST(bit, kr_bitreverse32)
 
 TEST(bit, kr_bitreverse64)
 {
-    EXPECT_UINT64EQ(0x0000ffff00ff0f35u, kr_bitreverse64(0xacf0ff00ffff0000u));
+    EXPECT_UINTEQ(0x0000ffff00ff0f35u, kr_bitreverse64(0xacf0ff00ffff0000u));
 }
 
 /******************************************************************************/
@@ -54,7 +54,7 @@ TEST(bit, kr_byteswap64)
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_UINT64EQ(UINT64_C(0xEFCDAB8967452301), kr_byteswap64(0x0123456789ABCDEF));
+    EXPECT_UINTEQ(UINT64_C(0xEFCDAB8967452301), kr_byteswap64(0x0123456789ABCDEF));
 #endif /* !defined(UINT64_MAX) */
 }
 
@@ -110,14 +110,14 @@ TEST(bit, kr_bit_ceil64)
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_UINT64EQ(1, kr_bit_ceil64(0));
-    EXPECT_UINT64EQ(1, kr_bit_ceil64(1));
-    EXPECT_UINT64EQ(2, kr_bit_ceil64(2));
-    EXPECT_UINT64EQ(4, kr_bit_ceil64(3));
-    EXPECT_UINT64EQ(4, kr_bit_ceil64(4));
-    EXPECT_UINT64EQ(8, kr_bit_ceil64(5));
-    EXPECT_UINT64EQ(INT32_MAX + UINT64_C(1), kr_bit_ceil64(INT32_MAX));
-    EXPECT_UINT64EQ(INT64_MAX + UINT64_C(1), kr_bit_ceil64(INT64_MAX));
+    EXPECT_UINTEQ(1, kr_bit_ceil64(0));
+    EXPECT_UINTEQ(1, kr_bit_ceil64(1));
+    EXPECT_UINTEQ(2, kr_bit_ceil64(2));
+    EXPECT_UINTEQ(4, kr_bit_ceil64(3));
+    EXPECT_UINTEQ(4, kr_bit_ceil64(4));
+    EXPECT_UINTEQ(8, kr_bit_ceil64(5));
+    EXPECT_UINTEQ(INT32_MAX + UINT64_C(1), kr_bit_ceil64(INT32_MAX));
+    EXPECT_UINTEQ(INT64_MAX + UINT64_C(1), kr_bit_ceil64(INT64_MAX));
 #endif /* !defined(UINT64_MAX) */
 }
 
@@ -137,14 +137,14 @@ TEST(bit, kr_bit_floor64)
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_UINT64EQ(0, kr_bit_floor64(0));
-    EXPECT_UINT64EQ(1, kr_bit_floor64(1));
-    EXPECT_UINT64EQ(2, kr_bit_floor64(2));
-    EXPECT_UINT64EQ(2, kr_bit_floor64(3));
-    EXPECT_UINT64EQ(4, kr_bit_floor64(4));
-    EXPECT_UINT64EQ(4, kr_bit_floor64(5));
-    EXPECT_UINT64EQ(INT32_MAX + UINT64_C(1), kr_bit_floor64(UINT32_MAX));
-    EXPECT_UINT64EQ(INT64_MAX + UINT64_C(1), kr_bit_floor64(UINT64_MAX));
+    EXPECT_UINTEQ(0, kr_bit_floor64(0));
+    EXPECT_UINTEQ(1, kr_bit_floor64(1));
+    EXPECT_UINTEQ(2, kr_bit_floor64(2));
+    EXPECT_UINTEQ(2, kr_bit_floor64(3));
+    EXPECT_UINTEQ(4, kr_bit_floor64(4));
+    EXPECT_UINTEQ(4, kr_bit_floor64(5));
+    EXPECT_UINTEQ(INT32_MAX + UINT64_C(1), kr_bit_floor64(UINT32_MAX));
+    EXPECT_UINTEQ(INT64_MAX + UINT64_C(1), kr_bit_floor64(UINT64_MAX));
 #endif /* !defined(UINT64_MAX) */
 }
 
@@ -201,11 +201,11 @@ TEST(bit, kr_rotl64)
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_XINT64EQ(UINT64_C(0x2a99ff800799aa80), kr_rotl64(0x05533ff000f33550, 3));
-    EXPECT_XINT64EQ(UINT64_C(0x001e66aa00aa67fe), kr_rotl64(0x05533ff000f33550, 29));
-    EXPECT_XINT64EQ(UINT64_C(0x0799aa802a99ff80), kr_rotl64(0x05533ff000f33550, 35));
-    EXPECT_XINT64EQ(UINT64_C(0x00aa67fe001e66aa), kr_rotl64(0x05533ff000f33550, 61));
-    EXPECT_XINT64EQ(UINT64_C(0x05533ff000f33550), kr_rotl64(0x05533ff000f33550, 0));
+    EXPECT_XINTEQ(UINT64_C(0x2a99ff800799aa80), kr_rotl64(0x05533ff000f33550, 3));
+    EXPECT_XINTEQ(UINT64_C(0x001e66aa00aa67fe), kr_rotl64(0x05533ff000f33550, 29));
+    EXPECT_XINTEQ(UINT64_C(0x0799aa802a99ff80), kr_rotl64(0x05533ff000f33550, 35));
+    EXPECT_XINTEQ(UINT64_C(0x00aa67fe001e66aa), kr_rotl64(0x05533ff000f33550, 61));
+    EXPECT_XINTEQ(UINT64_C(0x05533ff000f33550), kr_rotl64(0x05533ff000f33550, 0));
 #endif /* !defined(UINT64_MAX) */
 }
 
@@ -237,11 +237,11 @@ TEST(bit, kr_rotr64)
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_XINT64EQ(UINT64_C(0x00aa67fe001e66aa), kr_rotr64(0x05533ff000f33550, 3));
-    EXPECT_XINT64EQ(UINT64_C(0x0799aa802a99ff80), kr_rotr64(0x05533ff000f33550, 29));
-    EXPECT_XINT64EQ(UINT64_C(0x001e66aa00aa67fe), kr_rotr64(0x05533ff000f33550, 35));
-    EXPECT_XINT64EQ(UINT64_C(0x2a99ff800799aa80), kr_rotr64(0x05533ff000f33550, 61));
-    EXPECT_XINT64EQ(UINT64_C(0x05533ff000f33550), kr_rotr64(0x05533ff000f33550, 0));
+    EXPECT_XINTEQ(UINT64_C(0x00aa67fe001e66aa), kr_rotr64(0x05533ff000f33550, 3));
+    EXPECT_XINTEQ(UINT64_C(0x0799aa802a99ff80), kr_rotr64(0x05533ff000f33550, 29));
+    EXPECT_XINTEQ(UINT64_C(0x001e66aa00aa67fe), kr_rotr64(0x05533ff000f33550, 35));
+    EXPECT_XINTEQ(UINT64_C(0x2a99ff800799aa80), kr_rotr64(0x05533ff000f33550, 61));
+    EXPECT_XINTEQ(UINT64_C(0x05533ff000f33550), kr_rotr64(0x05533ff000f33550, 0));
 #endif /* !defined(UINT64_MAX) */
 }
 

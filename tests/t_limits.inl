@@ -12,27 +12,27 @@
 
 TEST(limits, char)
 {
-    EXPECT_SIZEEQ(CHAR_WIDTH, sizeof(char) * CHAR_BIT);
-    EXPECT_SIZEEQ(SCHAR_WIDTH, sizeof(signed char) * CHAR_BIT);
-    EXPECT_SIZEEQ(UCHAR_WIDTH, sizeof(unsigned char) * CHAR_BIT);
+    EXPECT_UINTEQ(CHAR_WIDTH, sizeof(char) * CHAR_BIT);
+    EXPECT_UINTEQ(SCHAR_WIDTH, sizeof(signed char) * CHAR_BIT);
+    EXPECT_UINTEQ(UCHAR_WIDTH, sizeof(unsigned char) * CHAR_BIT);
 }
 
 TEST(limits, short)
 {
-    EXPECT_SIZEEQ(SHRT_WIDTH, sizeof(short) * CHAR_BIT);
-    EXPECT_SIZEEQ(USHRT_WIDTH, sizeof(unsigned short) * CHAR_BIT);
+    EXPECT_UINTEQ(SHRT_WIDTH, sizeof(short) * CHAR_BIT);
+    EXPECT_UINTEQ(USHRT_WIDTH, sizeof(unsigned short) * CHAR_BIT);
 }
 
 TEST(limits, int)
 {
-    EXPECT_SIZEEQ(INT_WIDTH, sizeof(int) * CHAR_BIT);
-    EXPECT_SIZEEQ(UINT_WIDTH, sizeof(unsigned int) * CHAR_BIT);
+    EXPECT_UINTEQ(INT_WIDTH, sizeof(int) * CHAR_BIT);
+    EXPECT_UINTEQ(UINT_WIDTH, sizeof(unsigned int) * CHAR_BIT);
 }
 
 TEST(limits, long)
 {
-    EXPECT_SIZEEQ(LONG_WIDTH, sizeof(long) * CHAR_BIT);
-    EXPECT_SIZEEQ(ULONG_WIDTH, sizeof(unsigned long) * CHAR_BIT);
+    EXPECT_UINTEQ(LONG_WIDTH, sizeof(long) * CHAR_BIT);
+    EXPECT_UINTEQ(ULONG_WIDTH, sizeof(unsigned long) * CHAR_BIT);
 }
 
 TEST(limits, longlong)
@@ -41,16 +41,16 @@ TEST(limits, longlong)
     SKIP();
 #else
     long long i = LLONG_MIN;
-    EXPECT_INT64EQ(i, LLONG_MIN);
+    EXPECT_INTEQ(i, LLONG_MIN);
 
     i = LLONG_MAX;
-    EXPECT_INT64EQ(i, LLONG_MAX);
+    EXPECT_INTEQ(i, LLONG_MAX);
 
     unsigned long long u = ULLONG_MAX;
-    EXPECT_UINT64EQ(u, ULLONG_MAX);
+    EXPECT_UINTEQ(u, ULLONG_MAX);
 
-    EXPECT_SIZEEQ(LLONG_WIDTH, sizeof(long long) * CHAR_BIT);
-    EXPECT_SIZEEQ(ULLONG_WIDTH, sizeof(unsigned long long) * CHAR_BIT);
+    EXPECT_UINTEQ(LLONG_WIDTH, sizeof(long long) * CHAR_BIT);
+    EXPECT_UINTEQ(ULLONG_WIDTH, sizeof(unsigned long long) * CHAR_BIT);
 #endif
 }
 
