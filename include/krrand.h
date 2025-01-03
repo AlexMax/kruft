@@ -168,8 +168,8 @@ KR_CONSTEXPR void kr_jsf8_srand(struct kr_jsf8_ctx_s *x, uint8_t seed)
 
 KR_CONSTEXPR uint8_t kr_jsf8_rand(struct kr_jsf8_ctx_s *x)
 {
-    uint8_t e = x->a - kr_rotl8(x->b, 1);
-    x->a = x->b ^ kr_rotl8(x->c, 4);
+    uint8_t e = x->a - kr_rotate_left8(x->b, 1);
+    x->a = x->b ^ kr_rotate_left8(x->c, 4);
     x->b = x->c + x->d;
     x->c = x->d + e;
     x->d = e + x->a;
@@ -217,8 +217,8 @@ KR_CONSTEXPR void kr_jsf16_srand(struct kr_jsf16_ctx_s *x, uint16_t seed)
 
 KR_CONSTEXPR uint16_t kr_jsf16_rand(struct kr_jsf16_ctx_s *x)
 {
-    uint16_t e = x->a - kr_rotl16(x->b, 13);
-    x->a = x->b ^ kr_rotl16(x->c, 8);
+    uint16_t e = x->a - kr_rotate_left16(x->b, 13);
+    x->a = x->b ^ kr_rotate_left16(x->c, 8);
     x->b = x->c + x->d;
     x->c = x->d + e;
     x->d = e + x->a;
@@ -266,8 +266,8 @@ KR_CONSTEXPR void kr_jsf32_srand(struct kr_jsf32_ctx_s *x, uint32_t seed)
 
 KR_CONSTEXPR uint32_t kr_jsf32_rand(struct kr_jsf32_ctx_s *x)
 {
-    uint32_t e = x->a - kr_rotl32(x->b, 27);
-    x->a = x->b ^ kr_rotl32(x->c, 17);
+    uint32_t e = x->a - kr_rotate_left32(x->b, 27);
+    x->a = x->b ^ kr_rotate_left32(x->c, 17);
     x->b = x->c + x->d;
     x->c = x->d + e;
     x->d = e + x->a;
@@ -317,9 +317,9 @@ KR_CONSTEXPR void kr_jsf64_srand(struct kr_jsf64_ctx_s *x, uint64_t seed)
 
 KR_CONSTEXPR uint64_t kr_jsf64_rand(struct kr_jsf64_ctx_s *x)
 {
-    uint64_t e = x->a - kr_rotl64(x->b, 7);
-    x->a = x->b ^ kr_rotl64(x->c, 13);
-    x->b = x->c + kr_rotl64(x->d, 37);
+    uint64_t e = x->a - kr_rotate_left64(x->b, 7);
+    x->a = x->b ^ kr_rotate_left64(x->c, 13);
+    x->b = x->c + kr_rotate_left64(x->d, 37);
     x->c = x->d + e;
     x->d = e + x->a;
     return x->d;

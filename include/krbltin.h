@@ -82,11 +82,11 @@
 #define kr_rol64(x, c) (_rotl64((x), (c)))
 #endif /* defined(UINT64_MAX) */
 #else
-#define kr_rol8(x, c) (kr_rotl8((x), (c)))
-#define kr_rol16(x, c) (kr_rotl16((x), (c)))
-#define kr_rol32(x, c) (kr_rotl32((x), (c)))
+#define kr_rol8(x, c) (kr_rotate_left8((x), (c)))
+#define kr_rol16(x, c) (kr_rotate_left16((x), (c)))
+#define kr_rol32(x, c) (kr_rotate_left32((x), (c)))
 #if defined(UINT64_MAX)
-#define kr_rol64(x, c) (kr_rotl64((x), (c)))
+#define kr_rol64(x, c) (kr_rotate_left64((x), (c)))
 #endif /* #if defined(UINT64_MAX) */
 #endif
 
@@ -107,11 +107,11 @@
 #define kr_ror64(x, c) (_rotr64((x), (c)))
 #endif /* defined(UINT64_MAX) */
 #else
-#define kr_ror8(x, c) (kr_rotr8((x), (c)))
-#define kr_ror16(x, c) (kr_rotr16((x), (c)))
-#define kr_ror32(x, c) (kr_rotr32((x), (c)))
+#define kr_ror8(x, c) (kr_rotate_right8((x), (c)))
+#define kr_ror16(x, c) (kr_rotate_right16((x), (c)))
+#define kr_ror32(x, c) (kr_rotate_right32((x), (c)))
 #if defined(UINT64_MAX)
-#define kr_ror64(x, c) (kr_rotr64((x), (c)))
+#define kr_ror64(x, c) (kr_rotate_right64((x), (c)))
 #endif /* defined(UINT64_MAX) */
 #endif
 
@@ -138,9 +138,9 @@ KR_FORCEINLINE int kr_clz64_detail_(unsigned long long x)
 #define kr_clz64(x) (kr_clz64_detail_(x))
 #endif /* defined(UINT64_MAX) */
 #else
-#define kr_clz32(x) (kr_countl_zero32(x))
+#define kr_clz32(x) (kr_leading_zeros32(x))
 #if defined(UINT64_MAX)
-#define kr_clz64(x) (kr_countl_zero64(x))
+#define kr_clz64(x) (kr_leading_zeros64(x))
 #endif /* defined(UINT64_MAX) */
 #endif
 
@@ -157,9 +157,9 @@ KR_FORCEINLINE int kr_clz64_detail_(unsigned long long x)
 #define kr_clo64(x) (kr_clz64_detail_(~KR_CASTS(uint64_t, x)))
 #endif /* defined(UINT64_MAX) */
 #else
-#define kr_clo32(x) (kr_countl_one32(x))
+#define kr_clo32(x) (kr_leading_ones32(x))
 #if defined(UINT64_MAX)
-#define kr_clo64(x) (kr_countl_one64(x))
+#define kr_clo64(x) (kr_leading_ones64(x))
 #endif /* defined(UINT64_MAX) */
 #endif
 
@@ -186,9 +186,9 @@ KR_FORCEINLINE int kr_ctz64_detail_(unsigned long long x)
 #define kr_ctz64(x) (kr_ctz64_detail_(x))
 #endif /* defined(UINT64_MAX) */
 #else
-#define kr_ctz32(x) (kr_countr_zero32(x))
+#define kr_ctz32(x) (kr_trailing_zeros32(x))
 #if defined(UINT64_MAX)
-#define kr_ctz64(x) (kr_countr_zero64(x))
+#define kr_ctz64(x) (kr_trailing_zeros64(x))
 #endif /* defined(UINT64_MAX) */
 #endif
 
@@ -205,9 +205,9 @@ KR_FORCEINLINE int kr_ctz64_detail_(unsigned long long x)
 #define kr_cto64(x) (kr_ctz64_detail_(~KR_CASTS(uint64_t, x)))
 #endif /* defined(UINT64_MAX) */
 #else
-#define kr_cto32(x) (kr_countr_one32(x))
+#define kr_cto32(x) (kr_trailing_ones32(x))
 #if defined(UINT64_MAX)
-#define kr_cto64(x) (kr_countr_one64(x))
+#define kr_cto64(x) (kr_trailing_ones64(x))
 #endif /* defined(UINT64_MAX) */
 #endif
 
@@ -226,10 +226,10 @@ KR_FORCEINLINE int kr_ctz64_detail_(unsigned long long x)
 #define kr_popcnt64(x) (KR_CASTS(int, __popcnt64(x)))
 #endif /* defined(UINT64_MAX) */
 #else
-#define kr_popcnt16(x) (kr_popcount16(x))
-#define kr_popcnt32(x) (kr_popcount32(x))
+#define kr_popcnt16(x) (kr_count_ones16(x))
+#define kr_popcnt32(x) (kr_count_ones32(x))
 #if defined(UINT64_MAX)
-#define kr_popcnt64(x) (kr_popcount64(x))
+#define kr_popcnt64(x) (kr_count_ones64(x))
 #endif /* defined(UINT64_MAX) */
 #endif
 

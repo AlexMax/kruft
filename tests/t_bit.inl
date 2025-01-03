@@ -94,6 +94,28 @@ TEST(bit, kr_has_single_bit64)
 
 /******************************************************************************/
 
+TEST(bit, kr_bit_ceil8)
+{
+    EXPECT_UINTEQ(1, kr_bit_ceil8(0));
+    EXPECT_UINTEQ(1, kr_bit_ceil8(1));
+    EXPECT_UINTEQ(2, kr_bit_ceil8(2));
+    EXPECT_UINTEQ(4, kr_bit_ceil8(3));
+    EXPECT_UINTEQ(4, kr_bit_ceil8(4));
+    EXPECT_UINTEQ(8, kr_bit_ceil8(5));
+    EXPECT_UINTEQ(INT8_MAX + UINT8_C(1), kr_bit_ceil8(INT8_MAX));
+}
+
+TEST(bit, kr_bit_ceil16)
+{
+    EXPECT_UINTEQ(1, kr_bit_ceil16(0));
+    EXPECT_UINTEQ(1, kr_bit_ceil16(1));
+    EXPECT_UINTEQ(2, kr_bit_ceil16(2));
+    EXPECT_UINTEQ(4, kr_bit_ceil16(3));
+    EXPECT_UINTEQ(4, kr_bit_ceil16(4));
+    EXPECT_UINTEQ(8, kr_bit_ceil16(5));
+    EXPECT_UINTEQ(INT16_MAX + UINT16_C(1), kr_bit_ceil16(INT16_MAX));
+}
+
 TEST(bit, kr_bit_ceil32)
 {
     EXPECT_UINTEQ(1, kr_bit_ceil32(0));
@@ -119,6 +141,28 @@ TEST(bit, kr_bit_ceil64)
     EXPECT_UINTEQ(INT32_MAX + UINT64_C(1), kr_bit_ceil64(INT32_MAX));
     EXPECT_UINTEQ(INT64_MAX + UINT64_C(1), kr_bit_ceil64(INT64_MAX));
 #endif /* !defined(UINT64_MAX) */
+}
+
+TEST(bit, kr_bit_floor8)
+{
+    EXPECT_UINTEQ(0, kr_bit_floor8(0));
+    EXPECT_UINTEQ(1, kr_bit_floor8(1));
+    EXPECT_UINTEQ(2, kr_bit_floor8(2));
+    EXPECT_UINTEQ(2, kr_bit_floor8(3));
+    EXPECT_UINTEQ(4, kr_bit_floor8(4));
+    EXPECT_UINTEQ(4, kr_bit_floor8(5));
+    EXPECT_UINTEQ(INT8_MAX + UINT8_C(1), kr_bit_floor8(UINT8_MAX));
+}
+
+TEST(bit, kr_bit_floor16)
+{
+    EXPECT_UINTEQ(0, kr_bit_floor16(0));
+    EXPECT_UINTEQ(1, kr_bit_floor16(1));
+    EXPECT_UINTEQ(2, kr_bit_floor16(2));
+    EXPECT_UINTEQ(2, kr_bit_floor16(3));
+    EXPECT_UINTEQ(4, kr_bit_floor16(4));
+    EXPECT_UINTEQ(4, kr_bit_floor16(5));
+    EXPECT_UINTEQ(INT16_MAX + UINT16_C(1), kr_bit_floor16(UINT16_MAX));
 }
 
 TEST(bit, kr_bit_floor32)
@@ -148,14 +192,34 @@ TEST(bit, kr_bit_floor64)
 #endif /* !defined(UINT64_MAX) */
 }
 
+TEST(bit, kr_bit_width8)
+{
+    EXPECT_UINTEQ(0, kr_bit_width8(0));
+    EXPECT_UINTEQ(1, kr_bit_width8(1));
+    EXPECT_UINTEQ(2, kr_bit_width8(2));
+    EXPECT_UINTEQ(2, kr_bit_width8(3));
+    EXPECT_UINTEQ(3, kr_bit_width8(4));
+    EXPECT_UINTEQ(8, kr_bit_width8(UINT8_MAX));
+}
+
+TEST(bit, kr_bit_width16)
+{
+    EXPECT_UINTEQ(0, kr_bit_width16(0));
+    EXPECT_UINTEQ(1, kr_bit_width16(1));
+    EXPECT_UINTEQ(2, kr_bit_width16(2));
+    EXPECT_UINTEQ(2, kr_bit_width16(3));
+    EXPECT_UINTEQ(3, kr_bit_width16(4));
+    EXPECT_UINTEQ(16, kr_bit_width16(UINT16_MAX));
+}
+
 TEST(bit, kr_bit_width32)
 {
-    EXPECT_INTEQ(0, kr_bit_width32(0));
-    EXPECT_INTEQ(1, kr_bit_width32(1));
-    EXPECT_INTEQ(2, kr_bit_width32(2));
-    EXPECT_INTEQ(2, kr_bit_width32(3));
-    EXPECT_INTEQ(3, kr_bit_width32(4));
-    EXPECT_INTEQ(32, kr_bit_width32(UINT32_MAX));
+    EXPECT_UINTEQ(0, kr_bit_width32(0));
+    EXPECT_UINTEQ(1, kr_bit_width32(1));
+    EXPECT_UINTEQ(2, kr_bit_width32(2));
+    EXPECT_UINTEQ(2, kr_bit_width32(3));
+    EXPECT_UINTEQ(3, kr_bit_width32(4));
+    EXPECT_UINTEQ(32, kr_bit_width32(UINT32_MAX));
 }
 
 TEST(bit, kr_bit_width64)
@@ -163,197 +227,258 @@ TEST(bit, kr_bit_width64)
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_INTEQ(0, kr_bit_width64(0));
-    EXPECT_INTEQ(1, kr_bit_width64(1));
-    EXPECT_INTEQ(2, kr_bit_width64(2));
-    EXPECT_INTEQ(2, kr_bit_width64(3));
-    EXPECT_INTEQ(3, kr_bit_width64(4));
-    EXPECT_INTEQ(32, kr_bit_width64(UINT32_MAX));
-    EXPECT_INTEQ(64, kr_bit_width64(UINT64_MAX));
+    EXPECT_UINTEQ(0, kr_bit_width64(0));
+    EXPECT_UINTEQ(1, kr_bit_width64(1));
+    EXPECT_UINTEQ(2, kr_bit_width64(2));
+    EXPECT_UINTEQ(2, kr_bit_width64(3));
+    EXPECT_UINTEQ(3, kr_bit_width64(4));
+    EXPECT_UINTEQ(32, kr_bit_width64(UINT32_MAX));
+    EXPECT_UINTEQ(64, kr_bit_width64(UINT64_MAX));
 #endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/
 
-TEST(bit, kr_rotl8)
+TEST(bit, kr_rotate_left8)
 {
-    EXPECT_XINTEQ(0xa6u, kr_rotl8(0xd4, 3));
-    EXPECT_XINTEQ(0x9au, kr_rotl8(0xd4, 5));
-    EXPECT_XINTEQ(0xd4u, kr_rotl8(0xd4, 0));
+    EXPECT_XINTEQ(0xa6u, kr_rotate_left8(0xd4, 3));
+    EXPECT_XINTEQ(0x9au, kr_rotate_left8(0xd4, 5));
+    EXPECT_XINTEQ(0xd4u, kr_rotate_left8(0xd4, 0));
 }
 
-TEST(bit, kr_rotl16)
+TEST(bit, kr_rotate_left16)
 {
-    EXPECT_XINTEQ(0xe6a1, kr_rotl16(0x3cd4, 3));
-    EXPECT_XINTEQ(0x879a, kr_rotl16(0x3cd4, 13));
-    EXPECT_XINTEQ(0x3cd4, kr_rotl16(0x3cd4, 0));
+    EXPECT_XINTEQ(0xe6a1, kr_rotate_left16(0x3cd4, 3));
+    EXPECT_XINTEQ(0x879a, kr_rotate_left16(0x3cd4, 13));
+    EXPECT_XINTEQ(0x3cd4, kr_rotate_left16(0x3cd4, 0));
 }
 
-TEST(bit, kr_rotl32)
+TEST(bit, kr_rotate_left32)
 {
-    EXPECT_XINTEQ(0x0799aa80, kr_rotl32(0x00f33550, 3));
-    EXPECT_XINTEQ(0x001e66aa, kr_rotl32(0x00f33550, 29));
-    EXPECT_XINTEQ(0x00f33550, kr_rotl32(0x00f33550, 0));
+    EXPECT_XINTEQ(0x0799aa80, kr_rotate_left32(0x00f33550, 3));
+    EXPECT_XINTEQ(0x001e66aa, kr_rotate_left32(0x00f33550, 29));
+    EXPECT_XINTEQ(0x00f33550, kr_rotate_left32(0x00f33550, 0));
 }
 
-TEST(bit, kr_rotl64)
+TEST(bit, kr_rotate_left64)
 {
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_XINTEQ(UINT64_C(0x2a99ff800799aa80), kr_rotl64(0x05533ff000f33550, 3));
-    EXPECT_XINTEQ(UINT64_C(0x001e66aa00aa67fe), kr_rotl64(0x05533ff000f33550, 29));
-    EXPECT_XINTEQ(UINT64_C(0x0799aa802a99ff80), kr_rotl64(0x05533ff000f33550, 35));
-    EXPECT_XINTEQ(UINT64_C(0x00aa67fe001e66aa), kr_rotl64(0x05533ff000f33550, 61));
-    EXPECT_XINTEQ(UINT64_C(0x05533ff000f33550), kr_rotl64(0x05533ff000f33550, 0));
+    EXPECT_XINTEQ(UINT64_C(0x2a99ff800799aa80), kr_rotate_left64(0x05533ff000f33550, 3));
+    EXPECT_XINTEQ(UINT64_C(0x001e66aa00aa67fe), kr_rotate_left64(0x05533ff000f33550, 29));
+    EXPECT_XINTEQ(UINT64_C(0x0799aa802a99ff80), kr_rotate_left64(0x05533ff000f33550, 35));
+    EXPECT_XINTEQ(UINT64_C(0x00aa67fe001e66aa), kr_rotate_left64(0x05533ff000f33550, 61));
+    EXPECT_XINTEQ(UINT64_C(0x05533ff000f33550), kr_rotate_left64(0x05533ff000f33550, 0));
 #endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/
 
-TEST(bit, kr_rotr8)
+TEST(bit, kr_rotate_right8)
 {
-    EXPECT_XINTEQ(0x9au, kr_rotr8(0xd4, 3));
-    EXPECT_XINTEQ(0xa6u, kr_rotr8(0xd4, 5));
-    EXPECT_XINTEQ(0xd4u, kr_rotr8(0xd4, 0));
+    EXPECT_XINTEQ(0x9au, kr_rotate_right8(0xd4, 3));
+    EXPECT_XINTEQ(0xa6u, kr_rotate_right8(0xd4, 5));
+    EXPECT_XINTEQ(0xd4u, kr_rotate_right8(0xd4, 0));
 }
 
-TEST(bit, kr_rotr16)
+TEST(bit, kr_rotate_right16)
 {
-    EXPECT_XINTEQ(0x879a, kr_rotr16(0x3cd4, 3));
-    EXPECT_XINTEQ(0xe6a1, kr_rotr16(0x3cd4, 13));
-    EXPECT_XINTEQ(0x3cd4, kr_rotr16(0x3cd4, 0));
+    EXPECT_XINTEQ(0x879a, kr_rotate_right16(0x3cd4, 3));
+    EXPECT_XINTEQ(0xe6a1, kr_rotate_right16(0x3cd4, 13));
+    EXPECT_XINTEQ(0x3cd4, kr_rotate_right16(0x3cd4, 0));
 }
 
-TEST(bit, kr_rotr32)
+TEST(bit, kr_rotate_right32)
 {
-    EXPECT_XINTEQ(0x001e66aa, kr_rotr32(0x00f33550, 3));
-    EXPECT_XINTEQ(0x0799aa80, kr_rotr32(0x00f33550, 29));
-    EXPECT_XINTEQ(0x00f33550, kr_rotr32(0x00f33550, 0));
+    EXPECT_XINTEQ(0x001e66aa, kr_rotate_right32(0x00f33550, 3));
+    EXPECT_XINTEQ(0x0799aa80, kr_rotate_right32(0x00f33550, 29));
+    EXPECT_XINTEQ(0x00f33550, kr_rotate_right32(0x00f33550, 0));
 }
 
-TEST(bit, kr_rotr64)
+TEST(bit, kr_rotate_right64)
 {
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_XINTEQ(UINT64_C(0x00aa67fe001e66aa), kr_rotr64(0x05533ff000f33550, 3));
-    EXPECT_XINTEQ(UINT64_C(0x0799aa802a99ff80), kr_rotr64(0x05533ff000f33550, 29));
-    EXPECT_XINTEQ(UINT64_C(0x001e66aa00aa67fe), kr_rotr64(0x05533ff000f33550, 35));
-    EXPECT_XINTEQ(UINT64_C(0x2a99ff800799aa80), kr_rotr64(0x05533ff000f33550, 61));
-    EXPECT_XINTEQ(UINT64_C(0x05533ff000f33550), kr_rotr64(0x05533ff000f33550, 0));
+    EXPECT_XINTEQ(UINT64_C(0x00aa67fe001e66aa), kr_rotate_right64(0x05533ff000f33550, 3));
+    EXPECT_XINTEQ(UINT64_C(0x0799aa802a99ff80), kr_rotate_right64(0x05533ff000f33550, 29));
+    EXPECT_XINTEQ(UINT64_C(0x001e66aa00aa67fe), kr_rotate_right64(0x05533ff000f33550, 35));
+    EXPECT_XINTEQ(UINT64_C(0x2a99ff800799aa80), kr_rotate_right64(0x05533ff000f33550, 61));
+    EXPECT_XINTEQ(UINT64_C(0x05533ff000f33550), kr_rotate_right64(0x05533ff000f33550, 0));
 #endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/
 
-TEST(bit, kr_countl_zero32)
+TEST(bit, kr_leading_zeros8)
 {
-    EXPECT_INTEQ(0, kr_countl_zero32(0x80000000));
-    EXPECT_INTEQ(16, kr_countl_zero32(0x00008000));
-    EXPECT_INTEQ(32, kr_countl_zero32(0x00000000));
+    EXPECT_UINTEQ(0, kr_leading_zeros8(0x80));
+    EXPECT_UINTEQ(4, kr_leading_zeros8(0x08));
+    EXPECT_UINTEQ(8, kr_leading_zeros8(0x00));
 }
 
-TEST(bit, kr_countl_zero64)
+TEST(bit, kr_leading_zeros16)
+{
+    EXPECT_UINTEQ(0, kr_leading_zeros16(0x8000));
+    EXPECT_UINTEQ(8, kr_leading_zeros16(0x0080));
+    EXPECT_UINTEQ(16, kr_leading_zeros16(0x0000));
+}
+
+TEST(bit, kr_leading_zeros32)
+{
+    EXPECT_UINTEQ(0, kr_leading_zeros32(0x80000000));
+    EXPECT_UINTEQ(16, kr_leading_zeros32(0x00008000));
+    EXPECT_UINTEQ(32, kr_leading_zeros32(0x00000000));
+}
+
+TEST(bit, kr_leading_zeros64)
 {
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_INTEQ(0, kr_countl_zero64(0x8000000000000000));
-    EXPECT_INTEQ(16, kr_countl_zero64(0x0000800000000000));
-    EXPECT_INTEQ(32, kr_countl_zero64(0x0000000080000000));
-    EXPECT_INTEQ(48, kr_countl_zero64(0x0000000000008000));
-    EXPECT_INTEQ(64, kr_countl_zero64(0x0000000000000000));
+    EXPECT_UINTEQ(0, kr_leading_zeros64(0x8000000000000000));
+    EXPECT_UINTEQ(16, kr_leading_zeros64(0x0000800000000000));
+    EXPECT_UINTEQ(32, kr_leading_zeros64(0x0000000080000000));
+    EXPECT_UINTEQ(48, kr_leading_zeros64(0x0000000000008000));
+    EXPECT_UINTEQ(64, kr_leading_zeros64(0x0000000000000000));
 #endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/
 
-TEST(bit, kr_countl_one32)
+TEST(bit, kr_leading_ones8)
 {
-    EXPECT_INTEQ(0, kr_countl_one32(0x00000000));
-    EXPECT_INTEQ(16, kr_countl_one32(0xFFFF7FFF));
-    EXPECT_INTEQ(32, kr_countl_one32(0xFFFFFFFF));
+    EXPECT_UINTEQ(0, kr_leading_ones8(0x00));
+    EXPECT_UINTEQ(4, kr_leading_ones8(0xF7));
+    EXPECT_UINTEQ(8, kr_leading_ones8(0xFF));
 }
 
-TEST(bit, kr_countl_one64)
+TEST(bit, kr_leading_ones16)
+{
+    EXPECT_UINTEQ(0, kr_leading_ones16(0x0000));
+    EXPECT_UINTEQ(8, kr_leading_ones16(0xFF7F));
+    EXPECT_UINTEQ(16, kr_leading_ones16(0xFFFF));
+}
+
+TEST(bit, kr_leading_ones32)
+{
+    EXPECT_UINTEQ(0, kr_leading_ones32(0x00000000));
+    EXPECT_UINTEQ(16, kr_leading_ones32(0xFFFF7FFF));
+    EXPECT_UINTEQ(32, kr_leading_ones32(0xFFFFFFFF));
+}
+
+TEST(bit, kr_leading_ones64)
 {
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_INTEQ(0, kr_countl_one64(0x0000000000000000));
-    EXPECT_INTEQ(16, kr_countl_one64(0xFFFF7FFFFFFFFFFF));
-    EXPECT_INTEQ(32, kr_countl_one64(0xFFFFFFFF7FFFFFFF));
-    EXPECT_INTEQ(48, kr_countl_one64(0xFFFFFFFFFFFF7FFF));
-    EXPECT_INTEQ(64, kr_countl_one64(0xFFFFFFFFFFFFFFFF));
+    EXPECT_UINTEQ(0, kr_leading_ones64(0x0000000000000000));
+    EXPECT_UINTEQ(16, kr_leading_ones64(0xFFFF7FFFFFFFFFFF));
+    EXPECT_UINTEQ(32, kr_leading_ones64(0xFFFFFFFF7FFFFFFF));
+    EXPECT_UINTEQ(48, kr_leading_ones64(0xFFFFFFFFFFFF7FFF));
+    EXPECT_UINTEQ(64, kr_leading_ones64(0xFFFFFFFFFFFFFFFF));
 #endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/
 
-TEST(bit, kr_countr_zero32)
+TEST(bit, kr_trailing_zeros8)
 {
-    EXPECT_INTEQ(0, kr_countr_zero32(0xFFFFFFFF));
-    EXPECT_INTEQ(16, kr_countr_zero32(0x00010000));
-    EXPECT_INTEQ(32, kr_countr_zero32(0x00000000));
+    EXPECT_UINTEQ(0, kr_trailing_zeros8(0xFF));
+    EXPECT_UINTEQ(4, kr_trailing_zeros8(0x10));
+    EXPECT_UINTEQ(8, kr_trailing_zeros8(0x00));
 }
 
-TEST(bit, kr_countr_zero64)
+TEST(bit, kr_trailing_zeros16)
+{
+    EXPECT_UINTEQ(0, kr_trailing_zeros16(0xFFFF));
+    EXPECT_UINTEQ(8, kr_trailing_zeros16(0x0100));
+    EXPECT_UINTEQ(16, kr_trailing_zeros16(0x0000));
+}
+
+TEST(bit, kr_trailing_zeros32)
+{
+    EXPECT_UINTEQ(0, kr_trailing_zeros32(0xFFFFFFFF));
+    EXPECT_UINTEQ(16, kr_trailing_zeros32(0x00010000));
+    EXPECT_UINTEQ(32, kr_trailing_zeros32(0x00000000));
+}
+
+TEST(bit, kr_trailing_zeros64)
 {
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_INTEQ(0, kr_countr_zero64(0xFFFFFFFFFFFFFFFF));
-    EXPECT_INTEQ(16, kr_countr_zero64(0x0000000000010000));
-    EXPECT_INTEQ(32, kr_countr_zero64(0x0000000100000000));
-    EXPECT_INTEQ(48, kr_countr_zero64(0x0001000000000000));
-    EXPECT_INTEQ(64, kr_countr_zero64(0x0000000000000000));
+    EXPECT_UINTEQ(0, kr_trailing_zeros64(0xFFFFFFFFFFFFFFFF));
+    EXPECT_UINTEQ(16, kr_trailing_zeros64(0x0000000000010000));
+    EXPECT_UINTEQ(32, kr_trailing_zeros64(0x0000000100000000));
+    EXPECT_UINTEQ(48, kr_trailing_zeros64(0x0001000000000000));
+    EXPECT_UINTEQ(64, kr_trailing_zeros64(0x0000000000000000));
 #endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/
 
-TEST(bit, kr_countr_one32)
+TEST(bit, kr_trailing_ones8)
 {
-    EXPECT_INTEQ(0, kr_countr_one32(0x00000000));
-    EXPECT_INTEQ(16, kr_countr_one32(0xFFFEFFFF));
-    EXPECT_INTEQ(32, kr_countr_one32(0xFFFFFFFF));
+    EXPECT_UINTEQ(0, kr_trailing_ones8(0x00));
+    EXPECT_UINTEQ(4, kr_trailing_ones8(0xEF));
+    EXPECT_UINTEQ(8, kr_trailing_ones8(0xFF));
 }
 
-TEST(bit, kr_countr_one64)
+TEST(bit, kr_trailing_ones16)
+{
+    EXPECT_UINTEQ(0, kr_trailing_ones16(0x0000));
+    EXPECT_UINTEQ(8, kr_trailing_ones16(0xFEFF));
+    EXPECT_UINTEQ(16, kr_trailing_ones16(0xFFFF));
+}
+
+TEST(bit, kr_trailing_ones32)
+{
+    EXPECT_UINTEQ(0, kr_trailing_ones32(0x00000000));
+    EXPECT_UINTEQ(16, kr_trailing_ones32(0xFFFEFFFF));
+    EXPECT_UINTEQ(32, kr_trailing_ones32(0xFFFFFFFF));
+}
+
+TEST(bit, kr_trailing_ones64)
 {
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_INTEQ(0, kr_countr_one64(0x0000000000000000));
-    EXPECT_INTEQ(16, kr_countr_one64(0xFFFFFFFFFFFEFFFF));
-    EXPECT_INTEQ(32, kr_countr_one64(0xFFFFFFFEFFFFFFFF));
-    EXPECT_INTEQ(48, kr_countr_one64(0xFFFEFFFFFFFFFFFF));
-    EXPECT_INTEQ(64, kr_countr_one64(0xFFFFFFFFFFFFFFFF));
+    EXPECT_UINTEQ(0, kr_trailing_ones64(0x0000000000000000));
+    EXPECT_UINTEQ(16, kr_trailing_ones64(0xFFFFFFFFFFFEFFFF));
+    EXPECT_UINTEQ(32, kr_trailing_ones64(0xFFFFFFFEFFFFFFFF));
+    EXPECT_UINTEQ(48, kr_trailing_ones64(0xFFFEFFFFFFFFFFFF));
+    EXPECT_UINTEQ(64, kr_trailing_ones64(0xFFFFFFFFFFFFFFFF));
 #endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/
 
-TEST(bit, kr_popcount16)
+TEST(bit, kr_count_ones8)
 {
-    EXPECT_INTEQ(6, kr_popcount16(0x04c7));
+    EXPECT_UINTEQ(5, kr_count_ones8(0xe6));
 }
 
-TEST(bit, kr_popcount32)
+TEST(bit, kr_count_ones16)
 {
-    EXPECT_INTEQ(6, kr_popcount32(0x04c7));
-    EXPECT_INTEQ(12, kr_popcount32(0x04c704c7));
+    EXPECT_UINTEQ(6, kr_count_ones16(0x04c7));
 }
 
-TEST(bit, kr_popcount64)
+TEST(bit, kr_count_ones32)
+{
+    EXPECT_UINTEQ(6, kr_count_ones32(0x04c7));
+    EXPECT_UINTEQ(12, kr_count_ones32(0x04c704c7));
+}
+
+TEST(bit, kr_count_ones64)
 {
 #if !defined(UINT64_MAX)
     SKIP();
 #else  /* !defined(UINT64_MAX) */
-    EXPECT_INTEQ(6, kr_popcount64(0x04c7));
-    EXPECT_INTEQ(12, kr_popcount64(0x04c704c7));
-    EXPECT_INTEQ(24, kr_popcount64(0x04c704c704c704c7));
+    EXPECT_UINTEQ(6, kr_count_ones64(0x04c7));
+    EXPECT_UINTEQ(12, kr_count_ones64(0x04c704c7));
+    EXPECT_UINTEQ(24, kr_count_ones64(0x04c704c704c704c7));
 #endif /* !defined(UINT64_MAX) */
 }
 
@@ -372,31 +497,46 @@ SUITE(bit)
     SUITE_TEST(bit, kr_has_single_bit16);
     SUITE_TEST(bit, kr_has_single_bit32);
     SUITE_TEST(bit, kr_has_single_bit64);
+    SUITE_TEST(bit, kr_bit_ceil8);
+    SUITE_TEST(bit, kr_bit_ceil16);
     SUITE_TEST(bit, kr_bit_ceil32);
     SUITE_TEST(bit, kr_bit_ceil64);
+    SUITE_TEST(bit, kr_bit_floor8);
+    SUITE_TEST(bit, kr_bit_floor16);
     SUITE_TEST(bit, kr_bit_floor32);
     SUITE_TEST(bit, kr_bit_floor64);
+    SUITE_TEST(bit, kr_bit_width8);
+    SUITE_TEST(bit, kr_bit_width16);
     SUITE_TEST(bit, kr_bit_width32);
     SUITE_TEST(bit, kr_bit_width64);
-    SUITE_TEST(bit, kr_rotl8);
-    SUITE_TEST(bit, kr_rotl16);
-    SUITE_TEST(bit, kr_rotl32);
-    SUITE_TEST(bit, kr_rotl64);
-    SUITE_TEST(bit, kr_rotr8);
-    SUITE_TEST(bit, kr_rotr16);
-    SUITE_TEST(bit, kr_rotr32);
-    SUITE_TEST(bit, kr_rotr64);
-    SUITE_TEST(bit, kr_countl_zero32);
-    SUITE_TEST(bit, kr_countl_zero64);
-    SUITE_TEST(bit, kr_countl_one32);
-    SUITE_TEST(bit, kr_countl_one64);
-    SUITE_TEST(bit, kr_countr_zero32);
-    SUITE_TEST(bit, kr_countr_zero64);
-    SUITE_TEST(bit, kr_countr_one32);
-    SUITE_TEST(bit, kr_countr_one64);
-    SUITE_TEST(bit, kr_popcount16);
-    SUITE_TEST(bit, kr_popcount32);
-    SUITE_TEST(bit, kr_popcount64);
+    SUITE_TEST(bit, kr_rotate_left8);
+    SUITE_TEST(bit, kr_rotate_left16);
+    SUITE_TEST(bit, kr_rotate_left32);
+    SUITE_TEST(bit, kr_rotate_left64);
+    SUITE_TEST(bit, kr_rotate_right8);
+    SUITE_TEST(bit, kr_rotate_right16);
+    SUITE_TEST(bit, kr_rotate_right32);
+    SUITE_TEST(bit, kr_rotate_right64);
+    SUITE_TEST(bit, kr_leading_zeros8);
+    SUITE_TEST(bit, kr_leading_zeros16);
+    SUITE_TEST(bit, kr_leading_zeros32);
+    SUITE_TEST(bit, kr_leading_zeros64);
+    SUITE_TEST(bit, kr_leading_ones8);
+    SUITE_TEST(bit, kr_leading_ones16);
+    SUITE_TEST(bit, kr_leading_ones32);
+    SUITE_TEST(bit, kr_leading_ones64);
+    SUITE_TEST(bit, kr_trailing_zeros8);
+    SUITE_TEST(bit, kr_trailing_zeros16);
+    SUITE_TEST(bit, kr_trailing_zeros32);
+    SUITE_TEST(bit, kr_trailing_zeros64);
+    SUITE_TEST(bit, kr_trailing_ones8);
+    SUITE_TEST(bit, kr_trailing_ones16);
+    SUITE_TEST(bit, kr_trailing_ones32);
+    SUITE_TEST(bit, kr_trailing_ones64);
+    SUITE_TEST(bit, kr_count_ones8);
+    SUITE_TEST(bit, kr_count_ones16);
+    SUITE_TEST(bit, kr_count_ones32);
+    SUITE_TEST(bit, kr_count_ones64);
 }
 
 #pragma warning(pop)
