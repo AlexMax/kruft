@@ -206,6 +206,23 @@ TEST(str, kr_strtok_r)
     }
 }
 
+TEST(str, kr_memccpy)
+{
+    char *ptr = NULL;
+    char buffer[32];
+
+    memset(buffer, 0x00, sizeof(buffer));
+    ptr = KR_CASTS(char *, kr_memccpy(buffer, "The quick brown fox", (int)'b', 20));
+    EXPECT_INTEQ(ptr - buffer, 11);
+    *ptr = '\0';
+    EXPECT_STREQ(buffer, "The quick b");
+
+    memset(buffer, 0x00, sizeof(buffer));
+    ptr = KR_CASTS(char *, kr_memccpy(buffer, "The quick brown fox", (int)'y', 21));
+    EXPECT_TRUE(ptr == NULL);
+    EXPECT_STREQ(buffer, "The quick brown fox");
+}
+
 SUITE(str)
 {
     SUITE_TEST(str, kr_strscpy);
@@ -216,4 +233,5 @@ SUITE(str)
     SUITE_TEST(str, kr_strspn);
     SUITE_TEST(str, kr_strcspn);
     SUITE_TEST(str, kr_strtok_r);
+    SUITE_TEST(str, kr_memccpy);
 }

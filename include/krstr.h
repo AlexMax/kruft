@@ -65,6 +65,7 @@ KR_CONSTEXPR char *kr_strtok_r(char *KR_RESTRICT str, const char *KR_RESTRICT de
 
 KR_NODISCARD char *kr_strdup(const char *str);
 KR_NODISCARD char *kr_strndup(const char *str, size_t len);
+KR_INLINE void *kr_memccpy(void *KR_RESTRICT dest, const void *KR_RESTRICT src, int ch, size_t len);
 
 /******************************************************************************/
 #if !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION)
@@ -337,6 +338,26 @@ KR_NODISCARD char *kr_strndup(const char *str, size_t len)
     memcpy(dup, str, strl);
     dup[strl] = '\0';
     return dup;
+}
+
+/******************************************************************************/
+
+KR_INLINE void *kr_memccpy(void *KR_RESTRICT dest, const void *KR_RESTRICT src, int ch, size_t len)
+{
+    unsigned char *destCh = KR_CASTS(unsigned char *, dest);
+    const unsigned char *curCh = KR_CASTS(const unsigned char *, src);
+    const unsigned char *endCh = curCh + len;
+
+    for (; curCh != endCh; destCh++, curCh++)
+    {
+        *destCh = *curCh;
+        if (*curCh == KR_CASTS(unsigned char, ch))
+        {
+            return KR_CASTS(void *, destCh + 1);
+        }
+    }
+
+    return NULL;
 }
 
 #endif /* !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION) */
