@@ -132,19 +132,19 @@
 
 /* Language and compiler feature shims. */
 
-#if (KR_CPLUSPLUS)
+#if (KR_CPLUSPLUS >= 199711)
 #define KR_CASTC(t, u) (const_cast<t>(u))
 #else
 #define KR_CASTC(t, u) (t)(u)
 #endif
 
-#if (KR_CPLUSPLUS)
+#if (KR_CPLUSPLUS >= 199711)
 #define KR_CASTR(t, u) (reinterpret_cast<t>(u))
 #else
 #define KR_CASTR(t, u) (t)(u)
 #endif
 
-#if (KR_CPLUSPLUS)
+#if (KR_CPLUSPLUS >= 199711)
 #define KR_CASTS(t, u) (static_cast<t>(u))
 #else
 #define KR_CASTS(t, u) (t)(u)
@@ -166,7 +166,7 @@
 
 #if (KR_MSC_VER && KR_MSC_VER < 1900) /* Visual C++ 2015 */
 #define KR_INLINE __inline
-#elif (KR_CPLUSPLUS) /* C++ inline. */
+#elif (KR_CPLUSPLUS >= 199711) /* C++ inline. */
 #define KR_INLINE inline
 #elif (KR_STDC_VERSION >= 199901) /* C++-style inline in C99. */
 #define KR_INLINE static inline

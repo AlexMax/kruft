@@ -11,7 +11,7 @@
 
 #include "./krconfig.h"
 
-#if (!KR_CPLUSPLUS)
+#if (KR_CPLUSPLUS < 199711)
 #if (KR_STDC_VERSION >= 199901)
 
 #if (!KR_CONFIG_NOINCLUDE)

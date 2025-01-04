@@ -29,7 +29,11 @@ TEST(bltin, kr_rbit32_MACRO)
 
 TEST(bltin, kr_rbit64_MACRO)
 {
+#if !defined(UINT64_MAX)
+    SKIP();
+#else  /* !defined(UINT64_MAX) */
     EXPECT_UINTEQ(0x0000ffff00ff0f35u, kr_rbit64(0xacf0ff00ffff0000u));
+#endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/

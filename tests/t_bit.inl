@@ -34,7 +34,11 @@ TEST(bit, kr_bitreverse32)
 
 TEST(bit, kr_bitreverse64)
 {
+#if !defined(UINT64_MAX)
+    SKIP();
+#else  /* !defined(UINT64_MAX) */
     EXPECT_UINTEQ(0x0000ffff00ff0f35u, kr_bitreverse64(0xacf0ff00ffff0000u));
+#endif /* !defined(UINT64_MAX) */
 }
 
 /******************************************************************************/
@@ -102,7 +106,7 @@ TEST(bit, kr_bit_ceil8)
     EXPECT_UINTEQ(4, kr_bit_ceil8(3));
     EXPECT_UINTEQ(4, kr_bit_ceil8(4));
     EXPECT_UINTEQ(8, kr_bit_ceil8(5));
-    EXPECT_UINTEQ(INT8_MAX + UINT8_C(1), kr_bit_ceil8(INT8_MAX));
+    EXPECT_UINTEQ(128u, kr_bit_ceil8(INT8_MAX));
 }
 
 TEST(bit, kr_bit_ceil16)
@@ -113,7 +117,7 @@ TEST(bit, kr_bit_ceil16)
     EXPECT_UINTEQ(4, kr_bit_ceil16(3));
     EXPECT_UINTEQ(4, kr_bit_ceil16(4));
     EXPECT_UINTEQ(8, kr_bit_ceil16(5));
-    EXPECT_UINTEQ(INT16_MAX + UINT16_C(1), kr_bit_ceil16(INT16_MAX));
+    EXPECT_UINTEQ(32768u, kr_bit_ceil16(INT16_MAX));
 }
 
 TEST(bit, kr_bit_ceil32)
@@ -124,7 +128,7 @@ TEST(bit, kr_bit_ceil32)
     EXPECT_UINTEQ(4, kr_bit_ceil32(3));
     EXPECT_UINTEQ(4, kr_bit_ceil32(4));
     EXPECT_UINTEQ(8, kr_bit_ceil32(5));
-    EXPECT_UINTEQ(INT32_MAX + UINT32_C(1), kr_bit_ceil32(INT32_MAX));
+    EXPECT_UINTEQ(2147483648u, kr_bit_ceil32(INT32_MAX));
 }
 
 TEST(bit, kr_bit_ceil64)
@@ -138,8 +142,8 @@ TEST(bit, kr_bit_ceil64)
     EXPECT_UINTEQ(4, kr_bit_ceil64(3));
     EXPECT_UINTEQ(4, kr_bit_ceil64(4));
     EXPECT_UINTEQ(8, kr_bit_ceil64(5));
-    EXPECT_UINTEQ(INT32_MAX + UINT64_C(1), kr_bit_ceil64(INT32_MAX));
-    EXPECT_UINTEQ(INT64_MAX + UINT64_C(1), kr_bit_ceil64(INT64_MAX));
+    EXPECT_UINTEQ(2147483648u, kr_bit_ceil64(INT32_MAX));
+    EXPECT_UINTEQ(9223372036854775808u, kr_bit_ceil64(INT64_MAX));
 #endif /* !defined(UINT64_MAX) */
 }
 
@@ -151,7 +155,7 @@ TEST(bit, kr_bit_floor8)
     EXPECT_UINTEQ(2, kr_bit_floor8(3));
     EXPECT_UINTEQ(4, kr_bit_floor8(4));
     EXPECT_UINTEQ(4, kr_bit_floor8(5));
-    EXPECT_UINTEQ(INT8_MAX + UINT8_C(1), kr_bit_floor8(UINT8_MAX));
+    EXPECT_UINTEQ(128u, kr_bit_floor8(UINT8_MAX));
 }
 
 TEST(bit, kr_bit_floor16)
@@ -162,7 +166,7 @@ TEST(bit, kr_bit_floor16)
     EXPECT_UINTEQ(2, kr_bit_floor16(3));
     EXPECT_UINTEQ(4, kr_bit_floor16(4));
     EXPECT_UINTEQ(4, kr_bit_floor16(5));
-    EXPECT_UINTEQ(INT16_MAX + UINT16_C(1), kr_bit_floor16(UINT16_MAX));
+    EXPECT_UINTEQ(32768u, kr_bit_floor16(UINT16_MAX));
 }
 
 TEST(bit, kr_bit_floor32)
@@ -173,7 +177,7 @@ TEST(bit, kr_bit_floor32)
     EXPECT_UINTEQ(2, kr_bit_floor32(3));
     EXPECT_UINTEQ(4, kr_bit_floor32(4));
     EXPECT_UINTEQ(4, kr_bit_floor32(5));
-    EXPECT_UINTEQ(INT32_MAX + UINT32_C(1), kr_bit_floor32(UINT32_MAX));
+    EXPECT_UINTEQ(2147483648u, kr_bit_floor32(UINT32_MAX));
 }
 
 TEST(bit, kr_bit_floor64)
@@ -187,8 +191,8 @@ TEST(bit, kr_bit_floor64)
     EXPECT_UINTEQ(2, kr_bit_floor64(3));
     EXPECT_UINTEQ(4, kr_bit_floor64(4));
     EXPECT_UINTEQ(4, kr_bit_floor64(5));
-    EXPECT_UINTEQ(INT32_MAX + UINT64_C(1), kr_bit_floor64(UINT32_MAX));
-    EXPECT_UINTEQ(INT64_MAX + UINT64_C(1), kr_bit_floor64(UINT64_MAX));
+    EXPECT_UINTEQ(2147483648u, kr_bit_floor64(UINT32_MAX));
+    EXPECT_UINTEQ(9223372036854775808u, kr_bit_floor64(UINT64_MAX));
 #endif /* !defined(UINT64_MAX) */
 }
 
