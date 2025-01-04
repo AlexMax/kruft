@@ -151,6 +151,61 @@ TEST(str, kr_stpecpy)
     EXPECT_TRUE(res == NULL);
 }
 
+TEST(str, kr_strspn)
+{
+    EXPECT_UINTEQ(3, kr_strspn("plugh", "plu"));
+    EXPECT_UINTEQ(3, kr_strspn("plugh", "ulp"));
+    EXPECT_UINTEQ(5, kr_strspn("plugh", "plugh"));
+    EXPECT_UINTEQ(0, kr_strspn("plugh", "xyz"));
+    EXPECT_UINTEQ(0, kr_strspn("plugh", ""));
+    EXPECT_UINTEQ(0, kr_strspn("", "xyz"));
+}
+
+TEST(str, kr_strcspn)
+{
+    EXPECT_UINTEQ(3, kr_strcspn("plugh", "ghxyz"));
+    EXPECT_UINTEQ(3, kr_strcspn("plugh", "zyxhg"));
+    EXPECT_UINTEQ(5, kr_strcspn("plugh", "xyz"));
+    EXPECT_UINTEQ(0, kr_strcspn("plugh", "plugh"));
+    EXPECT_UINTEQ(5, kr_strcspn("plugh", ""));
+    EXPECT_UINTEQ(0, kr_strcspn("", "xyz"));
+}
+
+TEST(str, kr_strtok_r)
+{
+    char *r = NULL, *ptr = NULL;
+    char buffer[32];
+
+    {
+        kr_strscpy(buffer, "foo/bar\\baz//\\plugh", sizeof(buffer));
+
+        r = kr_strtok_r(buffer, "/\\", &ptr);
+        EXPECT_STREQ(r, "foo");
+
+        r = kr_strtok_r(NULL, "/\\", &ptr);
+        EXPECT_STREQ(r, "bar");
+
+        r = kr_strtok_r(NULL, "/\\", &ptr);
+        EXPECT_STREQ(r, "baz");
+
+        r = kr_strtok_r(NULL, "/\\", &ptr);
+        EXPECT_STREQ(r, "plugh");
+
+        r = kr_strtok_r(NULL, "/\\", &ptr);
+        EXPECT_TRUE(r == NULL);
+    }
+
+    {
+        kr_strscpy(buffer, "//foo\\", sizeof(buffer));
+
+        r = kr_strtok_r(buffer, "/\\", &ptr);
+        EXPECT_STREQ(r, "foo");
+
+        r = kr_strtok_r(NULL, "/\\", &ptr);
+        EXPECT_TRUE(r == NULL);
+    }
+}
+
 SUITE(str)
 {
     SUITE_TEST(str, kr_strscpy);
@@ -158,4 +213,7 @@ SUITE(str)
     SUITE_TEST(str, kr_strlcpy);
     SUITE_TEST(str, kr_strlcat);
     SUITE_TEST(str, kr_stpecpy);
+    SUITE_TEST(str, kr_strspn);
+    SUITE_TEST(str, kr_strcspn);
+    SUITE_TEST(str, kr_strtok_r);
 }

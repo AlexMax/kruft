@@ -40,9 +40,9 @@ Limitations
 -----------
 Note that although this library is designed for crufty compilers and
 environments, there are certain limitations.  Code legibility is prioritized
-above compatibility - each function should be legible enough to allow for
-vendoring into your own codebases and having them work while only changing
-around a few kruft-specific defines.
+above compiler compatibility - each function should be legible enough to
+allow for vendoring into your own codebases and having them work while only
+changing around a few kruft-specific defines.
 
 If your environment has constraints that preclude the use of certain functions
 due to needing too much ROM space, using too much stack, or being inordinately

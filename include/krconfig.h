@@ -133,6 +133,12 @@
 /* Language and compiler feature shims. */
 
 #if (KR_CPLUSPLUS)
+#define KR_CASTC(t, u) (const_cast<t>(u))
+#else
+#define KR_CASTC(t, u) (t)(u)
+#endif
+
+#if (KR_CPLUSPLUS)
 #define KR_CASTR(t, u) (reinterpret_cast<t>(u))
 #else
 #define KR_CASTR(t, u) (t)(u)

@@ -25,6 +25,44 @@ KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRIC
 KR_CONSTEXPR size_t kr_strlcpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
 KR_CONSTEXPR size_t kr_strlcat(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
 KR_CONSTEXPR char *kr_stpecpy(char *dest, char *destEnd, const char *KR_RESTRICT src);
+
+/**
+ * @brief Return the length (span) of the passed string `str` that consists
+ *        only of the characters in the string `chars.`
+ *
+ * @param str String to check.
+ * @param chars Characters to check for.
+ * @return Length of substring that consists only of `chars` characters,
+ *         strlen(`str`) if the entire string matches, or 0 if none of the
+ *         string matches.
+ */
+KR_CONSTEXPR size_t kr_strspn(const char *str, const char *chars);
+
+/**
+ * @brief Return the length (span) of the passed string `str` that consists
+ *        only of the characters not in the string `chars`.
+ *
+ * @param str String to check.
+ * @param chars Characters to check for.
+ * @return Length of substring that does not consist of `chars` characters,
+ *         strlen(`str`) if the entire string lacks them.
+ */
+KR_CONSTEXPR size_t kr_strcspn(const char *str, const char *chars);
+
+/**
+ * @brief Scan string for a token that is split by one of the characters
+ *        in string `delim`.
+ *
+ * @param str String to start the scan inside.  Must be NULL on all calls
+ *            after the first if multiple tokens are desired.
+ * @param delim A list of characters that split tokens.
+ * @param ptr Pointer to context pointer.  If multiple tokens are desired,
+ *            this parameter must not change across multiple calls.
+ * @return A token found inside the scanned string, or NULL if no more tokens
+ *         were found.
+ */
+KR_CONSTEXPR char *kr_strtok_r(char *KR_RESTRICT str, const char *KR_RESTRICT delim, char **KR_RESTRICT ptr);
+
 KR_NODISCARD char *kr_strdup(const char *str);
 KR_NODISCARD char *kr_strndup(const char *str, size_t len);
 
@@ -177,6 +215,99 @@ KR_CONSTEXPR char *kr_stpecpy(char *dest, char *destEnd, const char *KR_RESTRICT
     }
 
     return dest + len;
+}
+
+/******************************************************************************/
+
+KR_CONSTEXPR size_t kr_strspn(const char *str, const char *chars)
+{
+    const char *s = str;
+    const char *ch = NULL;
+
+    for (; *s != '\0'; s++)
+    {
+        bool found = false;
+        for (ch = chars; *ch != '\0'; ch++)
+        {
+            if (*s == *ch)
+            {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            return KR_CASTS(size_t, s - str);
+        }
+    }
+
+    return KR_CASTS(size_t, s - str);
+}
+
+KR_CONSTEXPR size_t kr_strcspn(const char *str, const char *chars)
+{
+    const char *s = str;
+    const char *ch = NULL;
+
+    for (; *s != '\0'; s++)
+    {
+        bool found = false;
+        for (ch = chars; *ch != '\0'; ch++)
+        {
+            if (*s == *ch)
+            {
+                found = true;
+                break;
+            }
+        }
+        if (found)
+        {
+            return KR_CASTS(size_t, s - str);
+        }
+    }
+
+    return KR_CASTS(size_t, s - str);
+}
+
+/******************************************************************************/
+
+KR_CONSTEXPR char *kr_strtok_r(char *KR_RESTRICT str, const char *KR_RESTRICT delim, char **KR_RESTRICT ptr)
+{
+    char *tok = NULL;
+
+    if (str == NULL)
+    {
+        if (*ptr == NULL)
+        {
+            return NULL;
+        }
+
+        // Resuming a previous tokenization.
+        str = *ptr;
+    }
+
+    // First, munch all delim chars.
+    str += kr_strspn(str, delim);
+    if (*str == '\0')
+    {
+        // Could not find another token.
+        return NULL;
+    }
+
+    // Munch a token.
+    tok = str;
+    str += kr_strcspn(str, delim);
+    if (*str == '\0')
+    {
+        // Found the last token.
+        *ptr = NULL;
+        return tok;
+    }
+
+    // Null the end and set our next starting point.
+    *str = '\0';
+    *ptr = str + 1;
+    return tok;
 }
 
 /******************************************************************************/
