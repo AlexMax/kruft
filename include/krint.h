@@ -11,8 +11,11 @@
 
 #include "./krconfig.h"
 
-#include "krlimits.h"
+#include "./krlimits.h"
+
+#if (!KR_CONFIG_NOINCLUDE)
 #include <stddef.h>
+#endif
 
 /*
  * If we have an stdint.h, we should be using it.  Not using stdint.h on

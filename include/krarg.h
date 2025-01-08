@@ -11,7 +11,9 @@
 
 #include "./krconfig.h"
 
+#if (!KR_CONFIG_NOINCLUDE)
 #include <stdarg.h>
+#endif
 
 #if !defined(va_copy)
 #define va_copy(dest, src) ((dest) = (src))

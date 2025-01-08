@@ -11,7 +11,9 @@
 
 #include "./krconfig.h"
 
+#if (!KR_CONFIG_NOINCLUDE)
 #include <limits.h>
+#endif
 
 /* Some ancient versions of GCC define LONG_LONG_ *macros but not LLONG_ *. */
 

@@ -16,7 +16,7 @@
 #if !defined(KRBLTIN_H)
 #define KRBLTIN_H
 
-#include "krbit.h"
+#include "./krbit.h"
 
 #if (KR_MSC_VER >= 1300) /* FIXME: Not in VC6, unsure when introduced. */
 #include <intrin.h>
