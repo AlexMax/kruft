@@ -17,13 +17,94 @@
 #include <string.h>
 #endif
 
+/**
+ * @brief Get length of string.
+ *
+ * @param str String to calculate length of.
+ * @return Number of characters in string, not including the null terminator.
+ */
 KR_CONSTEXPR size_t kr_strlen(const char *str);
+
+/**
+ * @brief Get length of string up to a certain length.
+ *
+ * @param str String to calculate length of.
+ * @param len Number of bytes to check.
+ * @return Number of characters in string, or len if null terminator was
+ *         not found.
+ */
 KR_CONSTEXPR size_t kr_strnlen(const char *str, size_t len);
+
+/**
+ * @brief Compare strings lexographically.
+ *
+ * @param lhs First string to compare.
+ * @param rhs Second string to compare.
+ * @return 0 if identical, <0 if lhs comes before rhs, >0 if rhs comes before
+ *         lhs.
+ */
 KR_INLINE int kr_strcmp(const char *lhs, const char *rhs);
+
+/**
+ * @brief Copy string from src to dest.
+ *
+ * @details This function should be preferred over strlcpy if you are copying
+ *          a string to a fixed-size location that you cannot grow to make
+ *          bigger.
+ *
+ * @param dest Destination buffer to copy to.
+ * @param src Source string to copy.
+ * @param destLen Destination buffer size.
+ * @return Length of resulting string, or <0 if truncation occurred.
+ */
 KR_CONSTEXPR ptrdiff_t kr_strscpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
+
+/**
+ * @brief Concatenate string on destination buffer containing existing string.
+ *
+ * @param dest Destination buffer to copy to.  Must contain existing string.
+ * @param src Source string to copy.
+ * @param destLen Destination buffer size.
+ * @return Length of resulting string, or <0 if truncation occurred.
+ */
 KR_CONSTEXPR ptrdiff_t kr_strscat(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
+
+/**
+ * @brief Copy string from src to dest.
+ *
+ * @details This function should be preferred if you intend to reallocate
+ *          the destination buffer to a proper size.
+ *
+ * @param dest Destination buffer to copy to.
+ * @param src Source string to copy.
+ * @param destLen Destination buffer size.
+ * @return Length of desired string, >= destLen if truncation occurred.
+ */
 KR_CONSTEXPR size_t kr_strlcpy(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
+
+/**
+ * @brief Concatenate string on destination buffer containing existing string.
+ *
+ * @param dest Destination buffer to copy to.  Must contain existing string.
+ * @param src Source string to copy.
+ * @param destLen Destination buffer size.
+ * @return Length of desired string, >= destLen if truncation occurred.
+ */
 KR_CONSTEXPR size_t kr_strlcat(char *KR_RESTRICT dest, const char *KR_RESTRICT src, size_t destLen);
+
+/**
+ * @brief Chain-copy string to destination buffer.
+ *
+ * @details Prefer this function to strcpy/strcat, as it does not require
+ *          locating the existing end of string repeatedly.
+ *
+ * @param dest Destination buffer to copy to.  Passing NULL is a no-op.
+ * @param destEnd Pointer to end of destination buffer.
+ * @param src Source string to copy.
+ * @return New end of destination buffer, or NULL if truncation occurred.
+ *         Can be passed to subsequent invocations of kr_stpecpy without
+ *         checking the result.
+ */
 KR_CONSTEXPR char *kr_stpecpy(char *dest, char *destEnd, const char *KR_RESTRICT src);
 
 /**
@@ -63,9 +144,35 @@ KR_CONSTEXPR size_t kr_strcspn(const char *str, const char *chars);
  */
 KR_CONSTEXPR char *kr_strtok_r(char *KR_RESTRICT str, const char *KR_RESTRICT delim, char **KR_RESTRICT ptr);
 
+/**
+ * @brief Duplicate string with malloc().
+ *
+ * @param str String to duplicate.
+ * @return Allocated string that can be freed with free().
+ */
 KR_NODISCARD char *kr_strdup(const char *str);
+
+/**
+ * @brief Duplicate string with malloc() up to len characters.
+ *
+ * @param str String to duplicate.
+ * @param len Maximum number of characters to copy.
+ * @return Allocated string that can be freed with free().
+ */
 KR_NODISCARD char *kr_strndup(const char *str, size_t len);
-KR_INLINE void *kr_memccpy(void *KR_RESTRICT dest, const void *KR_RESTRICT src, int ch, size_t len);
+
+/**
+ * @brief Copy a buffer of bytes up to - and including - a given byte, or
+ *        copies the
+ *
+ * @param dest Destination buffer.
+ * @param src Source buffer.
+ * @param ch Byte to stop at.  Converted to unsigned char.
+ * @param destLen Length of destination buffer.
+ * @return If ch was found, return next byte after ch in destination buffer.
+ *         Otherwise, NULL.
+ */
+KR_INLINE void *kr_memccpy(void *KR_RESTRICT dest, const void *KR_RESTRICT src, int ch, size_t destLen);
 
 /******************************************************************************/
 #if !(KRUFT_CONFIG_USEIMPLEMENTATION) || defined(KRUFT_IMPLEMENTATION)
@@ -342,11 +449,11 @@ KR_NODISCARD char *kr_strndup(const char *str, size_t len)
 
 /******************************************************************************/
 
-KR_INLINE void *kr_memccpy(void *KR_RESTRICT dest, const void *KR_RESTRICT src, int ch, size_t len)
+KR_INLINE void *kr_memccpy(void *KR_RESTRICT dest, const void *KR_RESTRICT src, int ch, size_t destLen)
 {
     unsigned char *destCh = KR_CASTS(unsigned char *, dest);
     const unsigned char *curCh = KR_CASTS(const unsigned char *, src);
-    const unsigned char *endCh = curCh + len;
+    const unsigned char *endCh = curCh + destLen;
 
     for (; curCh != endCh; destCh++, curCh++)
     {
