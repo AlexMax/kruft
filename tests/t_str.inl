@@ -10,6 +10,13 @@
 
 #include "krstr.h"
 
+TEST(str, kr_strcmp)
+{
+    EXPECT_TRUE(0 == kr_strcmp("abc", "abc"));
+    EXPECT_TRUE(0 > kr_strcmp("abc", "def"));
+    EXPECT_TRUE(0 < kr_strcmp("def", "abc"));
+}
+
 TEST(str, kr_strscpy)
 {
     ptrdiff_t len;
@@ -225,6 +232,7 @@ TEST(str, kr_memccpy)
 
 SUITE(str)
 {
+    SUITE_TEST(str, kr_strcmp);
     SUITE_TEST(str, kr_strscpy);
     SUITE_TEST(str, kr_strscat);
     SUITE_TEST(str, kr_strlcpy);

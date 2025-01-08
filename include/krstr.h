@@ -43,7 +43,7 @@ KR_CONSTEXPR size_t kr_strnlen(const char *str, size_t len);
  * @return 0 if identical, <0 if lhs comes before rhs, >0 if rhs comes before
  *         lhs.
  */
-KR_INLINE int kr_strcmp(const char *lhs, const char *rhs);
+KR_CONSTEXPR int kr_strcmp(const char *lhs, const char *rhs);
 
 /**
  * @brief Copy string from src to dest.
@@ -207,7 +207,7 @@ KR_CONSTEXPR size_t kr_strnlen(const char *str, size_t len)
 
 /******************************************************************************/
 
-KR_INLINE int kr_strcmp(const char *lhs, const char *rhs)
+KR_CONSTEXPR int kr_strcmp(const char *lhs, const char *rhs)
 {
     for (;; lhs++, rhs++)
     {
@@ -216,7 +216,7 @@ KR_INLINE int kr_strcmp(const char *lhs, const char *rhs)
             break;
         }
     }
-    return *(KR_CASTR(const unsigned char *, lhs)) - *(KR_CASTR(const unsigned char *, rhs));
+    return KR_CASTS(unsigned char, *lhs) - KR_CASTS(unsigned char, *rhs);
 }
 
 /******************************************************************************/
