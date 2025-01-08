@@ -90,13 +90,6 @@ enum zzt_fmt_e
 
 struct zzt_test_state_s;
 
-enum zzt_result_e
-{
-    ZZT_RESULT_SUCCESS,
-    ZZT_RESULT_FAIL,
-    ZZT_RESULT_SKIP,
-};
-
 typedef void (*zzt_testfunc)(struct zzt_test_state_s *);
 
 struct zzt_test_s
@@ -136,7 +129,7 @@ struct zzt_test_suite_s
 /**
  * @brief Symbol name of test info.
  */
-#define ZZT_TESTINFO(s, t) s##__##t##__INFO
+#define ZZT_TESTINFO(s, t) s##__##t##__TINFO
 
 /**
  * @brief Define a test suite.
@@ -181,114 +174,216 @@ struct zzt_test_suite_s
  * @brief Expect equality.
  */
 #define EXPECT_TRUE(t)                                                                                                 \
+    do                                                                                                                 \
     {                                                                                                                  \
         if (!(t))                                                                                                      \
         {                                                                                                              \
-            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL,                                            \
-                       "Value of: " #t "\n  Actual: false\nExpected: true");                                           \
+            zzt_fail(zzt_test_state, __FILE__, __LINE__, "Value of: " #t "\n  Actual: false\nExpected: true");         \
         }                                                                                                              \
-    }
+    } while (0)
+
+/**
+ * @brief Assert equality.
+ */
+#define ASSERT_TRUE(t)                                                                                                 \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (!(t))                                                                                                      \
+        {                                                                                                              \
+            zzt_fail(zzt_test_state, __FILE__, __LINE__, "Value of: " #t "\n  Actual: false\nExpected: true");         \
+            return;                                                                                                    \
+        }                                                                                                              \
+    } while (0)
 
 /**
  * @brief Expect inequality.
  */
 #define EXPECT_FALSE(t)                                                                                                \
+    do                                                                                                                 \
     {                                                                                                                  \
         if ((t))                                                                                                       \
         {                                                                                                              \
-            zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL,                                            \
-                       "Value of: " #t "\n  Actual: true\nExpected: false");                                           \
+            zzt_fail(zzt_test_state, __FILE__, __LINE__, "Value of: " #t "\n  Actual: true\nExpected: false");         \
         }                                                                                                              \
-    }
+    } while (0)
+
+/**
+ * @brief Assert inequality.
+ */
+#define ASSERT_FALSE(t)                                                                                                \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if ((t))                                                                                                       \
+        {                                                                                                              \
+            zzt_fail(zzt_test_state, __FILE__, __LINE__, "Value of: " #t "\n  Actual: true\nExpected: false");         \
+            return;                                                                                                    \
+        }                                                                                                              \
+    } while (0)
 
 /**
  * @brief Expect boolean equality.
  */
 #define EXPECT_BOOLEQ(l, r)                                                                                            \
+    do                                                                                                                 \
     {                                                                                                                  \
         int ll = (l) ? 1 : 0, rr = (r) ? 1 : 0;                                                                        \
         zzt_eq(zzt_test_state, ZZT_FMT_BOOL, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
-    }
+    } while (0)
+
+/**
+ * @brief Assert boolean equality.
+ */
+#define ASSERT_BOOLEQ(l, r)                                                                                            \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        int ll = (l) ? 1 : 0, rr = (r) ? 1 : 0;                                                                        \
+        zzt_eq(zzt_test_state, ZZT_FMT_BOOL, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+        return;                                                                                                        \
+    } while (0)
 
 /**
  * @brief Expect char equality.
  */
 #define EXPECT_CHAREQ(l, r)                                                                                            \
+    do                                                                                                                 \
     {                                                                                                                  \
         char ll = l, rr = r;                                                                                           \
         zzt_eq(zzt_test_state, ZZT_FMT_CHAR, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
-    }
+    } while (0)
+
+/**
+ * @brief Assert char equality.
+ */
+#define ASSERT_CHAREQ(l, r)                                                                                            \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        char ll = l, rr = r;                                                                                           \
+        zzt_eq(zzt_test_state, ZZT_FMT_CHAR, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+        return;                                                                                                        \
+    } while (0)
 
 /**
  * @brief Expect exact integer equality.
  */
 #define EXPECT_INTEQ(l, r)                                                                                             \
+    do                                                                                                                 \
     {                                                                                                                  \
         ZZT_INTMAX ll = l, rr = r;                                                                                     \
         zzt_eq(zzt_test_state, ZZT_FMT_INT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                     \
-    }
+    } while (0)
+
+/**
+ * @brief Assert exact integer equality.
+ */
+#define ASSERT_INTEQ(l, r)                                                                                             \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        ZZT_INTMAX ll = l, rr = r;                                                                                     \
+        zzt_eq(zzt_test_state, ZZT_FMT_INT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                     \
+        return;                                                                                                        \
+    } while (0)
 
 /**
  * @brief Expect exact integer equality.
  */
 #define EXPECT_UINTEQ(l, r)                                                                                            \
+    do                                                                                                                 \
     {                                                                                                                  \
         ZZT_UINTMAX ll = l, rr = r;                                                                                    \
         zzt_eq(zzt_test_state, ZZT_FMT_UINT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
-    }
+    } while (0)
+
+/**
+ * @brief Assert exact integer equality.
+ */
+#define ASSERT_UINTEQ(l, r)                                                                                            \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        ZZT_UINTMAX ll = l, rr = r;                                                                                    \
+        zzt_eq(zzt_test_state, ZZT_FMT_UINT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+        return;                                                                                                        \
+    } while (0)
 
 /**
  * @brief Expect exact integer equality, failures are shown in hex.
  */
 #define EXPECT_XINTEQ(l, r)                                                                                            \
+    do                                                                                                                 \
     {                                                                                                                  \
         ZZT_UINTMAX ll = l, rr = r;                                                                                    \
         zzt_eq(zzt_test_state, ZZT_FMT_XINT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
-    }
+    } while (0)
+
+/**
+ * @brief Assert exact integer equality, failures are shown in hex.
+ */
+#define ASSERT_XINTEQ(l, r)                                                                                            \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        ZZT_UINTMAX ll = l, rr = r;                                                                                    \
+        zzt_eq(zzt_test_state, ZZT_FMT_XINT, &ll, &rr, #l, #r, __FILE__, __LINE__);                                    \
+        return;                                                                                                        \
+    } while (0)
 
 /**
  * @brief Expect string equality.
  */
 #define EXPECT_STREQ(l, r)                                                                                             \
+    do                                                                                                                 \
     {                                                                                                                  \
         const char *ll = l, *rr = r;                                                                                   \
         zzt_eq(zzt_test_state, ZZT_FMT_STR, (const void *)ll, (const void *)rr, #l, #r, __FILE__, __LINE__);           \
-    }
+    } while (0)
+
+/**
+ * @brief Assert string equality.
+ */
+#define ASSERT_STREQ(l, r)                                                                                             \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        const char *ll = l, *rr = r;                                                                                   \
+        zzt_eq(zzt_test_state, ZZT_FMT_STR, (const void *)ll, (const void *)rr, #l, #r, __FILE__, __LINE__);           \
+        return;                                                                                                        \
+    } while (0)
 
 /**
  * @brief Add a failure, without a return.
  */
 #define ADD_FAILURE()                                                                                                  \
+    do                                                                                                                 \
     {                                                                                                                  \
-        zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "Failure");                                    \
-    }
+        zzt_fail(zzt_test_state, __FILE__, __LINE__, "Failure");                                                       \
+    } while (0)
 
 /**
  * @brief Signal failure.
  */
 #define FAIL()                                                                                                         \
+    do                                                                                                                 \
     {                                                                                                                  \
-        zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_FAIL, "Failure");                                    \
+        zzt_fail(zzt_test_state, __FILE__, __LINE__, "Failure");                                                       \
         return;                                                                                                        \
-    }
+    } while (0)
 
 /**
  * @brief Signal skip.
  */
 #define SKIP()                                                                                                         \
+    do                                                                                                                 \
     {                                                                                                                  \
-        zzt_result(zzt_test_state, __FILE__, __LINE__, ZZT_RESULT_SKIP, NULL);                                         \
+        zzt_skip(zzt_test_state);                                                                                      \
         return;                                                                                                        \
-    }
+    } while (0)
 
 /**
  * @brief Add suite of tests to be run when RUN_TESTS is called.
  */
 #define ADD_TEST_SUITE(s)                                                                                              \
+    do                                                                                                                 \
     {                                                                                                                  \
         ZZT_SUITENAME(s)();                                                                                            \
         zzt_add_test_suite(&ZZT_SUITEINFO(s));                                                                         \
-    }
+    } while (0)
 
 /**
  * @brief Run all tests and return code which can be returned from main().
@@ -296,10 +391,10 @@ struct zzt_test_suite_s
 #define RUN_TESTS() (zzt_run_all())
 
 int zzt_strcmp(const char *lhs, const char *rhs);
+void zzt_skip(struct zzt_test_state_s *state);
+void zzt_fail(struct zzt_test_state_s *state, const char *file, unsigned long line, const char *msgstr);
 ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *l, const void *r, const char *ls,
                 const char *rs, const char *file, unsigned long line);
-void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long line, enum zzt_result_e msg,
-                const char *msgstr);
 void zzt_add_test_suite(struct zzt_test_suite_s *suite);
 int zzt_run_all(void);
 
@@ -484,6 +579,7 @@ static void zzt_stringify(char *buf, unsigned long buflen, const char *str)
     WRITE_('\"');
     WRITE_('\0');
 #undef REMAIN_
+#undef WRITE_
 }
 
 /**
@@ -609,6 +705,21 @@ int zzt_strcmp(const char *lhs, const char *rhs)
 
 /******************************************************************************/
 
+void zzt_skip(struct zzt_test_state_s *state)
+{
+    state->skipped += 1;
+}
+
+/******************************************************************************/
+
+void zzt_fail(struct zzt_test_state_s *state, const char *file, unsigned long line, const char *msgstr)
+{
+    ZZT_PRINTF("%s(%lu): error: %s\n\n", file, line, msgstr);
+    state->failed += 1;
+}
+
+/******************************************************************************/
+
 ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *l, const void *r, const char *ls,
                 const char *rs, const char *file, unsigned long line)
 {
@@ -652,25 +763,6 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *
     puts("");
 
     return ZZT_FALSE;
-}
-
-/******************************************************************************/
-
-void zzt_result(struct zzt_test_state_s *state, const char *file, unsigned long line, enum zzt_result_e msg,
-                const char *msgstr)
-{
-    switch (msg)
-    {
-    case ZZT_RESULT_SUCCESS:
-        break;
-    case ZZT_RESULT_FAIL:
-        ZZT_PRINTF("%s(%lu): error: %s\n\n", file, line, msgstr);
-        state->failed += 1;
-        break;
-    case ZZT_RESULT_SKIP:
-        state->skipped += 1;
-        break;
-    }
 }
 
 /******************************************************************************/
@@ -874,6 +966,42 @@ TEST(zztest, skipping2)
     SKIP();
 }
 
+TEST(zztest, assert_bool)
+{
+    ASSERT_BOOLEQ(ZZT_TRUE, ZZT_FALSE);
+    EXPECT_BOOLEQ(ZZT_FALSE, ZZT_TRUE);
+}
+
+TEST(zztest, assert_char)
+{
+    ASSERT_CHAREQ('a', 'b');
+    EXPECT_CHAREQ('c', 'd');
+}
+
+TEST(zztest, assert_int)
+{
+    ASSERT_INTEQ(1, 2);
+    EXPECT_INTEQ(3, 4);
+}
+
+TEST(zztest, assert_uint)
+{
+    ASSERT_UINTEQ(1, 2);
+    EXPECT_UINTEQ(3, 4);
+}
+
+TEST(zztest, assert_xint)
+{
+    ASSERT_XINTEQ(1, 2);
+    EXPECT_XINTEQ(3, 4);
+}
+
+TEST(zztest, assert_str)
+{
+    ASSERT_STREQ("foo", "bar");
+    EXPECT_STREQ("baz", "plugh");
+}
+
 SUITE(zztest)
 {
     SUITE_TEST(zztest, passing);
@@ -884,6 +1012,12 @@ SUITE(zztest)
     SUITE_TEST(zztest, failing_str);
     SUITE_TEST(zztest, skipping);
     SUITE_TEST(zztest, skipping2);
+    SUITE_TEST(zztest, assert_bool);
+    SUITE_TEST(zztest, assert_char);
+    SUITE_TEST(zztest, assert_int);
+    SUITE_TEST(zztest, assert_uint);
+    SUITE_TEST(zztest, assert_xint);
+    SUITE_TEST(zztest, assert_str);
 }
 
 int main()
