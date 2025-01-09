@@ -390,29 +390,29 @@ KR_CONSTEXPR char *kr_strtok_r(char *KR_RESTRICT str, const char *KR_RESTRICT de
             return NULL;
         }
 
-        // Resuming a previous tokenization.
+        /* Resuming a previous tokenization. */
         str = *ptr;
     }
 
-    // First, munch all delim chars.
+    /* First, munch all delim chars. */
     str += kr_strspn(str, delim);
     if (*str == '\0')
     {
-        // Could not find another token.
+        /* Could not find another token. */
         return NULL;
     }
 
-    // Munch a token.
+    /* Munch a token. */
     tok = str;
     str += kr_strcspn(str, delim);
     if (*str == '\0')
     {
-        // Found the last token.
+        /* Found the last token. */
         *ptr = NULL;
         return tok;
     }
 
-    // Null the end and set our next starting point.
+    /* Null the end and set our next starting point. */
     *str = '\0';
     *ptr = str + 1;
     return tok;
