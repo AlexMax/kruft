@@ -11,20 +11,23 @@
  * ABOUT
  *  zztest is a test framework for crufty compilers.
  *
- * COMPILER SUPPORT
+ * TESTED COMPILERS
  *  - Modern GCC, Clang, MSVC
  *  - Microsoft Visual C++ 6.0
  *  - Borland C++ 3.1 (DOS)
  *  - Watcom C 9.01 (DOS)
  *
- * Important defines:
+ * HOW TO USE
+ *  This is a single-header library, simply include this from anyplace where
+ *  you want to define tests or run the main function, and you must reserve
+ *  a single file which defines ZZTEST_IMPLEMENTATION and then includes this
+ *  header in order to give the header its function implementations.
+ *
+ * IMPORTANT DEFINES
  *  ZZTEST_IMPLEMENTATION: You must define this before including zztest.h
  *                         in a single file, otherwise internal functions
  *                         will be missing their implementation.
- *  ZZTEST_SELFCHECK: Define this before including zztest.h to create a
- *                    self-contained program that shows output of sample
- *                    tests.  Useful to sanity check your environment.
- *  ZZTEST_CONFIG_PRINTF: Define this to your own print function.
+ *  ZZTEST_CONFIG_PRINTF: Define this to your own printf function.
  */
 
 #if !defined(INCLUDE_ZZTEST_H)
@@ -88,6 +91,16 @@ enum zzt_fmt_e
     ZZT_FMT_STR,
 };
 
+enum zzt_cmp_e
+{
+    ZZT_CMP_EQ,
+    ZZT_CMP_NE,
+    ZZT_CMP_LT,
+    ZZT_CMP_LE,
+    ZZT_CMP_GT,
+    ZZT_CMP_GE,
+};
+
 struct zzt_test_state_s;
 
 typedef void (*zzt_testfunc)(struct zzt_test_state_s *);
@@ -131,8 +144,28 @@ struct zzt_test_suite_s
  */
 #define ZZT_TESTINFO(s, t) s##__##t##__TINFO
 
+#define ZZT_EXPECT_BOOL(cmp, l, r) \
+    int ll = (l) ? 1 : 0, rr = (r) ? 1 : 0; \
+    zzt_cmp(zzt_test_state, ZZT_FMT_BOOL, cmp, &ll, &rr, #l, #r, __FILE__, __LINE__)
+#define ZZT_EXPECT_CHAR(cmp, l, r) \
+    char ll = l, rr = r; \
+    zzt_cmp(zzt_test_state, ZZT_FMT_CHAR, cmp, &ll, &rr, #l, #r, __FILE__, __LINE__)
+#define ZZT_EXPECT_INT(cmp, l, r) \
+    ZZT_INTMAX ll = l, rr = r; \
+    zzt_cmp(zzt_test_state, ZZT_FMT_INT, cmp, &ll, &rr, #l, #r, __FILE__, __LINE__)
+#define ZZT_EXPECT_UINT(cmp, l, r) \
+    ZZT_UINTMAX ll = l, rr = r; \
+    zzt_cmp(zzt_test_state, ZZT_FMT_UINT, cmp, &ll, &rr, #l, #r, __FILE__, __LINE__)
+#define ZZT_EXPECT_XINT(cmp, l, r) \
+    ZZT_UINTMAX ll = l, rr = r; \
+    zzt_cmp(zzt_test_state, ZZT_FMT_XINT, cmp, &ll, &rr, #l, #r, __FILE__, __LINE__)
+#define ZZT_EXPECT_STR(cmp, l, r) \
+    const char *ll = l, *rr = r; \
+    zzt_cmp(zzt_test_state, ZZT_FMT_STR, cmp, (const void *)ll, (const void *)rr, #l, #r, __FILE__, __LINE__)
+
 /**
- * @brief Define a test suite.
+ * @brief Define a test suite.  Creates a function definition, which must
+ *        be followed by a {} block containing SUITE_TESTs.
  *
  * @param s Test suite.  Must be valid identifier.
  */
@@ -141,7 +174,9 @@ struct zzt_test_suite_s
     void ZZT_SUITENAME(s)(void)
 
 /**
- * @brief Define a test.
+ * @brief Define a test.  Creates a function definition accepting a single
+ *        parameter containing test state, which must be followed by a {}
+ *        block containing your expects and assertions.
  *
  * @param s Test suite.  Must be valid identifier.
  * @param t Test name.  Must be valid identifier.
@@ -151,6 +186,9 @@ struct zzt_test_suite_s
     static struct zzt_test_s ZZT_TESTINFO(s, t) = {ZZT_TESTNAME(s, t), #s, #s "." #t, NULL, NULL, NULL}; \
     void ZZT_TESTNAME(s, t)(struct zzt_test_state_s * zzt_test_state)
 
+/**
+ * @brief Add a test to a test suite.  Must be placed inside SUITE block.
+ */
 #define SUITE_TEST(s, t) \
     do \
     { \
@@ -171,7 +209,7 @@ struct zzt_test_suite_s
     } while (0)
 
 /**
- * @brief Expect equality.
+ * Expect expression t evaulates to non-zero or true value.
  */
 #define EXPECT_TRUE(t) \
     do \
@@ -183,7 +221,7 @@ struct zzt_test_suite_s
     } while (0)
 
 /**
- * @brief Assert equality.
+ * Assert expression t evaulates to non-zero or true value, exit early if failed.
  */
 #define ASSERT_TRUE(t) \
     do \
@@ -196,7 +234,7 @@ struct zzt_test_suite_s
     } while (0)
 
 /**
- * @brief Expect inequality.
+ * Expect expression t evaulates to zero or false.
  */
 #define EXPECT_FALSE(t) \
     do \
@@ -208,7 +246,7 @@ struct zzt_test_suite_s
     } while (0)
 
 /**
- * @brief Assert inequality.
+ * Assert expression t evaulates to zero or false, exit early if failed.
  */
 #define ASSERT_FALSE(t) \
     do \
@@ -221,128 +259,540 @@ struct zzt_test_suite_s
     } while (0)
 
 /**
- * @brief Expect boolean equality.
+ * @brief Expect l == r as a boolean.
  */
 #define EXPECT_BOOLEQ(l, r) \
     do \
     { \
-        int ll = (l) ? 1 : 0, rr = (r) ? 1 : 0; \
-        zzt_eq(zzt_test_state, ZZT_FMT_BOOL, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_BOOL(ZZT_CMP_EQ, l, r); \
     } while (0)
 
 /**
- * @brief Assert boolean equality.
+ * @brief Assert l == r as a boolean, exit early if failed.
  */
 #define ASSERT_BOOLEQ(l, r) \
     do \
     { \
-        int ll = (l) ? 1 : 0, rr = (r) ? 1 : 0; \
-        zzt_eq(zzt_test_state, ZZT_FMT_BOOL, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_BOOL(ZZT_CMP_EQ, l, r); \
         return; \
     } while (0)
 
 /**
- * @brief Expect char equality.
+ * @brief Expect l != r as a boolean.
+ */
+#define EXPECT_BOOLNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_BOOL(ZZT_CMP_NE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l != r as a boolean, exit early if failed.
+ */
+#define ASSERT_BOOLNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_BOOL(ZZT_CMP_NE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l == r as a char.
  */
 #define EXPECT_CHAREQ(l, r) \
     do \
     { \
-        char ll = l, rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_CHAR, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_CHAR(ZZT_CMP_EQ, l, r); \
     } while (0)
 
 /**
- * @brief Assert char equality.
+ * @brief Assert l == r as a char, exit early if failed.
  */
 #define ASSERT_CHAREQ(l, r) \
     do \
     { \
-        char ll = l, rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_CHAR, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_CHAR(ZZT_CMP_EQ, l, r); \
         return; \
     } while (0)
 
 /**
- * @brief Expect exact integer equality.
+ * @brief Expect l != r as a char.
+ */
+#define EXPECT_CHARNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_NE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l != r as a char, exit early if failed.
+ */
+#define ASSERT_CHARNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_NE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l < r as a char.
+ */
+#define EXPECT_CHARLT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_LT, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l < r as a char, exit early if failed.
+ */
+#define ASSERT_CHARLT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_LT, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l <= r as a char.
+ */
+#define EXPECT_CHARLE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_LE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l <= r as a char, exit early if failed.
+ */
+#define ASSERT_CHARLE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_LE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l > r as a char.
+ */
+#define EXPECT_CHARGT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_GT, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l > r as a char, exit early if failed.
+ */
+#define ASSERT_CHARGT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_GT, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l >= r as a char.
+ */
+#define EXPECT_CHARGE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_GE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l >= r as a char, exit early if failed.
+ */
+#define ASSERT_CHARGE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_CHAR(ZZT_CMP_GE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l == r as any signed integral type.
  */
 #define EXPECT_INTEQ(l, r) \
     do \
     { \
-        ZZT_INTMAX ll = l, rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_INT, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_INT(ZZT_CMP_EQ, l, r); \
     } while (0)
 
 /**
- * @brief Assert exact integer equality.
+ * @brief Assert l == r as any signed integral type, exit early if failed.
  */
 #define ASSERT_INTEQ(l, r) \
     do \
     { \
-        ZZT_INTMAX ll = l, rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_INT, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_INT(ZZT_CMP_EQ, l, r); \
         return; \
     } while (0)
 
 /**
- * @brief Expect exact integer equality.
+ * @brief Expect l != r as any signed integral type.
+ */
+#define EXPECT_INTNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_NE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l != r as any signed integral type, exit early if failed.
+ */
+#define ASSERT_INTNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_NE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l < r as any signed integral type.
+ */
+#define EXPECT_INTLT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_LT, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l < r as any signed integral type, exit early if failed.
+ */
+#define ASSERT_INTLT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_LT, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l <= r as any signed integral type.
+ */
+#define EXPECT_INTLE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_LE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l <= r as any signed integral type, exit early if failed.
+ */
+#define ASSERT_INTLE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_LE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l > r as any signed integral type.
+ */
+#define EXPECT_INTGT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_GT, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l > r as any signed integral type, exit early if failed.
+ */
+#define ASSERT_INTGT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_GT, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l >= r as any signed integral type.
+ */
+#define EXPECT_INTGE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_GE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l >= r as any signed integral type, exit early if failed.
+ */
+#define ASSERT_INTGE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_INT(ZZT_CMP_GE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l == r as any unsigned integral type.
  */
 #define EXPECT_UINTEQ(l, r) \
     do \
     { \
-        ZZT_UINTMAX ll = l, rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_UINT, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_UINT(ZZT_CMP_EQ, l, r); \
     } while (0)
 
 /**
- * @brief Assert exact integer equality.
+ * @brief Assert l == r as any unsigned integral type, exit early if failed.
  */
 #define ASSERT_UINTEQ(l, r) \
     do \
     { \
-        ZZT_UINTMAX ll = l, rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_UINT, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_UINT(ZZT_CMP_EQ, l, r); \
         return; \
     } while (0)
 
 /**
- * @brief Expect exact integer equality, failures are shown in hex.
+ * @brief Expect l != r as any unsigned integral type.
+ */
+#define EXPECT_UINTNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_NE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l != r as any unsigned integral type, exit early if failed.
+ */
+#define ASSERT_UINTNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_NE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l < r as any unsigned integral type.
+ */
+#define EXPECT_UINTLT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_LT, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l < r as any unsigned integral type, exit early if failed.
+ */
+#define ASSERT_UINTLT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_LT, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l <= r as any unsigned integral type.
+ */
+#define EXPECT_UINTLE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_LE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l <= r as any unsigned integral type, exit early if failed.
+ */
+#define ASSERT_UINTLE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_LE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l > r as any unsigned integral type.
+ */
+#define EXPECT_UINTGT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_GT, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l > r as any unsigned integral type, exit early if failed.
+ */
+#define ASSERT_UINTGT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_GT, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l >= r as any unsigned integral type.
+ */
+#define EXPECT_UINTGE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_GE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l >= r as any unsigned integral type, exit early if failed.
+ */
+#define ASSERT_UINTGE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_UINT(ZZT_CMP_GE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l == r as any unsigned integral type, hex output.
  */
 #define EXPECT_XINTEQ(l, r) \
     do \
     { \
-        ZZT_UINTMAX ll = l, rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_XINT, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_XINT(ZZT_CMP_EQ, l, r); \
     } while (0)
 
 /**
- * @brief Assert exact integer equality, failures are shown in hex.
+ * @brief Assert l == r as any unsigned integral type, hex output, exit early
+ *        if failed.
  */
 #define ASSERT_XINTEQ(l, r) \
     do \
     { \
-        ZZT_UINTMAX ll = l, rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_XINT, &ll, &rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_XINT(ZZT_CMP_EQ, l, r); \
         return; \
     } while (0)
 
 /**
- * @brief Expect string equality.
+ * @brief Expect l != r as any unsigned integral type, hex output.
+ */
+#define EXPECT_XINTNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_NE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l != r as any unsigned integral type, hex output, exit early
+ *        if failed.
+ */
+#define ASSERT_XINTNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_NE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l < r as any unsigned integral type, hex output.
+ */
+#define EXPECT_XINTLT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_LT, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l < r as any unsigned integral type, hex output, exit early
+ *        if failed.
+ */
+#define ASSERT_XINTLT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_LT, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l <= r as any unsigned integral type, hex output.
+ */
+#define EXPECT_XINTLE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_LE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l <= r as any unsigned integral type, hex output, exit early
+ *        if failed.
+ */
+#define ASSERT_XINTLE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_LE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l > r as any unsigned integral type, hex output.
+ */
+#define EXPECT_XINTGT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_GT, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l > r as any unsigned integral type, hex output, exit early
+ *        if failed.
+ */
+#define ASSERT_XINTGT(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_GT, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l >= r as any unsigned integral type, hex output.
+ */
+#define EXPECT_XINTGE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_GE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l >= r as any unsigned integral type, hex output, exit early
+ *        if failed.
+ */
+#define ASSERT_XINTGE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_XINT(ZZT_CMP_GE, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l and r are identical C strings.
  */
 #define EXPECT_STREQ(l, r) \
     do \
     { \
-        const char *ll = l, *rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_STR, (const void *)ll, (const void *)rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_STR(ZZT_CMP_EQ, l, r); \
     } while (0)
 
 /**
- * @brief Assert string equality.
+ * @brief Assert l and r are identical C strings, exit early if failed.
  */
 #define ASSERT_STREQ(l, r) \
     do \
     { \
-        const char *ll = l, *rr = r; \
-        zzt_eq(zzt_test_state, ZZT_FMT_STR, (const void *)ll, (const void *)rr, #l, #r, __FILE__, __LINE__); \
+        ZZT_EXPECT_STR(ZZT_CMP_EQ, l, r); \
+        return; \
+    } while (0)
+
+/**
+ * @brief Expect l and r are different C strings.
+ */
+#define EXPECT_STRNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_STR(ZZT_CMP_NE, l, r); \
+    } while (0)
+
+/**
+ * @brief Assert l and r are different C strings, exit early if failed.
+ */
+#define ASSERT_STRNE(l, r) \
+    do \
+    { \
+        ZZT_EXPECT_STR(ZZT_CMP_NE, l, r); \
         return; \
     } while (0)
 
@@ -393,8 +843,8 @@ struct zzt_test_suite_s
 int zzt_strcmp(const char *lhs, const char *rhs);
 void zzt_skip(struct zzt_test_state_s *state);
 void zzt_fail(struct zzt_test_state_s *state, const char *file, unsigned long line, const char *msgstr);
-ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *l, const void *r, const char *ls,
-                const char *rs, const char *file, unsigned long line);
+ZZT_BOOL zzt_cmp(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, enum zzt_cmp_e cmp, const void *l, const void *r,
+                 const char *ls, const char *rs, const char *file, unsigned long line);
 void zzt_add_test_suite(struct zzt_test_suite_s *suite);
 int zzt_run_all(void);
 
@@ -431,6 +881,7 @@ struct zzt_test_state_s
     int skipped;
 };
 
+static const char *g_cmpStrings[] = {"==", "!=", "<", "<=", ">", ">="};
 static unsigned long g_testsCount;
 static struct zzt_test_suite_s *g_suitesHead;
 static struct zzt_test_suite_s *g_suitesTail;
@@ -585,25 +1036,25 @@ static void zzt_stringify(char *buf, unsigned long buflen, const char *str)
 /**
  * @brief Print a value based on its desired format.
  *
+ * @param buf Buffer to write to.
+ * @param buflen Length of buffer.
  * @param fmt Format type.
  * @param v Pointer to underlying value.
  * @param vs String representation of value.
  */
-static void zzt_printv(enum zzt_fmt_e fmt, const void *v, const char *vs)
+static void zzt_printv(char *buf, ZZT_UINTMAX buflen, enum zzt_fmt_e fmt, const void *v, const char *vs)
 {
-    char buffer[64];
-
     switch (fmt)
     {
     case ZZT_FMT_BOOL: {
         const int boolean = *((int *)v);
         if (boolean)
         {
-            zzt_sprintf(buffer, sizeof(buffer), "true");
+            zzt_sprintf(buf, buflen, "true");
         }
         else
         {
-            zzt_sprintf(buffer, sizeof(buffer), "false");
+            zzt_sprintf(buf, buflen, "false");
         }
         break;
     }
@@ -611,54 +1062,39 @@ static void zzt_printv(enum zzt_fmt_e fmt, const void *v, const char *vs)
         const char ch = *((char *)v);
         if (ch == '\0')
         {
-            zzt_sprintf(buffer, sizeof(buffer), "'\\0'", ch);
+            zzt_sprintf(buf, buflen, "'\\0'", ch);
         }
         else if (ch == '\t')
         {
-            zzt_sprintf(buffer, sizeof(buffer), "'\\t'", ch);
+            zzt_sprintf(buf, buflen, "'\\t'", ch);
         }
         else if (ch == '\n')
         {
-            zzt_sprintf(buffer, sizeof(buffer), "'\\n'", ch);
+            zzt_sprintf(buf, buflen, "'\\n'", ch);
         }
         else if (ch == '\r')
         {
-            zzt_sprintf(buffer, sizeof(buffer), "'\\r'", ch);
+            zzt_sprintf(buf, buflen, "'\\r'", ch);
         }
         else if (ch == '\\')
         {
-            zzt_sprintf(buffer, sizeof(buffer), "'\\\\'", ch);
+            zzt_sprintf(buf, buflen, "'\\\\'", ch);
         }
         else if (ch >= ' ' && ch <= '~')
         {
-            zzt_sprintf(buffer, sizeof(buffer), "'%c'", ch);
+            zzt_sprintf(buf, buflen, "'%c'", ch);
         }
         else
         {
-            zzt_sprintf(buffer, sizeof(buffer), "'\\x%02x'", ((unsigned)ch) & 0xFF);
+            zzt_sprintf(buf, buflen, "'\\x%02x'", ((unsigned)ch) & 0xFF);
         }
         break;
     }
-    case ZZT_FMT_INT:
-        zzt_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIiMAX, *((ZZT_INTMAX *)v));
-        break;
-    case ZZT_FMT_UINT:
-        zzt_sprintf(buffer, sizeof(buffer), "%" ZZT_PRIuMAX, *((ZZT_UINTMAX *)v));
-        break;
-    case ZZT_FMT_XINT:
-        zzt_sprintf(buffer, sizeof(buffer), "0x%" ZZT_PRIuMAX, *((ZZT_UINTMAX *)v));
-        break;
-    case ZZT_FMT_STR:
-        zzt_stringify(buffer, sizeof(buffer), (const char *)v);
-        break;
-    default:
-        return;
-    }
-
-    ZZT_PRINTF("  %s\n", vs);
-    if (strcmp(buffer, vs))
-    {
-        ZZT_PRINTF("    Which is: %s\n", buffer);
+    case ZZT_FMT_INT: zzt_sprintf(buf, buflen, "%" ZZT_PRIiMAX, *((ZZT_INTMAX *)v)); break;
+    case ZZT_FMT_UINT: zzt_sprintf(buf, buflen, "%" ZZT_PRIuMAX, *((ZZT_UINTMAX *)v)); break;
+    case ZZT_FMT_XINT: zzt_sprintf(buf, buflen, "0x%" ZZT_PRIuMAX, *((ZZT_UINTMAX *)v)); break;
+    case ZZT_FMT_STR: zzt_stringify(buf, buflen, (const char *)v); break;
+    default: return;
     }
 }
 
@@ -720,30 +1156,66 @@ void zzt_fail(struct zzt_test_state_s *state, const char *file, unsigned long li
 
 /******************************************************************************/
 
-ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *l, const void *r, const char *ls,
-                const char *rs, const char *file, unsigned long line)
+ZZT_BOOL zzt_cmp(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, enum zzt_cmp_e cmp, const void *l, const void *r,
+                 const char *ls, const char *rs, const char *file, unsigned long line)
 {
+    char lbuf[64] = {0};
+    char rbuf[64] = {0};
     ZZT_BOOL isEqual = ZZT_FALSE;
 
     if (fmt == ZZT_FMT_BOOL)
     {
-        isEqual = *((int *)l) == *((int *)r);
+        switch (cmp)
+        {
+        case ZZT_CMP_EQ: isEqual = *((int *)l) == *((int *)r); break;
+        case ZZT_CMP_NE: isEqual = *((int *)l) != *((int *)r); break;
+        default: break;
+        }
     }
     else if (fmt == ZZT_FMT_CHAR)
     {
-        isEqual = *((char *)l) == *((char *)r);
+        switch (cmp)
+        {
+        case ZZT_CMP_EQ: isEqual = *((char *)l) == *((char *)r); break;
+        case ZZT_CMP_NE: isEqual = *((char *)l) != *((char *)r); break;
+        case ZZT_CMP_LT: isEqual = *((char *)l) < *((char *)r); break;
+        case ZZT_CMP_LE: isEqual = *((char *)l) <= *((char *)r); break;
+        case ZZT_CMP_GT: isEqual = *((char *)l) > *((char *)r); break;
+        case ZZT_CMP_GE: isEqual = *((char *)l) >= *((char *)r); break;
+        }
     }
     else if (fmt == ZZT_FMT_INT)
     {
-        isEqual = *((ZZT_INTMAX *)l) == *((ZZT_INTMAX *)r);
+        switch (cmp)
+        {
+        case ZZT_CMP_EQ: isEqual = *((ZZT_INTMAX *)l) == *((ZZT_INTMAX *)r); break;
+        case ZZT_CMP_NE: isEqual = *((ZZT_INTMAX *)l) != *((ZZT_INTMAX *)r); break;
+        case ZZT_CMP_LT: isEqual = *((ZZT_INTMAX *)l) < *((ZZT_INTMAX *)r); break;
+        case ZZT_CMP_LE: isEqual = *((ZZT_INTMAX *)l) <= *((ZZT_INTMAX *)r); break;
+        case ZZT_CMP_GT: isEqual = *((ZZT_INTMAX *)l) > *((ZZT_INTMAX *)r); break;
+        case ZZT_CMP_GE: isEqual = *((ZZT_INTMAX *)l) >= *((ZZT_INTMAX *)r); break;
+        }
     }
     else if (fmt == ZZT_FMT_UINT || fmt == ZZT_FMT_XINT)
     {
-        isEqual = *((ZZT_UINTMAX *)l) == *((ZZT_UINTMAX *)r);
+        switch (cmp)
+        {
+        case ZZT_CMP_EQ: isEqual = *((ZZT_UINTMAX *)l) == *((ZZT_UINTMAX *)r); break;
+        case ZZT_CMP_NE: isEqual = *((ZZT_UINTMAX *)l) != *((ZZT_UINTMAX *)r); break;
+        case ZZT_CMP_LT: isEqual = *((ZZT_UINTMAX *)l) < *((ZZT_UINTMAX *)r); break;
+        case ZZT_CMP_LE: isEqual = *((ZZT_UINTMAX *)l) <= *((ZZT_UINTMAX *)r); break;
+        case ZZT_CMP_GT: isEqual = *((ZZT_UINTMAX *)l) > *((ZZT_UINTMAX *)r); break;
+        case ZZT_CMP_GE: isEqual = *((ZZT_UINTMAX *)l) >= *((ZZT_UINTMAX *)r); break;
+        }
     }
     else if (fmt == ZZT_FMT_STR)
     {
-        isEqual = strcmp((const char *)l, (const char *)r) == 0;
+        switch (cmp)
+        {
+        case ZZT_CMP_EQ: isEqual = strcmp((const char *)l, (const char *)r) == 0; break;
+        case ZZT_CMP_NE: isEqual = strcmp((const char *)l, (const char *)r) != 0; break;
+        default: break;
+        }
     }
     else
     {
@@ -757,9 +1229,28 @@ ZZT_BOOL zzt_eq(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, const void *
 
     state->failed += 1;
 
-    ZZT_PRINTF("%s(%lu): error: Expected equality of these values:\n", file, line);
-    zzt_printv(fmt, l, ls);
-    zzt_printv(fmt, r, rs);
+    zzt_printv(lbuf, sizeof(lbuf), fmt, l, ls);
+    zzt_printv(rbuf, sizeof(rbuf), fmt, r, rs);
+    if (fmt != ZZT_FMT_STR)
+    {
+        ZZT_PRINTF("%s(%lu): error: Expected %s %s %s, actual %s vs %s\n", file, line, ls, g_cmpStrings[cmp], rs, lbuf,
+                   rbuf);
+    }
+    else
+    {
+        ZZT_PRINTF("%s(%lu): error: Expected equality of these values:\n", file, line);
+        ZZT_PRINTF("  %s\n", ls);
+        if (strcmp(lbuf, ls))
+        {
+            ZZT_PRINTF("    Which is: %s\n", lbuf);
+        }
+
+        ZZT_PRINTF("  %s\n", rs);
+        if (strcmp(rbuf, rs))
+        {
+            ZZT_PRINTF("    Which is: %s\n", rbuf);
+        }
+    }
     puts("");
 
     return ZZT_FALSE;
@@ -903,129 +1394,5 @@ int zzt_run_all(void)
     return failed != 0;
 }
 
-#if defined(ZZTEST_SELFCHECK)
-
-TEST(zztest, passing)
-{
-    EXPECT_TRUE(1 == 1);
-    EXPECT_FALSE(1 != 1);
-    EXPECT_BOOLEQ(1, 2);
-    EXPECT_CHAREQ('a', 'a');
-    EXPECT_STREQ("foo", "foo");
-}
-
-TEST(zztest, passing_int)
-{
-    EXPECT_INTEQ(1, 1);
-    EXPECT_UINTEQ(1, 1);
-    EXPECT_XINTEQ(1, 1);
-}
-
-TEST(zztest, failing)
-{
-    EXPECT_TRUE(1 == 2);
-    EXPECT_FALSE(1 != 2);
-    EXPECT_BOOLEQ(1, 0);
-    ADD_FAILURE();
-}
-
-TEST(zztest, failing_char)
-{
-    EXPECT_CHAREQ('a', 'b');
-    EXPECT_CHAREQ('\0', '\xaa');
-    EXPECT_CHAREQ('\n', '\r');
-    EXPECT_CHAREQ('\t', '\\');
-    EXPECT_CHAREQ(0x61, 0x62);
-    EXPECT_CHAREQ(0x00, (char)0xaa);
-    EXPECT_CHAREQ(0x0a, 0x0d);
-    EXPECT_CHAREQ(0x09, 0x5c);
-}
-
-TEST(zztest, failing_int)
-{
-    EXPECT_INTEQ(1, (int)2);
-    EXPECT_UINTEQ(1, 2u);
-    EXPECT_XINTEQ(0xabc, 0x0DEF);
-}
-
-TEST(zztest, failing_str)
-{
-    EXPECT_STREQ("foo", "bar");
-    EXPECT_STREQ("\r\n", "\t\\");
-    EXPECT_STREQ("f\x6F\x6F", "b\x61r");
-    EXPECT_STREQ("", "The quick brown fox jumps over the lazy dog.\nLorem ipsum dolor sit amet.");
-}
-
-TEST(zztest, skipping)
-{
-    SKIP();
-}
-
-TEST(zztest, skipping2)
-{
-    SKIP();
-}
-
-TEST(zztest, assert_bool)
-{
-    ASSERT_BOOLEQ(ZZT_TRUE, ZZT_FALSE);
-    EXPECT_BOOLEQ(ZZT_FALSE, ZZT_TRUE);
-}
-
-TEST(zztest, assert_char)
-{
-    ASSERT_CHAREQ('a', 'b');
-    EXPECT_CHAREQ('c', 'd');
-}
-
-TEST(zztest, assert_int)
-{
-    ASSERT_INTEQ(1, 2);
-    EXPECT_INTEQ(3, 4);
-}
-
-TEST(zztest, assert_uint)
-{
-    ASSERT_UINTEQ(1, 2);
-    EXPECT_UINTEQ(3, 4);
-}
-
-TEST(zztest, assert_xint)
-{
-    ASSERT_XINTEQ(1, 2);
-    EXPECT_XINTEQ(3, 4);
-}
-
-TEST(zztest, assert_str)
-{
-    ASSERT_STREQ("foo", "bar");
-    EXPECT_STREQ("baz", "plugh");
-}
-
-SUITE(zztest)
-{
-    SUITE_TEST(zztest, passing);
-    SUITE_TEST(zztest, passing_int);
-    SUITE_TEST(zztest, failing);
-    SUITE_TEST(zztest, failing_char);
-    SUITE_TEST(zztest, failing_int);
-    SUITE_TEST(zztest, failing_str);
-    SUITE_TEST(zztest, skipping);
-    SUITE_TEST(zztest, skipping2);
-    SUITE_TEST(zztest, assert_bool);
-    SUITE_TEST(zztest, assert_char);
-    SUITE_TEST(zztest, assert_int);
-    SUITE_TEST(zztest, assert_uint);
-    SUITE_TEST(zztest, assert_xint);
-    SUITE_TEST(zztest, assert_str);
-}
-
-int main()
-{
-    ADD_TEST_SUITE(zztest);
-    return RUN_TESTS();
-}
-
-#endif /* defined(ZZTEST_SELFCHECK) */
 #endif /* defined(ZZTEST_IMPLEMENTATION) */
 #endif /* !defined(INCLUDE_ZZTEST_H) */

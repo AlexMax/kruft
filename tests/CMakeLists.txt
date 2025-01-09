@@ -1,11 +1,10 @@
+add_subdirectory(zztest)
+
 include(CheckCompilerFlag)
 include(FindSanitizers)
 
 set(KRUFT_C_STANDARD "90" CACHE STRING "C Standard to use")
 set(KRUFT_CXX_STANDARD "14" CACHE STRING "C++ Standard to use")
-
-set(ZZTEST_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/zztest.h")
 
 set(TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/t_bit.inl"
@@ -19,18 +18,16 @@ set(TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/t_str.inl")
 
 # Test suite.
-add_executable(kruft_test_c ${ZZTEST_SOURCES} ${TEST_SOURCES}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_c.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/zztest.c")
-add_executable(kruft_test_cxx ${ZZTEST_SOURCES} ${TEST_SOURCES}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_cxx.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/zztest.cpp")
+add_executable(kruft_test_c
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_c.c")
+add_executable(kruft_test_cxx
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_cxx.cpp")
 
 target_include_directories(kruft_test_c PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_include_directories(kruft_test_cxx PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
-target_link_libraries(kruft_test_c PRIVATE kruft)
-target_link_libraries(kruft_test_cxx PRIVATE kruft)
+target_link_libraries(kruft_test_c PRIVATE kruft zztest_c)
+target_link_libraries(kruft_test_cxx PRIVATE kruft zztest_cxx)
 
 check_compiler_flag(CXX -Wmost W_MOST)
 if(W_MOST)

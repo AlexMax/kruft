@@ -12,9 +12,9 @@
 
 TEST(str, kr_strcmp)
 {
-    EXPECT_TRUE(0 == kr_strcmp("abc", "abc"));
-    EXPECT_TRUE(0 > kr_strcmp("abc", "def"));
-    EXPECT_TRUE(0 < kr_strcmp("def", "abc"));
+    EXPECT_INTEQ(0, kr_strcmp("abc", "abc"));
+    EXPECT_INTGT(0, kr_strcmp("abc", "def"));
+    EXPECT_INTLT(0, kr_strcmp("def", "abc"));
 }
 
 TEST(str, kr_strscpy)
