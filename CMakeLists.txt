@@ -22,6 +22,7 @@ set(KRUFT_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krint.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krlib.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krlimits.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/krmath.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krrand.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krserial.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/krstr.h")

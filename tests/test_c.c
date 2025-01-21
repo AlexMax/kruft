@@ -14,6 +14,7 @@
 #include "t_int.inl"
 #include "t_lib.inl"
 #include "t_limits.inl"
+#include "t_math.inl"
 #include "t_rand.inl"
 #include "t_serial.inl"
 #include "t_str.inl"
@@ -26,6 +27,7 @@ int main()
     ADD_TEST_SUITE(int);
     ADD_TEST_SUITE(lib);
     ADD_TEST_SUITE(limits);
+    ADD_TEST_SUITE(math);
     ADD_TEST_SUITE(rand);
     ADD_TEST_SUITE(serial);
     ADD_TEST_SUITE(str);

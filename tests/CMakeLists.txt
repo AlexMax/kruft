@@ -4,7 +4,7 @@ include(CheckCompilerFlag)
 include(FindSanitizers)
 
 set(KRUFT_C_STANDARD "90" CACHE STRING "C Standard to use")
-set(KRUFT_CXX_STANDARD "14" CACHE STRING "C++ Standard to use")
+set(KRUFT_CXX_STANDARD "11" CACHE STRING "C++ Standard to use")
 
 set(TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/t_bit.inl"
@@ -13,6 +13,7 @@ set(TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/t_int.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_lib.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_limits.inl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/t_math.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_rand.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_serial.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/t_str.inl")
