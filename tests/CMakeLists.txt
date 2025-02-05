@@ -4,7 +4,7 @@ include(CheckCompilerFlag)
 include(FindSanitizers)
 
 set(KRUFT_C_STANDARD "90" CACHE STRING "C Standard to use")
-set(KRUFT_CXX_STANDARD "11" CACHE STRING "C++ Standard to use")
+set(KRUFT_CXX_STANDARD "14" CACHE STRING "C++ Standard to use")
 
 set(TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/t_bit.inl"

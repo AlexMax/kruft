@@ -150,7 +150,7 @@
 #define KR_CASTS(t, u) (t)(u)
 #endif
 
-#if (KR_CPLUSPLUS >= 201103)
+#if (KR_CPLUSPLUS >= 201402)
 #define KR_CONSTEXPR constexpr
 #else
 #define KR_CONSTEXPR KR_INLINE
